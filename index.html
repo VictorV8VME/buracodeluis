@@ -777,7 +777,7 @@ window.I18N = {
     rule4: "Fotos y descripciones deben coincidir con lo que ofrecés.",
     rule5: "La página no intermedia pagos: coordinás y cobrás vos. Cuidado con señas a desconocidos.",
     rule6: "Podemos ocultar avisos que incumplan estas reglas o generen reclamos reiterados.",
-    publishOk: "¡Publicado! Ya aparece en la página. Te abrimos WhatsApp para avisar a Víctor.",
+    publishOk: "¡Publicado! Ya aparece en la página. No hace falta avisarnos por WhatsApp.",
     publishFail: "No se pudo publicar. Revisá los datos o intentá de nuevo.",
   },
   pt: {
@@ -932,7 +932,7 @@ window.I18N = {
     rule4: "Fotos e descrições devem bater com o que você oferece.",
     rule5: "A página não intermedia pagamentos: combine e cobre você. Cuidado com sinais a desconhecidos.",
     rule6: "Podemos ocultar anúncios que descumpram estas regras ou gerem reclamações repetidas.",
-    publishOk: "Publicado! Já aparece na página. Abrimos o WhatsApp para avisar o Víctor.",
+    publishOk: "Publicado! Já aparece na página. Não precisa avisar pelo WhatsApp.",
     publishFail: "Não foi possível publicar. Confira os dados ou tente de novo.",
   },
 };
@@ -1582,22 +1582,12 @@ function mapFormToListing(kind, d) {
 }
 
 function notifyVictorWa(kind, d, num) {
+  // Solo pedidos y comentarios/reclamos llegan a Víctor por WhatsApp.
+  // Altas (servicio/venta/usado/remate/comercio) se autogestionan en Supabase.
   if (kind === "need") {
     wa(`BuracodeLuis - PEDIDO\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nRubro: ${d.rubro}\nDetalle: ${d.detalle}`, num);
-  } else if (kind === "offer") {
-    wa(`BuracodeLuis - PROVEEDOR (3 meses gratis)\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nRubro: ${d.rubro}\nZona: ${d.zona || "-"}`, num);
-  } else if (kind === "product") {
-    wa(`BuracodeLuis - VENTA PRODUCTO\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nCategoria: ${d.categoria}\nProducto: ${d.producto}\nPrecio: ${d.precio || "a convenir"}`, num);
-  } else if (kind === "used") {
-    wa(`BuracodeLuis - USADO\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nProducto: ${d.producto}\nPrecio: ${d.precio}`, num);
-  } else if (kind === "pin") {
-    wa(`BuracodeLuis - UBICACION COMERCIO\nComercio: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nDireccion: ${d.direccion || "-"}\nLat: ${d.lat || "-"}\nLng: ${d.lng || "-"}\nAdmin: ${window.SITE.owner}`, num);
-  } else if (kind === "auction") {
-    wa(`BuracodeLuis - REMATE (mejor oferta gana)\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nProducto: ${d.producto}\nOferta minima: ${d.minimo}`, num);
   } else if (kind === "comment") {
     wa(`BuracodeLuis - ${d.tipo}\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nMensaje: ${d.mensaje}`, num);
-  } else if (kind === "shop") {
-    wa(`BuracodeLuis - COMERCIO / PUBLICIDAD\nComercio: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nOfertas: ${d.ofertas}`, num);
   }
 }
 
@@ -1617,7 +1607,6 @@ document.querySelectorAll("form").forEach((form) => {
           throw new Error("incomplete");
         }
         await insertListing(row);
-        notifyVictorWa(kind, d, num);
         await Promise.all([renderMarket(), renderShops()]);
         alert(t().publishOk || "OK");
         form.reset();
