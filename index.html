@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- TODO (deferred): auth, live FX API, review moderation/backend,
+  <!-- TODO (deferred): auth, live FX API, review moderation,
        real shop geocoding, email delivery for contact form.
-       Backend listings: done via Supabase (public.listings). -->
+       Backend: listings + reviews via Supabase. -->
   <title>Buraco del Luis | Servicios y productos en Paso de los Libres y Uruguaiana</title>
-  <meta name="description" content="Marketplace local de servicios, usados y remates entre Paso de los Libres y Uruguaiana. Oficios, cuidados y comercios sin comisión. Español y portugués." />
+  <meta name="description" content="Encontrá oficios, comprá usados o publicá tu servicio sin comisiones en Paso de los Libres y Uruguaiana. 3 meses gratis." />
   <style>
 :root {
   --navy: #12263a;
@@ -50,8 +50,10 @@ body {
 h1 { font-size: clamp(30px, 5vw, 48px); line-height: 1.12; margin: 8px 0 14px; }
 .lead { color: var(--muted); font-size: 17px; }
 .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
-.stats { background: var(--navy); color: #fff; border-radius: 20px; padding: 22px; }
-.stats b { display: block; color: #5eead4; font-size: 28px; }
+.stats { background: var(--navy); color: #fff; border-radius: 20px; padding: 24px 22px; }
+.stats b { display: block; color: #5eead4; font-size: clamp(26px, 4vw, 34px); line-height: 1.15; }
+.stats .stats-main { margin: 8px 0 16px; color: #fff; font-size: 16px; font-weight: 700; line-height: 1.35; }
+.stats .stats-sub { margin: 0; color: #a8bdd0; font-size: 13px; line-height: 1.4; }
 .stats p { margin: 0 0 14px; color: #d7e3ef; }
 section { padding: 56px 0; }
 .alt { background: var(--sand); }
@@ -63,8 +65,15 @@ h2 { margin: 0 0 8px; font-size: 30px; }
 }
 .card h3, .shop h3 { margin: 0 0 6px; font-size: 15px; }
 .card p, .shop p, .step p { margin: 0; color: var(--muted); font-size: 13px; }
-.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
-.step b { color: var(--teal); }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.step { padding: 20px 18px; min-height: 150px; }
+.step b {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; border-radius: 999px;
+  background: #dcefec; color: var(--teal); font-size: 20px; margin-bottom: 10px;
+}
+.step h3 { margin: 0 0 8px; font-size: 17px; }
+.step p { font-size: 14px; }
 .prices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .price strong { display: block; margin-bottom: 8px; }
 .shops { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
@@ -219,6 +228,29 @@ body.has-trial-banner .nav { top: 42px; }
 .footer-links a { color: #5eead4; text-decoration: none; font-size: 14px; }
 .price-shown { font-weight: 700; color: var(--ink); }
 
+.actions .btn-primary {
+  padding: 14px 20px; font-size: 16px; border-radius: 14px;
+}
+.actions .btn-secondary, .actions .btn-sm {
+  padding: 9px 14px; font-size: 13px; background: #eef4f3; color: var(--navy);
+  box-shadow: none;
+}
+.trust-box {
+  margin-top: 16px; background: #fff; border: 1px solid var(--line);
+  border-radius: 14px; padding: 14px 16px;
+}
+.trust-box strong { display: block; margin-bottom: 8px; color: var(--navy); font-size: 14px; }
+.trust-box ul { margin: 0 0 10px; padding-left: 18px; color: var(--muted); }
+.trust-box li { margin: 4px 0; font-size: 13px; }
+.trust-box a { color: var(--teal); font-weight: 800; font-size: 13px; text-decoration: none; }
+.trust-box a:hover { text-decoration: underline; }
+.example-tag {
+  display: inline-block; font-size: 11px; font-weight: 800; color: #1e3a5f;
+  background: #e0e7ff; border-radius: 999px; padding: 2px 8px; margin-bottom: 6px;
+}
+.empty-state { color: var(--muted); font-size: 15px; padding: 12px 0; }
+.kind-tag-servicio { color: var(--teal); }
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
@@ -231,6 +263,7 @@ body.has-trial-banner .nav { top: 42px; }
       <a class="brand" href="#inicio">Bura<span>codeLuis</span></a>
       <div class="nav-links">
         <a href="#servicios" data-i="navServ"></a>
+        <a href="#servicios-publicados" data-i="pubServTitle"></a>
         <a href="#venta" data-i="navMarket"></a>
         <a href="#usados" data-i="navUsed"></a>
         <a href="#remates" data-i="navAuction"></a>
@@ -247,6 +280,7 @@ body.has-trial-banner .nav { top: 42px; }
         <button class="lang" id="langBtn" type="button">PT</button>
         <button class="lang" id="musicBtn" type="button" data-i="musicBtn"></button>
         <a class="btn btn-primary" href="#pedir" data-i="ctaNeed"></a>
+        <a class="btn btn-ghost" href="#ofrecer" data-i="ctaOffer"></a>
       </div>
     </div>
   </header>
@@ -260,14 +294,14 @@ body.has-trial-banner .nav { top: 42px; }
         <div class="actions">
           <a class="btn btn-primary" href="#pedir" data-i="heroNeed"></a>
           <a class="btn btn-primary" href="#ofrecer" data-i="heroOffer"></a>
-          <a class="btn btn-secondary" href="#comercio" data-i="heroShop"></a>
-          <a class="btn btn-secondary" href="#publicar" data-i="heroSell"></a>
+          <a class="btn btn-secondary btn-sm" href="#comercio" data-i="heroShop"></a>
+          <a class="btn btn-secondary btn-sm" href="#publicar" data-i="heroSell"></a>
         </div>
       </div>
       <div class="stats">
-        <b data-i="stat1n"></b><p data-i="stat1"></p>
-        <b data-i="stat2n"></b><p data-i="stat2"></p>
-        <b data-i="stat3n"></b><p data-i="stat3"></p>
+        <b data-i="stat1n"></b>
+        <p class="stats-main" data-i="stat1"></p>
+        <p class="stats-sub"><span data-i="stat2n"></span> <span data-i="stat2"></span></p>
       </div>
     </div>
   </section>
@@ -301,7 +335,15 @@ body.has-trial-banner .nav { top: 42px; }
     </div>
   </section>
 
-  <section class="alt" id="como">
+  <section class="alt" id="servicios-publicados">
+    <div class="wrap">
+      <h2 data-i="pubServTitle"></h2>
+      <p class="sub" data-i="pubServLead"></p>
+      <div class="shops" id="publishedServices"></div>
+    </div>
+  </section>
+
+  <section id="como">
     <div class="wrap">
       <h2 data-i="howTitle"></h2>
       <div class="steps" id="steps"></div>
@@ -430,6 +472,16 @@ body.has-trial-banner .nav { top: 42px; }
       <div>
         <h2 data-i="formNeedTitle"></h2>
         <p class="sub" data-i="formNeedLead"></p>
+        <div class="trust-box">
+          <strong data-i="trustTitle"></strong>
+          <ul>
+            <li data-i="trust1"></li>
+            <li data-i="trust2"></li>
+            <li data-i="trust3"></li>
+            <li data-i="trust4"></li>
+          </ul>
+          <a href="#reglas" data-i="trustMore"></a>
+        </div>
       </div>
       <form class="form" data-kind="need">
         <label><span data-i="name"></span><input name="nombre" required /></label>
@@ -451,6 +503,16 @@ body.has-trial-banner .nav { top: 42px; }
           <li data-i="publishStep2"></li>
           <li data-i="publishStep3"></li>
         </ol>
+        <div class="trust-box">
+          <strong data-i="trustTitle"></strong>
+          <ul>
+            <li data-i="trust1"></li>
+            <li data-i="trust2"></li>
+            <li data-i="trust3"></li>
+            <li data-i="trust4"></li>
+          </ul>
+          <a href="#reglas" data-i="trustMore"></a>
+        </div>
       </div>
       <form class="form" data-kind="offer">
         <label><span data-i="name"></span><input name="nombre" required /></label>
@@ -488,6 +550,7 @@ body.has-trial-banner .nav { top: 42px; }
           <p class="sub" data-i="reviewFormLead"></p>
           <form class="form" id="reviewForm" data-kind="review-local">
             <label><span data-i="name"></span><input name="nombre" required maxlength="60" /></label>
+            <label><span data-i="reviewContact"></span><input name="contacto" required maxlength="120" data-i-placeholder="reviewContactPh" /></label>
             <label><span data-i="reviewStars"></span>
               <div class="stars-pick">
                 <label><input type="radio" name="stars" value="5" checked /> ★★★★★</label>
@@ -536,6 +599,16 @@ body.has-trial-banner .nav { top: 42px; }
           <div class="contact-alt" id="contacto">
             <h3 data-i="contactAltTitle"></h3>
             <p class="sub" data-i="contactAltLead"></p>
+        <div class="trust-box">
+          <strong data-i="trustTitle"></strong>
+          <ul>
+            <li data-i="trust1"></li>
+            <li data-i="trust2"></li>
+            <li data-i="trust3"></li>
+            <li data-i="trust4"></li>
+          </ul>
+          <a href="#reglas" data-i="trustMore"></a>
+        </div>
             <form class="form" id="contactForm" data-kind="contact-local">
               <label><span data-i="name"></span><input name="nombre" required /></label>
               <label><span data-i="contactReach"></span><input name="contacto" required data-i-placeholder="contactReachPh" /></label>
@@ -640,16 +713,16 @@ window.I18N = {
     eyebrow: "Paso de los Libres · puente con Uruguaiana",
     heroTitle: "Servicios, productos, usados y remates de los dos lados del puente.",
     heroLead:
-      "Pedí un oficio, vendé lo que hacés (herrería, crochet, plantas y más), publicá usados o rematá al mejor postor. Sin comisión. 3 meses gratis para postear. Después, $1.000. La página se sostiene con publicidad de comercios.",
+      "Pedí un oficio, publicá tu servicio o vendé usados y remates entre Libres y Uruguaiana. Publicá GRATIS 3 meses. Sin comisiones.",
     heroNeed: "Solicitar presupuesto",
     heroOffer: "Publicar mi servicio",
     heroShop: "Anunciar mi comercio",
-    stat1n: "0$",
-    stat1: "comisión para clientes y proveedores",
-    stat2n: "3 meses",
-    stat2: "gratis para publicar oficios",
-    stat3n: "$1.000",
-    stat3: "recién al 4º mes, solo por postear",
+    stat1n: "3 meses GRATIS",
+    stat1: "Publicá tu servicio GRATIS por 3 meses. Sin comisiones.",
+    stat2n: "Desde el 4º mes:",
+    stat2: "ARS 1.000 por mes para mantener tu publicación.",
+    stat3n: "",
+    stat3: "",
     servTitle: "Rubros",
     servLead: "Oficios, cuidados, trámites, frontera y más.",
     howTitle: "Cómo funciona",
@@ -661,7 +734,7 @@ window.I18N = {
     ],
     priceTitle: "Precios claros",
     priceClient: "Clientes: siempre gratis.",
-    priceProv: "Proveedores: gratis 3 meses. Después, ARS 1.000 (~BRL según tipo de cambio de referencia) por postear servicios.",
+    priceProv: "Proveedores: gratis 3 meses. Sin comisiones. Desde el 4º mes, ARS 1.000/mes para mantener tu publicación.",
     priceShop: "Comercios: pagan publicidad y tienen su propia vidriera de ofertas.",
     shopsTitle: "Ofertas de comercios",
     shopsLead: "Cada comercio tiene su apartado. Ideal para shoppings y negocios de Uruguaiana y Libres.",
@@ -736,7 +809,8 @@ window.I18N = {
     servSearchPh: "Buscar oficio o servicio…",
     servSearchLabel: "Buscar rubros",
     groupOficios: "Oficios",
-    groupCuidados: "Cuidados",
+    groupCuidados: "Cuidados y Salud",
+    groupEventos: "Eventos",
     groupTramites: "Trámites",
     groupHogar: "Servicios para el hogar y más",
     publishNoteTitle: "¿Querés publicar tu servicio?",
@@ -746,21 +820,34 @@ window.I18N = {
     publishNoteFoot: "Sin contraseña. Coordinás todo por WhatsApp. Los primeros 3 meses son gratis.",
     demoLabel: "Demo",
     fxBoth: "ambas",
-    fxNote: "Precios en ARS / BRL de referencia — actualizá el tipo de cambio en el código (no es cotización en vivo).",
+    fxNote: "Precios en ARS y BRL de referencia. Consultá el tipo de cambio del día al contactar.",
     share: "Compartir",
     shareWa: "WhatsApp",
     shareCopy: "Copiar link",
     shareCopied: "¡Copiado!",
     reviewsTitle: "Opiniones y reputación",
-    reviewsLead: "Reseñas demo de vecinos y comercios. Las nuevas se guardan en este navegador (sin backend).",
+    reviewsLead: "Reseñas de ejemplo y opiniones reales de vecinos. Las nuevas se publican en la página.",
     reviewFormTitle: "Dejá tu reseña",
-    reviewFormLead: "Estrellas + comentario corto. Se guarda en tu dispositivo.",
+    reviewFormLead: "Nombre, WhatsApp o email, estrellas y comentario. Requerido para publicar.",
     reviewStars: "Estrellas",
     reviewCity: "Ciudad",
     reviewComment: "Comentario",
+    reviewContact: "WhatsApp o email",
+    reviewContactPh: "3772… o tu@email.com",
     reviewRubroPh: "Rubro u oficio (opcional)",
     reviewSubmit: "Publicar reseña",
-    reviewOk: "¡Gracias! Tu reseña quedó guardada en este navegador.",
+    reviewOk: "¡Gracias! Tu reseña quedó publicada.",
+    reviewExampleTag: "Reseñas de ejemplo",
+    pubServTitle: "Servicios publicados",
+    pubServLead: "Oficios y servicios reales publicados por vecinos. Distinto de productos, usados o remates.",
+    pubServEmpty: "Todavía no hay servicios publicados — sé el primero.",
+    pubServWa: "WhatsApp",
+    trustTitle: "Confianza rápida",
+    trust1: "Sin comisiones: coordinás y cobrás vos.",
+    trust2: "Contacto real (WhatsApp / email) en cada aviso.",
+    trust3: "Precios y descripciones honestas; nada ilegal ni engañoso.",
+    trust4: "3 meses gratis para publicar tu servicio.",
+    trustMore: "Ver reglas completas →",
     contactAltTitle: "¿Preferís no usar WhatsApp? Escribinos acá",
     contactAltLead: "Nombre, email o teléfono y mensaje. Se guarda localmente (y mailto si configurás el email del sitio).",
     contactReach: "Email o teléfono",
@@ -795,16 +882,16 @@ window.I18N = {
     eyebrow: "Passo de los Libres · ponte com Uruguaiana",
     heroTitle: "Serviços, produtos, usados e leilões dos dois lados da ponte.",
     heroLead:
-      "Peça um ofício, venda o que você faz (serralheria, crochê, plantas e mais), anuncie usados ou remate para o maior lance. Sem comissão. 3 meses grátis. Depois, $1.000. A página se sustenta com anúncios de comércios.",
+      "Peça um ofício, publique seu serviço ou venda usados e leilões entre Libres e Uruguaiana. Publique GRÁTIS por 3 meses. Sem comissões.",
     heroNeed: "Solicitar orçamento",
     heroOffer: "Publicar meu serviço",
     heroShop: "Anunciar meu comércio",
-    stat1n: "0$",
-    stat1: "comissão para clientes e prestadores",
-    stat2n: "3 meses",
-    stat2: "grátis para publicar ofícios",
-    stat3n: "$1.000",
-    stat3: "só a partir do 4º mês para postar",
+    stat1n: "3 meses GRÁTIS",
+    stat1: "Publique seu serviço GRÁTIS por 3 meses. Sem comissões.",
+    stat2n: "A partir do 4º mês:",
+    stat2: "ARS 1.000 por mês para manter sua publicação.",
+    stat3n: "",
+    stat3: "",
     servTitle: "Categorias",
     servLead: "Ofícios, cuidados, despachos, fronteira e mais.",
     howTitle: "Como funciona",
@@ -816,7 +903,7 @@ window.I18N = {
     ],
     priceTitle: "Preços claros",
     priceClient: "Clientes: sempre grátis.",
-    priceProv: "Prestadores: grátis por 3 meses. Depois, ARS 1.000 (~BRL conforme taxa de referência) para postar serviços.",
+    priceProv: "Prestadores: grátis por 3 meses. Sem comissões. A partir do 4º mês, ARS 1.000/mês para manter a publicação.",
     priceShop: "Comércios: pagam publicidade e têm a própria vitrine de ofertas.",
     shopsTitle: "Ofertas dos comércios",
     shopsLead: "Cada comércio tem o seu espaço. Pensado para lojas de Uruguaiana e Libres.",
@@ -891,7 +978,8 @@ window.I18N = {
     servSearchPh: "Buscar ofício ou serviço…",
     servSearchLabel: "Buscar categorias",
     groupOficios: "Ofícios",
-    groupCuidados: "Cuidados",
+    groupCuidados: "Cuidados e Saúde",
+    groupEventos: "Eventos",
     groupTramites: "Despachos",
     groupHogar: "Serviços para o lar e mais",
     publishNoteTitle: "Quer publicar seu serviço?",
@@ -901,21 +989,34 @@ window.I18N = {
     publishNoteFoot: "Sem senha. Tudo pelo WhatsApp. Os primeiros 3 meses são grátis.",
     demoLabel: "Demo",
     fxBoth: "ambas",
-    fxNote: "Preços em ARS / BRL de referência — atualize a taxa no código (não é cotação ao vivo).",
+    fxNote: "Preços em ARS e BRL de referência. Consulte a cotação do dia ao entrar em contato.",
     share: "Compartilhar",
     shareWa: "WhatsApp",
     shareCopy: "Copiar link",
     shareCopied: "Copiado!",
     reviewsTitle: "Opiniões e reputação",
-    reviewsLead: "Avaliações demo de vizinhos e comércios. As novas ficam neste navegador (sem backend).",
+    reviewsLead: "Primeiras opiniões (exemplo) e avaliações reais de vizinhos. As novas são publicadas na página.",
     reviewFormTitle: "Deixe sua avaliação",
-    reviewFormLead: "Estrelas + comentário curto. Salvo neste dispositivo.",
+    reviewFormLead: "Nome, WhatsApp ou e-mail, estrelas e comentário. Obrigatório para publicar.",
     reviewStars: "Estrelas",
     reviewCity: "Cidade",
     reviewComment: "Comentário",
+    reviewContact: "WhatsApp ou e-mail",
+    reviewContactPh: "55… ou seu@email.com",
     reviewRubroPh: "Categoria ou ofício (opcional)",
     reviewSubmit: "Publicar avaliação",
-    reviewOk: "Obrigado! Sua avaliação foi salva neste navegador.",
+    reviewOk: "Obrigado! Sua avaliação foi publicada.",
+    reviewExampleTag: "Primeiras opiniões (exemplo)",
+    pubServTitle: "Serviços publicados",
+    pubServLead: "Ofícios e serviços reais publicados por vizinhos. Separado de produtos, usados ou leilões.",
+    pubServEmpty: "Ainda não há serviços publicados — seja o primeiro.",
+    pubServWa: "WhatsApp",
+    trustTitle: "Confiança rápida",
+    trust1: "Sem comissões: combine e cobre você.",
+    trust2: "Contato real (WhatsApp / e-mail) em cada anúncio.",
+    trust3: "Preços e descrições honestas; nada ilegal nem enganoso.",
+    trust4: "3 meses grátis para publicar seu serviço.",
+    trustMore: "Ver regras completas →",
     contactAltTitle: "Prefere não usar WhatsApp? Escreva aqui",
     contactAltLead: "Nome, e-mail ou telefone e mensagem. Salvo localmente (e mailto se configurar o e-mail do site).",
     contactReach: "E-mail ou telefone",
@@ -985,9 +1086,9 @@ window.SERVICES = [
   { es: "Traslados a terminal", pt: "Transfer rodoviária", d_es: "Terminal, viajes y turismo", d_pt: "Rodoviária e viagens", group: "hogar" },
   { es: "Chofer por día", pt: "Motorista por dia", d_es: "Viajes, trámites y turismo", d_pt: "Viagens e turismo", group: "hogar" },
   { es: "Lavado de autos", pt: "Lavagem de carros", d_es: "A domicilio o en taller", d_pt: "Em casa ou no pátio", group: "hogar" },
-  { es: "Eventos / DJ / sonido", pt: "Eventos / DJ / som", d_es: "Fiestas y ferias", d_pt: "Festas e feiras", group: "hogar" },
-  { es: "Foto y video", pt: "Foto e vídeo", d_es: "Eventos y productos", d_pt: "Eventos e produtos", group: "hogar" },
-  { es: "Catering / lunch", pt: "Buffet / lunch", d_es: "Encargos para eventos", d_pt: "Encomendas para eventos", group: "hogar" },
+  { es: "Eventos / DJ / sonido", pt: "Eventos / DJ / som", d_es: "Fiestas y ferias", d_pt: "Festas e feiras", group: "eventos" },
+  { es: "Foto y video", pt: "Foto e vídeo", d_es: "Eventos y productos", d_pt: "Eventos e produtos", group: "eventos" },
+  { es: "Catering / lunch", pt: "Buffet / lunch", d_es: "Encargos para eventos", d_pt: "Encomendas para eventos", group: "eventos" },
   { es: "Costura", pt: "Costura", d_es: "Arreglos de ropa y uniformes", d_pt: "Ajustes e uniformes", group: "hogar" },
   { es: "Celulares y PCs", pt: "Celulares e PCs", d_es: "Reparación y formato", d_pt: "Conserto e formatação", group: "hogar" },
   { es: "Cámaras / WiFi", pt: "Câmeras / WiFi", d_es: "Instalación en casa o comercio", d_pt: "Instalação em casa ou loja", group: "hogar" },
@@ -1129,6 +1230,60 @@ async function insertListing(row) {
   return data;
 }
 
+async function fetchReviews() {
+  const client = sb();
+  if (!client) return { ok: false, rows: [] };
+  const { data, error } = await client
+    .from('reviews')
+    .select('*')
+    .eq('status', 'published')
+    .order('created_at', { ascending: false })
+    .limit(40);
+  if (error) {
+    console.warn('reviews fetch', error);
+    return { ok: false, rows: [] };
+  }
+  return { ok: true, rows: data || [] };
+}
+
+async function insertReview(row) {
+  const client = sb();
+  if (!client) throw new Error('Supabase no configurado');
+  const { data, error } = await client.from('reviews').insert(row).select().single();
+  if (error) throw error;
+  return data;
+}
+
+function renderRealServiceCards(rows) {
+  const waLabel = t().pubServWa || "WhatsApp";
+  return rows.map((row, i) => {
+    const title = row.title || row.rubro || "";
+    const zone = row.zone || row.city || row.description || "";
+    const tag = lang === "es" ? "Servicio" : "Serviço";
+    return `
+    <article class="shop">
+      <div class="tag kind-tag-servicio">${escapeHtml(tag)}</div>
+      <h3>${escapeHtml(title)}</h3>
+      ${zone ? `<p>${escapeHtml(zone)}</p>` : ""}
+      ${listingContactHtml(row) || (row.whatsapp ? `<p style="margin-top:8px"><a class="btn btn-ghost" style="padding:7px 12px;font-size:12px" href="https://wa.me/${waDigits(row.whatsapp)}" target="_blank" rel="noopener">${escapeHtml(waLabel)}</a></p>` : "")}
+      ${shareRowHtml("svc-" + (row.id || i), title, zone, "#servicios-publicados")}
+    </article>`;
+  }).join("");
+}
+
+async function renderPublishedServices() {
+  const root = $("#publishedServices");
+  if (!root) return;
+  let rows = [];
+  try { rows = await fetchListings("servicio"); } catch (err) { console.warn(err); rows = []; }
+  if (rows.length) {
+    root.innerHTML = renderRealServiceCards(rows);
+    bindShareButtons(root);
+  } else {
+    root.innerHTML = `<p class="empty-state">${escapeHtml(t().pubServEmpty || "")}</p>`;
+  }
+}
+
 function waDigits(phone) {
   return String(phone || "").replace(/\D/g, "");
 }
@@ -1200,6 +1355,7 @@ function applyTexts() {
   renderSteps();
   renderShops();
   renderMarket();
+  renderPublishedServices();
   renderReviews();
   fillSelects();
 }
@@ -1208,6 +1364,7 @@ const SERVICE_GROUPS = [
   { id: "oficios", key: "groupOficios" },
   { id: "cuidados", key: "groupCuidados" },
   { id: "tramites", key: "groupTramites" },
+  { id: "eventos", key: "groupEventos" },
   { id: "hogar", key: "groupHogar" },
 ];
 
@@ -1328,7 +1485,7 @@ function renderDemoProducts() {
     return `
     <article class="shop">
       ${demo}
-      <div class="tag">${escapeHtml(lang === "es" ? p.cat_es : p.cat_pt)}</div>
+      <div class="tag">${escapeHtml((lang === "es" ? "Producto" : "Produto") + " · " + (lang === "es" ? p.cat_es : p.cat_pt))}</div>
       <h3>${escapeHtml(title)}</h3>
       <p class="price-shown">${escapeHtml(price)}</p>
       ${shareRowHtml("prod-" + i, title, price, "#venta")}
@@ -1344,7 +1501,7 @@ function renderDemoUsed() {
     return `
     <article class="shop">
       ${demo}
-      <div class="tag">Usado</div>
+      <div class="tag">${lang === "es" ? "Usado" : "Usado"}</div>
       <h3>${escapeHtml(title)}</h3>
       <p class="price-shown">${escapeHtml(price)}</p>
       ${shareRowHtml("used-" + i, title, price, "#usados")}
@@ -1361,7 +1518,7 @@ function renderDemoAuctions() {
     return `
     <article class="shop">
       ${demo}
-      <div class="tag">${escapeHtml(lang === "es" ? p.ends_es : p.ends_pt)}</div>
+      <div class="tag">${escapeHtml((lang === "es" ? "Remate" : "Leilão") + " · " + (lang === "es" ? p.ends_es : p.ends_pt))}</div>
       <h3>${escapeHtml(title)}</h3>
       <p class="price-shown">${escapeHtml(label)}</p>
       ${shareRowHtml("auc-" + i, title, label, "#remates")}
@@ -1373,7 +1530,8 @@ function renderRealProductCards(rows) {
   return rows.map((row, i) => {
     const title = row.title || "";
     const price = displayPrice(row.price_label || "");
-    const tag = row.category || row.rubro || (lang === "es" ? "Producto" : "Produto");
+    const kind = lang === "es" ? "Producto" : "Produto";
+    const tag = row.category || row.rubro ? (kind + " · " + (row.category || row.rubro)) : kind;
     return `
     <article class="shop">
       <div class="tag">${escapeHtml(tag)}</div>
@@ -1392,7 +1550,7 @@ function renderRealUsedCards(rows) {
     const price = displayPrice(row.price_label || "");
     return `
     <article class="shop">
-      <div class="tag">Usado</div>
+      <div class="tag">${lang === "es" ? "Usado" : "Usado"}</div>
       <h3>${escapeHtml(title)}</h3>
       ${price ? `<p class="price-shown">${escapeHtml(price)}</p>` : ""}
       ${row.description ? `<p>${escapeHtml(row.description)}</p>` : ""}
@@ -1416,7 +1574,7 @@ function renderRealAuctionCards(rows) {
     }
     return `
     <article class="shop">
-      ${ends ? `<div class="tag">${escapeHtml(ends)}</div>` : `<div class="tag">${lang === "es" ? "Remate" : "Leilão"}</div>`}
+      ${ends ? `<div class="tag">${escapeHtml((lang === "es" ? "Remate" : "Leilão") + " · " + ends)}</div>` : `<div class="tag">${lang === "es" ? "Remate" : "Leilão"}</div>`}
       <h3>${escapeHtml(title)}</h3>
       ${label ? `<p class="price-shown">${escapeHtml(label)}</p>` : ""}
       ${row.description ? `<p>${escapeHtml(row.description)}</p>` : ""}
@@ -1463,9 +1621,8 @@ function saveStoredReviews(list) {
   localStorage.setItem(REVIEWS_KEY, JSON.stringify(list));
 }
 
-function allReviews() {
-  const stored = loadStoredReviews();
-  const demo = (window.DEMO_REVIEWS || []).map((r, i) => ({
+function demoReviewsMapped() {
+  return (window.DEMO_REVIEWS || []).map((r, i) => ({
     id: "demo-" + i,
     name: r.name,
     stars: r.stars,
@@ -1474,19 +1631,52 @@ function allReviews() {
     rubro: r.rubro || "",
     demo: true,
   }));
-  return stored.concat(demo);
 }
 
-function renderReviews() {
-  const root = $("#reviewsList");
-  if (!root) return;
-  const items = allReviews();
-  root.innerHTML = items.map((r) => `
+function mapRemoteReview(r) {
+  return {
+    id: r.id,
+    name: r.name,
+    stars: r.stars,
+    comment: r.comment,
+    city: r.city || "",
+    rubro: r.rubro || "",
+    demo: false,
+  };
+}
+
+let reviewsFromSupabase = false;
+
+async function collectReviews() {
+  const remote = await fetchReviews();
+  reviewsFromSupabase = remote.ok;
+  if (remote.ok) {
+    const rows = (remote.rows || []).map(mapRemoteReview);
+    // If empty remote, still show labeled examples so the section isn't blank
+    return rows.length ? rows : demoReviewsMapped();
+  }
+  const stored = loadStoredReviews();
+  return stored.concat(demoReviewsMapped());
+}
+
+function reviewCardHtml(r) {
+  const example = r.demo
+    ? `<span class="example-tag">${escapeHtml(t().reviewExampleTag || t().demoLabel || "Demo")}</span>`
+    : "";
+  return `
     <article class="review">
+      ${example}
       <div class="stars" aria-label="${r.stars}/5">${starsHtml(r.stars)}</div>
       <p>${escapeHtml(r.comment)}</p>
-      <div class="meta">${escapeHtml(r.name)} · ${escapeHtml(r.city)}${r.rubro ? " · " + escapeHtml(r.rubro) : ""}${r.demo ? " · " + escapeHtml(t().demoLabel || "Demo") : ""}</div>
-    </article>`).join("");
+      <div class="meta">${escapeHtml(r.name)} · ${escapeHtml(r.city)}${r.rubro ? " · " + escapeHtml(r.rubro) : ""}</div>
+    </article>`;
+}
+
+async function renderReviews() {
+  const root = $("#reviewsList");
+  if (!root) return;
+  const items = await collectReviews();
+  root.innerHTML = items.map(reviewCardHtml).join("");
 }
 
 function fillSelects() {
@@ -1607,7 +1797,7 @@ document.querySelectorAll("form").forEach((form) => {
           throw new Error("incomplete");
         }
         await insertListing(row);
-        await Promise.all([renderMarket(), renderShops()]);
+        await Promise.all([renderMarket(), renderShops(), renderPublishedServices()]);
         alert(t().publishOk || "OK");
         form.reset();
         if (kind === "pin") {
@@ -1642,13 +1832,14 @@ $("#fxBar")?.querySelectorAll("button").forEach((btn) => {
   });
 });
 
-$("#reviewForm")?.addEventListener("submit", (e) => {
+$("#reviewForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.target;
   const d = Object.fromEntries(new FormData(form).entries());
   const entry = {
     id: "u-" + Date.now(),
     name: (d.nombre || "").trim(),
+    contact: (d.contacto || "").trim(),
     stars: Number(d.stars) || 5,
     comment: (d.comment || "").trim(),
     city: d.city || "Libres",
@@ -1656,16 +1847,38 @@ $("#reviewForm")?.addEventListener("submit", (e) => {
     demo: false,
     ts: Date.now(),
   };
-  if (!entry.name || !entry.comment) return;
-  const list = loadStoredReviews();
-  list.unshift(entry);
-  saveStoredReviews(list.slice(0, 50));
+  if (!entry.name || !entry.contact || !entry.comment || !entry.stars) return;
+
+  let savedRemote = false;
+  try {
+    await insertReview({
+      name: entry.name,
+      contact: entry.contact,
+      stars: entry.stars,
+      comment: entry.comment,
+      city: entry.city,
+      rubro: entry.rubro || null,
+      status: "published",
+    });
+    savedRemote = true;
+  } catch (err) {
+    console.warn("review insert fallback local", err);
+    const list = loadStoredReviews();
+    list.unshift(entry);
+    saveStoredReviews(list.slice(0, 50));
+  }
+
   form.reset();
   const star5 = form.querySelector('input[name=stars][value="5"]');
   if (star5) star5.checked = true;
-  renderReviews();
+  await renderReviews();
   const ok = $("#reviewOk");
-  if (ok) { ok.classList.add("show"); setTimeout(() => ok.classList.remove("show"), 3500); }
+  if (ok) {
+    ok.textContent = t().reviewOk || ok.textContent;
+    ok.classList.add("show");
+    setTimeout(() => ok.classList.remove("show"), 3500);
+  }
+  void savedRemote;
 });
 
 $("#contactForm")?.addEventListener("submit", (e) => {
