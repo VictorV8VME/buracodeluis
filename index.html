@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- TODO (deferred): real backend listings + auth, live FX API,
-       review moderation/backend, real shop geocoding, email delivery for contact form -->
+  <!-- TODO (deferred): auth, live FX API, review moderation/backend,
+       real shop geocoding, email delivery for contact form.
+       Backend listings: done via Supabase (public.listings). -->
   <title>Buraco del Luis | Servicios y productos en Paso de los Libres y Uruguaiana</title>
   <meta name="description" content="Marketplace local de servicios, usados y remates entre Paso de los Libres y Uruguaiana. Oficios, cuidados y comercios sin comisión. Español y portugués." />
   <style>
@@ -599,6 +600,7 @@ body.has-trial-banner .nav { top: 42px; }
   </aside>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // Parámetros editables
 window.SITE = {
@@ -614,6 +616,8 @@ window.SITE = {
   priceAfterTrial: "ARS 1.000",
   trialMonths: 3,
   map: { lat: -29.7136, lng: -57.0894, zoom: 14 },
+  supabaseUrl: "https://kslhlktxlgtgoquhjhnz.supabase.co",
+  supabaseKey: "sb_publishable_fV1Dv_25YI2BUwnT9AB0-w_aPtvpLUT",
 };
 
 // Tipo de cambio de referencia (NO live). ARS por 1 BRL. Actualizá a mano.
@@ -773,6 +777,8 @@ window.I18N = {
     rule4: "Fotos y descripciones deben coincidir con lo que ofrecés.",
     rule5: "La página no intermedia pagos: coordinás y cobrás vos. Cuidado con señas a desconocidos.",
     rule6: "Podemos ocultar avisos que incumplan estas reglas o generen reclamos reiterados.",
+    publishOk: "¡Publicado! Ya aparece en la página. Te abrimos WhatsApp para avisar a Víctor.",
+    publishFail: "No se pudo publicar. Revisá los datos o intentá de nuevo.",
   },
   pt: {
     lang: "Português",
@@ -926,6 +932,8 @@ window.I18N = {
     rule4: "Fotos e descrições devem bater com o que você oferece.",
     rule5: "A página não intermedia pagamentos: combine e cobre você. Cuidado com sinais a desconhecidos.",
     rule6: "Podemos ocultar anúncios que descumpram estas regras ou gerem reclamações repetidas.",
+    publishOk: "Publicado! Já aparece na página. Abrimos o WhatsApp para avisar o Víctor.",
+    publishFail: "Não foi possível publicar. Confira os dados ou tente de novo.",
   },
 };
 
@@ -1098,6 +1106,41 @@ function escapeHtml(s) {
   return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
+function sb() {
+  if (!window._sb && window.supabase?.createClient && SITE.supabaseUrl && SITE.supabaseKey) {
+    window._sb = window.supabase.createClient(SITE.supabaseUrl, SITE.supabaseKey);
+  }
+  return window._sb;
+}
+async function fetchListings(kind) {
+  const client = sb();
+  if (!client) return [];
+  let q = client.from('listings').select('*').eq('status','published').order('created_at',{ascending:false}).limit(40);
+  if (kind) q = q.eq('kind', kind);
+  const { data, error } = await q;
+  if (error) { console.warn(error); return []; }
+  return data || [];
+}
+async function insertListing(row) {
+  const client = sb();
+  if (!client) throw new Error('Supabase no configurado');
+  const { data, error } = await client.from('listings').insert(row).select().single();
+  if (error) throw error;
+  return data;
+}
+
+function waDigits(phone) {
+  return String(phone || "").replace(/\D/g, "");
+}
+
+function listingContactHtml(row) {
+  if (!row || !row.whatsapp) return "";
+  const digits = waDigits(row.whatsapp);
+  if (!digits) return "";
+  const label = escapeHtml(row.contact_name || t().phone);
+  return `<p style="margin-top:8px"><a class="btn btn-ghost" style="padding:7px 12px;font-size:12px" href="https://wa.me/${digits}" target="_blank" rel="noopener">${label}</a></p>`;
+}
+
 function bindShareButtons(root) {
   (root || document).querySelectorAll(".share-btn").forEach((btn) => {
     if (btn.dataset.bound) return;
@@ -1237,63 +1280,175 @@ function renderSteps() {
   `).join("");
 }
 
-function renderShops() {
-  $("#shops").innerHTML = window.DEMO_SHOPS.map((s, i) => {
+function renderDemoShops() {
+  return window.DEMO_SHOPS.map((s, i) => {
     const title = lang === "es" ? s.es : s.pt;
     const offer = lang === "es" ? s.offer_es : s.offer_pt;
     return `
     <article class="shop">
-      <div class="tag">${s.city}</div>
-      <h3>${title}</h3>
-      <p>${offer}</p>
+      <span class="demo-tag">${t().demoLabel || "Demo"}</span>
+      <div class="tag">${escapeHtml(s.city)}</div>
+      <h3>${escapeHtml(title)}</h3>
+      <p>${escapeHtml(offer)}</p>
       ${shareRowHtml("shop-" + i, title, offer, "#comercios")}
     </article>`;
   }).join("");
-  bindShareButtons($("#shops"));
 }
 
-function renderMarket() {
+function renderRealShopCards(rows) {
+  return rows.map((row, i) => {
+    const title = row.title || "";
+    const offer = row.description || "";
+    const tag = row.city || row.zone || (lang === "es" ? "Comercio" : "Comércio");
+    return `
+    <article class="shop">
+      <div class="tag">${escapeHtml(tag)}</div>
+      <h3>${escapeHtml(title)}</h3>
+      ${offer ? `<p>${escapeHtml(offer)}</p>` : ""}
+      ${listingContactHtml(row)}
+      ${shareRowHtml("shop-" + (row.id || i), title, offer, "#comercios")}
+    </article>`;
+  }).join("");
+}
+
+async function renderShops() {
+  const root = $("#shops");
+  if (!root) return;
+  let rows = [];
+  try { rows = await fetchListings("comercio"); } catch (err) { console.warn(err); rows = []; }
+  root.innerHTML = rows.length ? renderRealShopCards(rows) : renderDemoShops();
+  bindShareButtons(root);
+}
+
+function renderDemoProducts() {
   const demo = `<span class="demo-tag">${t().demoLabel || "Demo"}</span>`;
-  $("#products").innerHTML = window.DEMO_PRODUCTS.map((p, i) => {
+  return window.DEMO_PRODUCTS.map((p, i) => {
     const title = lang === "es" ? p.es : p.pt;
     const price = displayPrice(p.price);
     return `
     <article class="shop">
       ${demo}
-      <div class="tag">${lang === "es" ? p.cat_es : p.cat_pt}</div>
-      <h3>${title}</h3>
-      <p class="price-shown">${price}</p>
+      <div class="tag">${escapeHtml(lang === "es" ? p.cat_es : p.cat_pt)}</div>
+      <h3>${escapeHtml(title)}</h3>
+      <p class="price-shown">${escapeHtml(price)}</p>
       ${shareRowHtml("prod-" + i, title, price, "#venta")}
     </article>`;
   }).join("");
-  $("#used").innerHTML = window.DEMO_USED.map((p, i) => {
+}
+
+function renderDemoUsed() {
+  const demo = `<span class="demo-tag">${t().demoLabel || "Demo"}</span>`;
+  return window.DEMO_USED.map((p, i) => {
     const title = lang === "es" ? p.es : p.pt;
     const price = displayPrice(p.price);
     return `
     <article class="shop">
       ${demo}
-      <div class="tag">${lang === "es" ? "Usado" : "Usado"}</div>
-      <h3>${title}</h3>
-      <p class="price-shown">${price}</p>
+      <div class="tag">Usado</div>
+      <h3>${escapeHtml(title)}</h3>
+      <p class="price-shown">${escapeHtml(price)}</p>
       ${shareRowHtml("used-" + i, title, price, "#usados")}
     </article>`;
   }).join("");
-  $("#auctions").innerHTML = window.DEMO_AUCTIONS.map((p, i) => {
+}
+
+function renderDemoAuctions() {
+  const demo = `<span class="demo-tag">${t().demoLabel || "Demo"}</span>`;
+  return window.DEMO_AUCTIONS.map((p, i) => {
     const title = lang === "es" ? p.es : p.pt;
     const min = displayPrice(p.min);
     const label = t().minBid + ": " + min;
     return `
     <article class="shop">
       ${demo}
-      <div class="tag">${lang === "es" ? p.ends_es : p.ends_pt}</div>
-      <h3>${title}</h3>
-      <p class="price-shown">${label}</p>
+      <div class="tag">${escapeHtml(lang === "es" ? p.ends_es : p.ends_pt)}</div>
+      <h3>${escapeHtml(title)}</h3>
+      <p class="price-shown">${escapeHtml(label)}</p>
       ${shareRowHtml("auc-" + i, title, label, "#remates")}
     </article>`;
   }).join("");
-  bindShareButtons($("#products"));
-  bindShareButtons($("#used"));
-  bindShareButtons($("#auctions"));
+}
+
+function renderRealProductCards(rows) {
+  return rows.map((row, i) => {
+    const title = row.title || "";
+    const price = displayPrice(row.price_label || "");
+    const tag = row.category || row.rubro || (lang === "es" ? "Producto" : "Produto");
+    return `
+    <article class="shop">
+      <div class="tag">${escapeHtml(tag)}</div>
+      <h3>${escapeHtml(title)}</h3>
+      ${price ? `<p class="price-shown">${escapeHtml(price)}</p>` : ""}
+      ${row.description ? `<p>${escapeHtml(row.description)}</p>` : ""}
+      ${listingContactHtml(row)}
+      ${shareRowHtml("prod-" + (row.id || i), title, price, "#venta")}
+    </article>`;
+  }).join("");
+}
+
+function renderRealUsedCards(rows) {
+  return rows.map((row, i) => {
+    const title = row.title || "";
+    const price = displayPrice(row.price_label || "");
+    return `
+    <article class="shop">
+      <div class="tag">Usado</div>
+      <h3>${escapeHtml(title)}</h3>
+      ${price ? `<p class="price-shown">${escapeHtml(price)}</p>` : ""}
+      ${row.description ? `<p>${escapeHtml(row.description)}</p>` : ""}
+      ${listingContactHtml(row)}
+      ${shareRowHtml("used-" + (row.id || i), title, price, "#usados")}
+    </article>`;
+  }).join("");
+}
+
+function renderRealAuctionCards(rows) {
+  return rows.map((row, i) => {
+    const title = row.title || "";
+    const minRaw = row.price_min_label || row.price_label || "";
+    const min = displayPrice(minRaw);
+    const label = minRaw ? (t().minBid + ": " + min) : "";
+    let ends = "";
+    if (row.ends_at) {
+      try {
+        ends = new Date(row.ends_at).toLocaleString(lang === "es" ? "es-AR" : "pt-BR");
+      } catch (_) { ends = String(row.ends_at); }
+    }
+    return `
+    <article class="shop">
+      ${ends ? `<div class="tag">${escapeHtml(ends)}</div>` : `<div class="tag">${lang === "es" ? "Remate" : "Leilão"}</div>`}
+      <h3>${escapeHtml(title)}</h3>
+      ${label ? `<p class="price-shown">${escapeHtml(label)}</p>` : ""}
+      ${row.description ? `<p>${escapeHtml(row.description)}</p>` : ""}
+      ${listingContactHtml(row)}
+      ${shareRowHtml("auc-" + (row.id || i), title, label, "#remates")}
+    </article>`;
+  }).join("");
+}
+
+async function renderMarket() {
+  const productsEl = $("#products");
+  const usedEl = $("#used");
+  const auctionsEl = $("#auctions");
+  if (!productsEl || !usedEl || !auctionsEl) return;
+
+  let products = [], used = [], auctions = [];
+  try {
+    [products, used, auctions] = await Promise.all([
+      fetchListings("producto"),
+      fetchListings("usado"),
+      fetchListings("remate"),
+    ]);
+  } catch (err) {
+    console.warn(err);
+  }
+
+  productsEl.innerHTML = products.length ? renderRealProductCards(products) : renderDemoProducts();
+  usedEl.innerHTML = used.length ? renderRealUsedCards(used) : renderDemoUsed();
+  auctionsEl.innerHTML = auctions.length ? renderRealAuctionCards(auctions) : renderDemoAuctions();
+  bindShareButtons(productsEl);
+  bindShareButtons(usedEl);
+  bindShareButtons(auctionsEl);
 }
 
 function loadStoredReviews() {
@@ -1356,30 +1511,130 @@ function wa(text, number) {
   window.open(`https://wa.me/${number || window.SITE.whatsappAR}?text=${encodeURIComponent(text)}`, "_blank");
 }
 
+function mapFormToListing(kind, d) {
+  const base = {
+    status: "published",
+    contact_name: (d.nombre || "").trim(),
+    whatsapp: (d.whatsapp || "").trim(),
+    description: "",
+  };
+  if (kind === "offer") {
+    return {
+      ...base,
+      kind: "servicio",
+      title: (d.rubro || "").trim(),
+      rubro: (d.rubro || "").trim(),
+      zone: (d.zona || "").trim() || null,
+      description: (d.zona || "").trim(),
+    };
+  }
+  if (kind === "product") {
+    return {
+      ...base,
+      kind: "producto",
+      title: (d.producto || "").trim(),
+      category: (d.categoria || "").trim() || null,
+      rubro: (d.categoria || "").trim() || null,
+      price_label: (d.precio || "").trim() || "Consultar",
+      description: (d.categoria || "").trim(),
+    };
+  }
+  if (kind === "used") {
+    return {
+      ...base,
+      kind: "usado",
+      title: (d.producto || "").trim(),
+      price_label: (d.precio || "").trim(),
+      description: "",
+    };
+  }
+  if (kind === "auction") {
+    return {
+      ...base,
+      kind: "remate",
+      title: (d.producto || "").trim(),
+      price_min_label: (d.minimo || "").trim(),
+      description: "",
+    };
+  }
+  if (kind === "shop") {
+    return {
+      ...base,
+      kind: "comercio",
+      title: (d.nombre || "").trim(),
+      description: (d.ofertas || "").trim(),
+    };
+  }
+  if (kind === "pin") {
+    const lat = d.lat !== undefined && d.lat !== "" ? Number(d.lat) : null;
+    const lng = d.lng !== undefined && d.lng !== "" ? Number(d.lng) : null;
+    return {
+      ...base,
+      kind: "comercio",
+      title: (d.nombre || "").trim(),
+      description: (d.direccion || "").trim(),
+      zone: (d.direccion || "").trim() || null,
+      lat: Number.isFinite(lat) ? lat : null,
+      lng: Number.isFinite(lng) ? lng : null,
+    };
+  }
+  return null;
+}
+
+function notifyVictorWa(kind, d, num) {
+  if (kind === "need") {
+    wa(`BuracodeLuis - PEDIDO\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nRubro: ${d.rubro}\nDetalle: ${d.detalle}`, num);
+  } else if (kind === "offer") {
+    wa(`BuracodeLuis - PROVEEDOR (3 meses gratis)\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nRubro: ${d.rubro}\nZona: ${d.zona || "-"}`, num);
+  } else if (kind === "product") {
+    wa(`BuracodeLuis - VENTA PRODUCTO\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nCategoria: ${d.categoria}\nProducto: ${d.producto}\nPrecio: ${d.precio || "a convenir"}`, num);
+  } else if (kind === "used") {
+    wa(`BuracodeLuis - USADO\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nProducto: ${d.producto}\nPrecio: ${d.precio}`, num);
+  } else if (kind === "pin") {
+    wa(`BuracodeLuis - UBICACION COMERCIO\nComercio: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nDireccion: ${d.direccion || "-"}\nLat: ${d.lat || "-"}\nLng: ${d.lng || "-"}\nAdmin: ${window.SITE.owner}`, num);
+  } else if (kind === "auction") {
+    wa(`BuracodeLuis - REMATE (mejor oferta gana)\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nProducto: ${d.producto}\nOferta minima: ${d.minimo}`, num);
+  } else if (kind === "comment") {
+    wa(`BuracodeLuis - ${d.tipo}\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nMensaje: ${d.mensaje}`, num);
+  } else if (kind === "shop") {
+    wa(`BuracodeLuis - COMERCIO / PUBLICIDAD\nComercio: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nOfertas: ${d.ofertas}`, num);
+  }
+}
+
 document.querySelectorAll("form").forEach((form) => {
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     const kind = form.dataset.kind;
     if (kind === "review-local" || kind === "contact-local") return; // handled separately
     e.preventDefault();
     const d = Object.fromEntries(new FormData(form).entries());
     const num = destNumber(form);
-    if (kind === "need") {
-      wa(`BuracodeLuis - PEDIDO\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nRubro: ${d.rubro}\nDetalle: ${d.detalle}`, num);
-    } else if (kind === "offer") {
-      wa(`BuracodeLuis - PROVEEDOR (3 meses gratis)\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nRubro: ${d.rubro}\nZona: ${d.zona || "-"}`, num);
-    } else if (kind === "product") {
-      wa(`BuracodeLuis - VENTA PRODUCTO\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nCategoria: ${d.categoria}\nProducto: ${d.producto}\nPrecio: ${d.precio || "a convenir"}`, num);
-    } else if (kind === "used") {
-      wa(`BuracodeLuis - USADO\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nProducto: ${d.producto}\nPrecio: ${d.precio}`, num);
-    } else if (kind === "pin") {
-      wa(`BuracodeLuis - UBICACION COMERCIO\nComercio: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nDireccion: ${d.direccion || "-"}\nLat: ${d.lat || "-"}\nLng: ${d.lng || "-"}\nAdmin: ${window.SITE.owner}`, num);
-    } else if (kind === "auction") {
-      wa(`BuracodeLuis - REMATE (mejor oferta gana)\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nProducto: ${d.producto}\nOferta minima: ${d.minimo}`, num);
-    } else if (kind === "comment") {
-      wa(`BuracodeLuis - ${d.tipo}\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nMensaje: ${d.mensaje}`, num);
-    } else {
-      wa(`BuracodeLuis - COMERCIO / PUBLICIDAD\nComercio: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nOfertas: ${d.ofertas}`, num);
+    const listingKinds = new Set(["offer", "product", "used", "auction", "shop", "pin"]);
+
+    if (listingKinds.has(kind)) {
+      const row = mapFormToListing(kind, d);
+      try {
+        if (!row || !row.title || !row.contact_name || !row.whatsapp) {
+          throw new Error("incomplete");
+        }
+        await insertListing(row);
+        notifyVictorWa(kind, d, num);
+        await Promise.all([renderMarket(), renderShops()]);
+        alert(t().publishOk || "OK");
+        form.reset();
+        if (kind === "pin") {
+          const latEl = document.getElementById("pinLat");
+          const lngEl = document.getElementById("pinLng");
+          if (latEl) latEl.value = "";
+          if (lngEl) lngEl.value = "";
+        }
+      } catch (err) {
+        console.warn(err);
+        alert(t().publishFail || "Error");
+      }
+      return;
     }
+
+    notifyVictorWa(kind, d, num);
   });
 });
 
