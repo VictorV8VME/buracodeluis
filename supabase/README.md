@@ -11,7 +11,7 @@ Reseñas viven en `public.reviews` (ver `reviews.sql`).
 - Market/shops/servicios leen `status=published`
 - Formularios offer/product/used/auction/shop/pin + reseñas: captcha + POST a la Edge Function (pending)
 - Pedidos (`need`) y comentarios (`comment`) abren WhatsApp a Víctor
-- Contacto sin WhatsApp sigue en localStorage (+ mailto opcional)
+- Contacto: Turnstile gate + mailto opcional + UI ok (sin PII en localStorage)
 
 ## Setup
 1. Corre `schema.sql` y `reviews.sql` en el SQL Editor (baseline)
