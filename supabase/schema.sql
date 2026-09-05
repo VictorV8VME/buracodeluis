@@ -20,7 +20,7 @@ create type public.listing_status as enum (
 create table if not exists public.listings (
   id uuid primary key default gen_random_uuid(),
   kind public.listing_kind not null,
-  status public.listing_status not null default 'published',
+  status public.listing_status not null default 'pending',
   title text not null check (char_length(title) between 2 and 120),
   description text not null default '' check (char_length(description) <= 2000),
   rubro text,
@@ -69,14 +69,14 @@ create policy "Public read published listings"
   to anon, authenticated
   using (status = 'published');
 
--- Anyone can insert a new listing (published by default for v1 automation)
+-- Anyone can insert only as pending (moderation)
 drop policy if exists "Anon insert listings" on public.listings;
 create policy "Anon insert listings"
   on public.listings
   for insert
   to anon, authenticated
   with check (
-    status in ('published', 'pending')
+    status = 'pending'
     and char_length(title) >= 2
     and char_length(contact_name) >= 2
     and char_length(whatsapp) >= 6
