@@ -248,6 +248,16 @@ body.has-trial-banner .nav { top: 42px; }
   background: #dcfce7; color: #166534; font-weight: 700; font-size: 14px;
 }
 .form-ok.show { display: block; }
+.hp-field {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
 .rules-box {
   background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px;
 }
@@ -441,6 +451,7 @@ body.has-trial-banner .nav { top: 42px; }
         <label><span data-i="rubro"></span><select name="categoria" id="catProduct" required></select></label>
         <label><span data-i="productName"></span><input name="producto" required /></label>
         <label><span data-i="price"></span><input name="precio" placeholder="ARS ..." /></label>
+        <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
         <button class="btn" type="submit" data-i="send"></button>
       </form>
     </div>
@@ -454,6 +465,7 @@ body.has-trial-banner .nav { top: 42px; }
         <label><span data-i="phone"></span><input name="whatsapp" required /></label>
         <label><span data-i="productName"></span><input name="producto" required /></label>
         <label><span data-i="price"></span><input name="precio" required /></label>
+        <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
         <button class="btn" type="submit" data-i="send"></button>
       </form>
     </div>
@@ -467,6 +479,7 @@ body.has-trial-banner .nav { top: 42px; }
         <label><span data-i="phone"></span><input name="whatsapp" required /></label>
         <label><span data-i="productName"></span><input name="producto" required /></label>
         <label><span data-i="minBid"></span><input name="minimo" required /></label>
+        <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
         <button class="btn" type="submit" data-i="send"></button>
       </form>
     </div>
@@ -486,7 +499,8 @@ body.has-trial-banner .nav { top: 42px; }
         <input type="hidden" name="lng" id="pinLng" />
         <div class="actions">
           <button class="btn btn-ghost" type="button" id="useGps" data-i="mapGps"></button>
-          <button class="btn" type="submit" data-i="send"></button>
+          <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="btn" type="submit" data-i="send"></button>
         </div>
       </form>
     </div>
@@ -552,6 +566,7 @@ body.has-trial-banner .nav { top: 42px; }
         <label><span data-i="phone"></span><input name="whatsapp" required /></label>
         <label><span data-i="rubro"></span><select name="rubro" id="rubroOffer" required></select></label>
         <label><span data-i="zone"></span><input name="zona" /></label>
+        <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
         <button class="btn" type="submit" data-i="send"></button>
       </form>
     </div>
@@ -567,6 +582,7 @@ body.has-trial-banner .nav { top: 42px; }
         <label><span data-i="shopName"></span><input name="nombre" required /></label>
         <label><span data-i="phone"></span><input name="whatsapp" required /></label>
         <label><span data-i="offers"></span><textarea name="ofertas" rows="4" required></textarea></label>
+        <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
         <button class="btn" type="submit" data-i="send"></button>
       </form>
     </div>
@@ -601,7 +617,8 @@ body.has-trial-banner .nav { top: 42px; }
             </label>
             <label><span data-i="rubro"></span><input name="rubro" maxlength="80" data-i-placeholder="reviewRubroPh" /></label>
             <label><span data-i="reviewComment"></span><textarea name="comment" rows="3" required maxlength="280"></textarea></label>
-            <button class="btn" type="submit" data-i="reviewSubmit"></button>
+            <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="btn" type="submit" data-i="reviewSubmit"></button>
             <div class="form-ok" id="reviewOk" data-i="reviewOk"></div>
           </form>
         </div>
@@ -869,7 +886,7 @@ window.I18N = {
     reviewContactPh: "3772… o tu@email.com",
     reviewRubroPh: "Rubro u oficio (opcional)",
     reviewSubmit: "Publicar reseña",
-    reviewOk: "¡Gracias! Tu reseña quedó publicada.",
+    reviewOk: "¡Gracias! Tu reseña quedó en revisión y no se publica sola. Cuando la aprobemos, aparece en la página.",
     reviewExampleTag: "Reseñas de ejemplo",
     pubServTitle: "Servicios publicados",
     pubServLead: "Oficios y servicios reales publicados por vecinos. Distinto de productos, usados o remates.",
@@ -899,6 +916,8 @@ window.I18N = {
     rule6: "Podemos ocultar avisos que incumplan estas reglas o generen reclamos reiterados.",
     publishOk: "¡Recibido! Tu aviso quedó en revisión y no se publica solo. Cuando lo aprobemos, aparece en la página.",
     publishFail: "No se pudo publicar. Revisá los datos o intentá de nuevo.",
+    publishSlow: "Esperá unos segundos antes de publicar de nuevo.",
+    reviewSlow: "Esperá unos segundos antes de enviar otra reseña.",
   },
   pt: {
     lang: "Português",
@@ -1038,7 +1057,7 @@ window.I18N = {
     reviewContactPh: "55… ou seu@email.com",
     reviewRubroPh: "Categoria ou ofício (opcional)",
     reviewSubmit: "Publicar avaliação",
-    reviewOk: "Obrigado! Sua avaliação foi publicada.",
+    reviewOk: "Obrigado! Sua avaliação ficou em revisão e não publica sozinha. Quando aprovarmos, aparece na página.",
     reviewExampleTag: "Primeiras opiniões (exemplo)",
     pubServTitle: "Serviços publicados",
     pubServLead: "Ofícios e serviços reais publicados por vizinhos. Separado de produtos, usados ou leilões.",
@@ -1068,6 +1087,8 @@ window.I18N = {
     rule6: "Podemos ocultar anúncios que descumpram estas regras ou gerem reclamações repetidas.",
     publishOk: "Recebido! Seu anúncio ficou em revisão e não publica sozinho. Quando aprovarmos, aparece na página.",
     publishFail: "Não foi possível publicar. Confira os dados ou tente de novo.",
+    publishSlow: "Aguarde alguns segundos antes de publicar de novo.",
+    reviewSlow: "Aguarde alguns segundos antes de enviar outra avaliação.",
   },
 };
 
@@ -1258,9 +1279,10 @@ async function fetchListings(kind) {
 async function insertListing(row) {
   const client = sb();
   if (!client) throw new Error('Supabase no configurado');
-  const { data, error } = await client.from('listings').insert(row).select().single();
+  const payload = { ...row, status: "pending" };
+  const { error } = await client.from('listings').insert(payload);
   if (error) throw error;
-  return data;
+  return true;
 }
 
 async function fetchReviews() {
@@ -1282,9 +1304,10 @@ async function fetchReviews() {
 async function insertReview(row) {
   const client = sb();
   if (!client) throw new Error('Supabase no configurado');
-  const { data, error } = await client.from('reviews').insert(row).select().single();
+  const payload = { ...row, status: "pending" };
+  const { error } = await client.from('reviews').insert(payload);
   if (error) throw error;
-  return data;
+  return true;
 }
 
 function renderRealServiceCards(rows) {
@@ -1319,6 +1342,25 @@ async function renderPublishedServices() {
 
 function waDigits(phone) {
   return String(phone || "").replace(/\D/g, "");
+}
+
+/** Digits-only WhatsApp; length 8–15 or null if invalid. */
+function normalizeWhatsapp(w) {
+  const digits = waDigits(w);
+  if (digits.length < 8 || digits.length > 15) return null;
+  return digits;
+}
+
+const BCL_COOLDOWN_MS = 45000;
+function tooSoon(storageKey) {
+  try {
+    const last = Number(localStorage.getItem(storageKey) || 0);
+    if (last && Date.now() - last < BCL_COOLDOWN_MS) return true;
+  } catch (_) {}
+  return false;
+}
+function markSubmitTime(storageKey) {
+  try { localStorage.setItem(storageKey, String(Date.now())); } catch (_) {}
 }
 
 function listingContactHtml(row) {
@@ -1824,12 +1866,30 @@ document.querySelectorAll("form").forEach((form) => {
     const listingKinds = new Set(["offer", "product", "used", "auction", "shop", "pin"]);
 
     if (listingKinds.has(kind)) {
+      // Honeypot: bots that fill "website" get a silent fake success.
+      if (String(d.website || "").trim()) {
+        alert(t().publishOk || "OK");
+        form.reset();
+        return;
+      }
+      if (tooSoon("bcl_last_listing")) {
+        alert(t().publishSlow || "Slow");
+        return;
+      }
       const row = mapFormToListing(kind, d);
       try {
         if (!row || !row.title || !row.contact_name || !row.whatsapp) {
           throw new Error("incomplete");
         }
+        const waNorm = normalizeWhatsapp(row.whatsapp);
+        if (!waNorm) {
+          alert(t().publishFail || "Error");
+          return;
+        }
+        row.whatsapp = waNorm;
+        row.status = "pending";
         await insertListing(row);
+        markSubmitTime("bcl_last_listing");
         await Promise.all([renderMarket(), renderShops(), renderPublishedServices()]);
         alert(t().publishOk || "OK");
         form.reset();
@@ -1869,6 +1929,29 @@ $("#reviewForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.target;
   const d = Object.fromEntries(new FormData(form).entries());
+
+  const showReviewOk = () => {
+    const ok = $("#reviewOk");
+    if (ok) {
+      ok.textContent = t().reviewOk || ok.textContent;
+      ok.classList.add("show");
+      setTimeout(() => ok.classList.remove("show"), 3500);
+    }
+  };
+
+  // Honeypot: silent fake success (no insert).
+  if (String(d.website || "").trim()) {
+    form.reset();
+    const star5hp = form.querySelector('input[name=stars][value="5"]');
+    if (star5hp) star5hp.checked = true;
+    showReviewOk();
+    return;
+  }
+  if (tooSoon("bcl_last_review")) {
+    alert(t().reviewSlow || "Slow");
+    return;
+  }
+
   const entry = {
     id: "u-" + Date.now(),
     name: (d.nombre || "").trim(),
@@ -1891,26 +1974,23 @@ $("#reviewForm")?.addEventListener("submit", async (e) => {
       comment: entry.comment,
       city: entry.city,
       rubro: entry.rubro || null,
-      status: "published",
+      status: "pending",
     });
     savedRemote = true;
+    markSubmitTime("bcl_last_review");
   } catch (err) {
     console.warn("review insert fallback local", err);
     const list = loadStoredReviews();
     list.unshift(entry);
     saveStoredReviews(list.slice(0, 50));
+    markSubmitTime("bcl_last_review");
   }
 
   form.reset();
   const star5 = form.querySelector('input[name=stars][value="5"]');
   if (star5) star5.checked = true;
   await renderReviews();
-  const ok = $("#reviewOk");
-  if (ok) {
-    ok.textContent = t().reviewOk || ok.textContent;
-    ok.classList.add("show");
-    setTimeout(() => ok.classList.remove("show"), 3500);
-  }
+  showReviewOk();
   void savedRemote;
 });
 
