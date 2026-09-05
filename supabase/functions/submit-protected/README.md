@@ -1,6 +1,6 @@
 # Edge Function: `submit-protected`
 
-Defensive submit path for listings and reviews: Cloudflare Turnstile verification + IP rate limit (8 / 10 min) + insert as `pending` via service role.
+Defensive submit path for listings, reviews, and egress **gate**: Cloudflare Turnstile verification + IP (and optional WhatsApp) rate limit (8 / 10 min) + insert as `pending` via service role (listing/review only).
 
 **Parent / Victor deploys — do not push or deploy from the coding agent unless asked.**
 
@@ -56,13 +56,16 @@ supabase secrets set TURNSTILE_SECRET_KEY="$(cat .secrets/turnstile-secret.txt)"
 
 ```json
 {
-  "type": "listing" | "review",
+  "type": "listing" | "review" | "gate",
   "turnstileToken": "<token>",
   "payload": { }
 }
 ```
 
-Success: `{ "ok": true }`. Rate limit: HTTP 429. Captcha fail: 403.
+- `listing` / `review`: require payload; insert as `pending` after Turnstile + rate limits.
+- `gate`: payload may be `{}`; verifies Turnstile + rate limits only (used before WhatsApp / contact flows). If `payload.whatsapp` (or contact digits) is present, also rate-limits key `whatsapp:<digits>`.
+
+Success: `{ "ok": true }`. Rate limit: HTTP 429. Captcha fail: 403. Errors are generic codes only (never raw DB messages).
 
 CORS allowlist: `https://buracodeluis.vercel.app` and `http://localhost:*` / `http://127.0.0.1:*` (Origin reflected).
 

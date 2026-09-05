@@ -1,8 +1,10 @@
 /**
- * submit-protected — Cloudflare Turnstile + IP rate limit + moderated insert.
+ * submit-protected — Cloudflare Turnstile + IP/WhatsApp rate limit + moderated insert.
+ * Types: listing | review | gate (captcha+rate only, no DB insert).
  * Defensive only. Env: TURNSTILE_SECRET_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY.
+ * Never returns raw DB error messages to the client.
  */
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
 const ALLOWED_ORIGINS = new Set([
   "https://buracodeluis.vercel.app",
@@ -24,6 +26,7 @@ function isAllowedOrigin(origin: string | null): boolean {
 }
 
 function corsHeaders(origin: string | null): Record<string, string> {
+  // Reflect allowlisted Origin only — never "*"
   const allow = origin && isAllowedOrigin(origin) ? origin : "https://buracodeluis.vercel.app";
   return {
     "Access-Control-Allow-Origin": allow,
@@ -32,6 +35,17 @@ function corsHeaders(origin: string | null): Record<string, string> {
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     Vary: "Origin",
   };
+}
+
+function jsonResponse(
+  headers: Record<string, string>,
+  status: number,
+  body: Record<string, unknown>,
+): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...headers, "Content-Type": "application/json" },
+  });
 }
 
 function clientIp(req: Request): string {
@@ -124,6 +138,61 @@ function windowStart(now = Date.now()): string {
   return new Date(ms).toISOString();
 }
 
+/**
+ * Rate-limit key in submit_rate_limits.ip column (IP or "whatsapp:digits").
+ * Returns generic error codes only — never DB messages.
+ */
+async function checkAndBumpRate(
+  admin: SupabaseClient,
+  key: string,
+): Promise<{ ok: true } | { ok: false; status: number; error: string }> {
+  const win = windowStart();
+  const { data: existing, error: selErr } = await admin
+    .from("submit_rate_limits")
+    .select("count")
+    .eq("ip", key)
+    .eq("bucket", RATE_BUCKET)
+    .eq("window_start", win)
+    .maybeSingle();
+
+  if (selErr) {
+    console.error("rate select", selErr);
+    return { ok: false, status: 500, error: "rate_check_failed" };
+  }
+
+  const prev = Number(existing?.count ?? 0);
+  if (prev >= RATE_MAX) {
+    return { ok: false, status: 429, error: "rate_limited" };
+  }
+
+  const nextCount = prev + 1;
+  const { error: upErr } = await admin.from("submit_rate_limits").upsert(
+    {
+      ip: key,
+      bucket: RATE_BUCKET,
+      window_start: win,
+      count: nextCount,
+    },
+    { onConflict: "ip,bucket,window_start" },
+  );
+
+  if (upErr) {
+    console.error("rate upsert", upErr);
+    return { ok: false, status: 500, error: "rate_update_failed" };
+  }
+  return { ok: true };
+}
+
+/** Prefer payload.whatsapp; fall back to contact/contacto digits when valid. */
+function whatsappRateKey(payload: Record<string, unknown> | null): string | null {
+  if (!payload) return null;
+  const wa =
+    normalizeWhatsapp(payload.whatsapp) ||
+    normalizeWhatsapp(payload.contact) ||
+    normalizeWhatsapp(payload.contacto);
+  return wa ? `whatsapp:${wa}` : null;
+}
+
 Deno.serve(async (req) => {
   const origin = req.headers.get("Origin");
   const headers = corsHeaders(origin);
@@ -133,17 +202,11 @@ Deno.serve(async (req) => {
   }
 
   if (req.method !== "POST") {
-    return new Response(JSON.stringify({ ok: false, error: "method_not_allowed" }), {
-      status: 405,
-      headers: { ...headers, "Content-Type": "application/json" },
-    });
+    return jsonResponse(headers, 405, { ok: false, error: "method_not_allowed" });
   }
 
   if (origin && !isAllowedOrigin(origin)) {
-    return new Response(JSON.stringify({ ok: false, error: "origin_denied" }), {
-      status: 403,
-      headers: { ...headers, "Content-Type": "application/json" },
-    });
+    return jsonResponse(headers, 403, { ok: false, error: "origin_denied" });
   }
 
   const turnstileSecret = Deno.env.get("TURNSTILE_SECRET_KEY") ?? "";
@@ -152,10 +215,7 @@ Deno.serve(async (req) => {
 
   if (!turnstileSecret || !supabaseUrl || !serviceKey) {
     console.error("missing env secrets");
-    return new Response(JSON.stringify({ ok: false, error: "server_misconfigured" }), {
-      status: 500,
-      headers: { ...headers, "Content-Type": "application/json" },
-    });
+    return jsonResponse(headers, 500, { ok: false, error: "server_misconfigured" });
   }
 
   let body: {
@@ -166,10 +226,7 @@ Deno.serve(async (req) => {
   try {
     body = await req.json();
   } catch {
-    return new Response(JSON.stringify({ ok: false, error: "invalid_json" }), {
-      status: 400,
-      headers: { ...headers, "Content-Type": "application/json" },
-    });
+    return jsonResponse(headers, 400, { ok: false, error: "invalid_json" });
   }
 
   const type = body?.type;
@@ -178,141 +235,80 @@ Deno.serve(async (req) => {
     ? body.payload
     : null;
 
-  if (type !== "listing" && type !== "review") {
-    return new Response(JSON.stringify({ ok: false, error: "bad_type" }), {
-      status: 400,
-      headers: { ...headers, "Content-Type": "application/json" },
-    });
+  if (type !== "listing" && type !== "review" && type !== "gate") {
+    return jsonResponse(headers, 400, { ok: false, error: "bad_type" });
   }
   if (!token) {
-    return new Response(JSON.stringify({ ok: false, error: "captcha_required" }), {
-      status: 400,
-      headers: { ...headers, "Content-Type": "application/json" },
-    });
+    return jsonResponse(headers, 400, { ok: false, error: "captcha_required" });
   }
-  if (!payload) {
-    return new Response(JSON.stringify({ ok: false, error: "missing_payload" }), {
-      status: 400,
-      headers: { ...headers, "Content-Type": "application/json" },
-    });
+  // gate may send empty payload {}; listing/review require a payload object
+  if (type !== "gate" && !payload) {
+    return jsonResponse(headers, 400, { ok: false, error: "missing_payload" });
   }
 
   const ip = clientIp(req);
 
   const captchaOk = await verifyTurnstile(token, ip, turnstileSecret);
   if (!captchaOk) {
-    return new Response(JSON.stringify({ ok: false, error: "captcha_failed" }), {
-      status: 403,
-      headers: { ...headers, "Content-Type": "application/json" },
-    });
+    return jsonResponse(headers, 403, { ok: false, error: "captcha_failed" });
   }
 
   const admin = createClient(supabaseUrl, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  const win = windowStart();
-  const { data: existing, error: selErr } = await admin
-    .from("submit_rate_limits")
-    .select("count")
-    .eq("ip", ip)
-    .eq("bucket", RATE_BUCKET)
-    .eq("window_start", win)
-    .maybeSingle();
-
-  if (selErr) {
-    console.error("rate select", selErr);
-    return new Response(JSON.stringify({ ok: false, error: "rate_check_failed" }), {
-      status: 500,
-      headers: { ...headers, "Content-Type": "application/json" },
-    });
+  const ipRate = await checkAndBumpRate(admin, ip);
+  if (!ipRate.ok) {
+    return jsonResponse(headers, ipRate.status, { ok: false, error: ipRate.error });
   }
 
-  const prev = Number(existing?.count ?? 0);
-  if (prev >= RATE_MAX) {
-    return new Response(JSON.stringify({ ok: false, error: "rate_limited" }), {
-      status: 429,
-      headers: { ...headers, "Content-Type": "application/json" },
-    });
+  const waKey = whatsappRateKey(payload);
+  if (waKey) {
+    const waRate = await checkAndBumpRate(admin, waKey);
+    if (!waRate.ok) {
+      return jsonResponse(headers, waRate.status, { ok: false, error: waRate.error });
+    }
   }
 
-  const nextCount = prev + 1;
-  const { error: upErr } = await admin.from("submit_rate_limits").upsert(
-    {
-      ip,
-      bucket: RATE_BUCKET,
-      window_start: win,
-      count: nextCount,
-    },
-    { onConflict: "ip,bucket,window_start" },
-  );
-
-  if (upErr) {
-    console.error("rate upsert", upErr);
-    return new Response(JSON.stringify({ ok: false, error: "rate_update_failed" }), {
-      status: 500,
-      headers: { ...headers, "Content-Type": "application/json" },
-    });
+  // Captcha + rate limit only (WhatsApp / contact flows that leave the browser)
+  if (type === "gate") {
+    return jsonResponse(headers, 200, { ok: true });
   }
 
   if (type === "listing") {
-    const row = pickCols(payload, LISTING_COLS);
+    const row = pickCols(payload!, LISTING_COLS);
     row.status = "pending";
     const wa = normalizeWhatsapp(row.whatsapp);
     if (!wa) {
-      return new Response(JSON.stringify({ ok: false, error: "bad_whatsapp" }), {
-        status: 400,
-        headers: { ...headers, "Content-Type": "application/json" },
-      });
+      return jsonResponse(headers, 400, { ok: false, error: "bad_whatsapp" });
     }
     row.whatsapp = wa;
     if (!row.title || !row.contact_name || !row.kind) {
-      return new Response(JSON.stringify({ ok: false, error: "incomplete_listing" }), {
-        status: 400,
-        headers: { ...headers, "Content-Type": "application/json" },
-      });
+      return jsonResponse(headers, 400, { ok: false, error: "incomplete_listing" });
     }
     const { error: insErr } = await admin.from("listings").insert(row);
     if (insErr) {
       console.error("listing insert", insErr);
-      return new Response(JSON.stringify({ ok: false, error: "insert_failed" }), {
-        status: 500,
-        headers: { ...headers, "Content-Type": "application/json" },
-      });
+      return jsonResponse(headers, 500, { ok: false, error: "insert_failed" });
     }
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200,
-      headers: { ...headers, "Content-Type": "application/json" },
-    });
+    return jsonResponse(headers, 200, { ok: true });
   }
 
   // review
-  const row = pickCols(payload, REVIEW_COLS);
+  const row = pickCols(payload!, REVIEW_COLS);
   row.status = "pending";
   const stars = Number(row.stars);
   if (!Number.isFinite(stars) || stars < 1 || stars > 5) {
-    return new Response(JSON.stringify({ ok: false, error: "bad_stars" }), {
-      status: 400,
-      headers: { ...headers, "Content-Type": "application/json" },
-    });
+    return jsonResponse(headers, 400, { ok: false, error: "bad_stars" });
   }
   row.stars = stars;
   if (!row.name || !row.contact || !row.comment) {
-    return new Response(JSON.stringify({ ok: false, error: "incomplete_review" }), {
-      status: 400,
-      headers: { ...headers, "Content-Type": "application/json" },
-    });
+    return jsonResponse(headers, 400, { ok: false, error: "incomplete_review" });
   }
   const { error: revErr } = await admin.from("reviews").insert(row);
   if (revErr) {
     console.error("review insert", revErr);
-    return new Response(JSON.stringify({ ok: false, error: "insert_failed" }), {
-      status: 500,
-      headers: { ...headers, "Content-Type": "application/json" },
-    });
+    return jsonResponse(headers, 500, { ok: false, error: "insert_failed" });
   }
-  return new Response(JSON.stringify({ ok: true }), {
-    status: 200,
-    headers: { ...headers, "Content-Type": "application/json" },
-  });
+  return jsonResponse(headers, 200, { ok: true });
 });
