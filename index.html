@@ -812,9 +812,9 @@ window.I18N = {
     radioTitle: "Radio",
     radioLibres: "LT12 Nacional Libres",
     radioBr: "Rádio Uruguaiana 102.1",
-    musicBtn: "Música indie",
-    musicOn: "Rock on",
-    musicOff: "Rock off",
+    musicBtn: "Music",
+    musicOn: "Music",
+    musicOff: "Music",
     helpName: "Luisito",
     helpHi: "Hola, soy Luisito. Te ayudo a usar la página.",
     help1: "1. Elegí qué querés: pedir, ofrecer, vender o rematar.",
@@ -981,9 +981,9 @@ window.I18N = {
     radioTitle: "Rádio",
     radioLibres: "LT12 Nacional Libres",
     radioBr: "Rádio Uruguaiana 102.1",
-    musicBtn: "Música indie",
-    musicOn: "Rock on",
-    musicOff: "Rock off",
+    musicBtn: "Music",
+    musicOn: "Music",
+    musicOff: "Music",
     helpName: "Luisito",
     helpHi: "Olá, eu sou o Luisito. Te ajudo a usar a página.",
     help1: "1. Escolha: pedir, oferecer, vender ou leiloar.",
@@ -2012,54 +2012,77 @@ applyTexts();
   });
 })();
 
-// Tema indie/classic rock libre (Mixkit Free License) — archivo local, loop largo.
+// Music: Mixkit Free License classic rock (CDN + local fallback). Button label: Music.
 (function () {
   let audio = null;
   let on = false;
+  const SOURCES = [
+    "https://assets.mixkit.co/music/954/954.mp3", // How Does it Feel — Michael Ramir C. (Mixkit Free)
+    "audio/indie-rock-bg.mp3",
+  ];
+
+  function setLabel() {
+    const btn = document.getElementById("musicBtn");
+    if (btn) btn.textContent = "Music";
+  }
 
   function getAudio() {
     if (audio) return audio;
-    audio = new Audio("audio/indie-rock-bg.mp3");
+    audio = new Audio();
     audio.loop = true;
-    audio.preload = "metadata";
+    audio.preload = "auto";
     audio.volume = 0.45;
+    let i = 0;
+    audio.src = SOURCES[0];
+    audio.addEventListener("error", () => {
+      i += 1;
+      if (i < SOURCES.length) {
+        audio.src = SOURCES[i];
+        if (on) audio.play().catch(() => {});
+      }
+    });
     return audio;
-  }
-
-  function label(onState) {
-    const btn = document.getElementById("musicBtn");
-    if (!btn || !window.I18N) return;
-    const dict = window.I18N[document.documentElement.lang] || window.I18N.es;
-    btn.textContent = onState ? (dict.musicOn || "Rock on") : (dict.musicOff || "Rock off");
   }
 
   async function start() {
     const a = getAudio();
     try {
+      a.currentTime = 0;
       await a.play();
       on = true;
-      label(true);
+      setLabel();
     } catch (err) {
       console.warn("music play", err);
-      alert((document.documentElement.lang === "pt")
-        ? "Toque de novo para ativar o áudio."
-        : "Tocá de nuevo para activar el audio.");
+      // Retry once after a tick (some browsers need a second gesture-adjacent play)
+      try {
+        await new Promise((r) => setTimeout(r, 50));
+        await a.play();
+        on = true;
+        setLabel();
+      } catch (err2) {
+        console.warn("music play retry", err2);
+      }
     }
   }
 
   function stop() {
     if (audio) {
       audio.pause();
-      audio.currentTime = 0;
+      try { audio.currentTime = 0; } catch (_) {}
     }
     on = false;
-    label(false);
+    setLabel();
   }
 
-  document.getElementById("musicBtn")?.addEventListener("click", () => {
-    if (on) stop();
-    else start();
-  });
+  const btn = document.getElementById("musicBtn");
+  if (btn) {
+    btn.textContent = "Music";
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (on) stop();
+      else start();
+    });
+  }
 })();
 
 </script>
