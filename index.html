@@ -586,6 +586,7 @@ body.has-trial-banner .nav { top: 42px; }
         <label><span data-i="phone"></span><input name="whatsapp" required /></label>
         <label><span data-i="rubro"></span><select name="rubro" id="rubroNeed" required></select></label>
         <label><span data-i="detail"></span><textarea name="detalle" rows="4" required></textarea></label>
+        <div class="turnstile-slot" aria-label="captcha"></div>
         <button class="btn" type="submit" data-i="send"></button>
       </form>
     </div>
@@ -687,6 +688,7 @@ body.has-trial-banner .nav { top: 42px; }
               </select>
             </label>
             <label><span data-i="commentMsg"></span><textarea name="mensaje" rows="4" required></textarea></label>
+            <div class="turnstile-slot" aria-label="captcha"></div>
             <button class="btn" type="submit" data-i="send"></button>
           </form>
 
@@ -703,6 +705,7 @@ body.has-trial-banner .nav { top: 42px; }
                 </select>
               </label>
               <label><span data-i="commentMsg"></span><textarea name="mensaje" rows="4" required></textarea></label>
+              <div class="turnstile-slot" aria-label="captcha"></div>
               <button class="btn btn-ghost" type="submit" data-i="contactSubmit"></button>
               <div class="form-ok" id="contactOk" data-i="contactOk"></div>
             </form>
@@ -727,6 +730,7 @@ body.has-trial-banner .nav { top: 42px; }
           <li data-i="rule6"></li>
         </ul>
       </details>
+      <p class="sub" style="margin-top:14px" data-i="privacyNote"></p>
     </div>
   </section>
 
@@ -734,6 +738,7 @@ body.has-trial-banner .nav { top: 42px; }
     <div class="wrap">
       <p><strong>BuracodeLuis</strong></p>
       <p data-i="footer"></p>
+      <p class="sub" data-i="privacyNote"></p>
       <div class="footer-links">
         <a href="#reglas" data-i="rulesNav"></a>
         <a href="#comentarios" data-i="reviewsTitle"></a>
@@ -757,7 +762,7 @@ body.has-trial-banner .nav { top: 42px; }
   </aside>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1"></script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
 // Parámetros editables
@@ -965,6 +970,7 @@ window.I18N = {
     captchaNeed: "Completá el captcha antes de enviar.",
     captchaFail: "No se pudo verificar el captcha. Probá de nuevo.",
     reviewSlow: "Esperá unos segundos antes de enviar otra reseña.",
+    privacyNote: "Se publican avisos y opiniones solo después de moderación. El WhatsApp que indiques se usa para contactarte. Para pedir baja o corrección, escribinos al WhatsApp del administrador.",
   },
   pt: {
     lang: "Português",
@@ -1146,6 +1152,7 @@ window.I18N = {
     captchaNeed: "Complete o captcha antes de enviar.",
     captchaFail: "Não foi possível verificar o captcha. Tente de novo.",
     reviewSlow: "Aguarde alguns segundos antes de enviar outra avaliação.",
+    privacyNote: "Avisos e opiniões só são publicados após moderação. O WhatsApp indicado serve para contato. Para pedir remoção ou correção, escreva no WhatsApp do administrador.",
   },
 };
 
@@ -2095,6 +2102,26 @@ document.querySelectorAll("form").forEach((form) => {
       return;
     }
 
+    // need / comment: leave browser via WhatsApp — gate with Turnstile + rate limit first
+    if (kind === "need" || kind === "comment") {
+      const captchaToken = getCaptchaToken(form);
+      if (!captchaToken) {
+        alert(t().captchaNeed || "Captcha");
+        return;
+      }
+      try {
+        await submitProtected("gate", { whatsapp: d.whatsapp || "" }, captchaToken);
+        notifyVictorWa(kind, d, num);
+        form.reset();
+        resetCaptcha(form);
+      } catch (err) {
+        console.warn(err);
+        resetCaptcha(form);
+        alertCaptchaOrFail(err);
+      }
+      return;
+    }
+
     notifyVictorWa(kind, d, num);
   });
 });
@@ -2194,7 +2221,7 @@ $("#reviewForm")?.addEventListener("submit", async (e) => {
   }
 });
 
-$("#contactForm")?.addEventListener("submit", (e) => {
+$("#contactForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.target;
   const d = Object.fromEntries(new FormData(form).entries());
@@ -2207,6 +2234,21 @@ $("#contactForm")?.addEventListener("submit", (e) => {
     ts: Date.now(),
   };
   if (!entry.name || !entry.contacto || !entry.mensaje) return;
+
+  const captchaToken = getCaptchaToken(form);
+  if (!captchaToken) {
+    alert(t().captchaNeed || "Captcha");
+    return;
+  }
+  try {
+    await submitProtected("gate", { whatsapp: entry.contacto }, captchaToken);
+  } catch (err) {
+    console.warn(err);
+    resetCaptcha(form);
+    alertCaptchaOrFail(err);
+    return;
+  }
+
   try {
     const prev = JSON.parse(localStorage.getItem(CONTACT_KEY) || "[]");
     prev.unshift(entry);
@@ -2222,6 +2264,7 @@ $("#contactForm")?.addEventListener("submit", (e) => {
     window.location.href = "mailto:" + email + "?subject=" + subject + "&body=" + body;
   }
   form.reset();
+  resetCaptcha(form);
   const ok = $("#contactOk");
   if (ok) { ok.classList.add("show"); setTimeout(() => ok.classList.remove("show"), 4000); }
 });
