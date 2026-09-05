@@ -1,0 +1,2430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- TODO (deferred): auth, live FX API, review moderation,
+       real shop geocoding, email delivery for contact form.
+       Backend: listings + reviews via Supabase. -->
+  <title>Buraco del Luis | Oficios y servicios en Libres y Uruguaiana</title>
+  <meta name="description" content="Clasificado de oficios de confianza para Paso de los Libres y Uruguaiana. Sin comisiones. 3 meses gratis." />
+  <style>
+:root {
+  --navy: #12263a;
+  --teal: #0f766e;
+  --sand: #f6f1e8;
+  --ink: #102033;
+  --muted: #5b6b7c;
+  --line: #e4ddd2;
+  --white: #fff;
+}
+* { box-sizing: border-box; }
+html {
+  scroll-behavior: smooth;
+  /* banner (~42px) + nav (~66px) so hash targets aren't hidden under sticky chrome */
+  scroll-padding-top: 120px;
+}
+body {
+  margin: 0;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background: var(--white);
+}
+.wrap { width: min(1120px, calc(100% - 28px)); margin: 0 auto; }
+.nav {
+  position: sticky; top: 0; z-index: 30;
+  background: rgba(255,255,255,.94);
+  border-bottom: 1px solid var(--line);
+}
+.nav-in {
+  min-height: 66px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  flex-wrap: nowrap;
+}
+.brand { font-weight: 800; color: var(--navy); text-decoration: none; font-size: 20px; white-space: nowrap; flex-shrink: 0; }
+.brand span { color: var(--teal); }
+.nav-links {
+  display: flex; gap: 10px; align-items: center; flex-wrap: nowrap;
+  justify-content: flex-end; min-width: 0;
+}
+.nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; white-space: nowrap; }
+section[id], .form[id], h2 { scroll-margin-top: 120px; }
+.lang { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 10px; cursor: pointer; font-weight: 700; }
+.btn, button.btn {
+  background: var(--teal); color: #fff; border: 0; border-radius: 12px;
+  padding: 11px 16px; font-weight: 700; text-decoration: none; display: inline-flex;
+  cursor: pointer; font-size: 14px;
+}
+.btn-ghost { background: #dcefec; color: var(--navy); }
+.hero { background: linear-gradient(180deg, #e7f3f1, #fff 72%); padding: 56px 0 40px; }
+.hero-grid { display: grid; grid-template-columns: 1.25fr .75fr; gap: 28px; align-items: center; }
+.eyebrow { color: var(--teal); font-weight: 800; text-transform: uppercase; letter-spacing: .04em; font-size: 12px; }
+h1 { font-size: clamp(30px, 5vw, 48px); line-height: 1.12; margin: 8px 0 14px; }
+.lead { color: var(--muted); font-size: 17px; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+.stats { background: var(--navy); color: #fff; border-radius: 20px; padding: 24px 22px; }
+.stats b { display: block; color: #5eead4; font-size: clamp(26px, 4vw, 34px); line-height: 1.15; }
+.stats .stats-main { margin: 8px 0 16px; color: #fff; font-size: 16px; font-weight: 700; line-height: 1.35; }
+.stats .stats-sub { margin: 0; color: #a8bdd0; font-size: 13px; line-height: 1.4; }
+.stats p { margin: 0 0 14px; color: #d7e3ef; }
+section { padding: 56px 0; }
+.alt { background: var(--sand); }
+h2 { margin: 0 0 8px; font-size: 30px; }
+.sub { color: var(--muted); margin: 0 0 22px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+.card, .shop, .step, .form, .price {
+  background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px;
+}
+.card h3, .shop h3 { margin: 0 0 6px; font-size: 15px; }
+.card p, .shop p, .step p { margin: 0; color: var(--muted); font-size: 13px; }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.step { padding: 20px 18px; min-height: 150px; }
+.step b {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; border-radius: 999px;
+  background: #dcefec; color: var(--teal); font-size: 20px; margin-bottom: 10px;
+}
+.step h3 { margin: 0 0 8px; font-size: 17px; }
+.step p { font-size: 14px; }
+.prices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.price strong { display: block; margin-bottom: 8px; }
+.shops { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.tag { font-size: 12px; color: var(--teal); font-weight: 800; }
+.split { display: grid; grid-template-columns: .85fr 1.15fr; gap: 24px; }
+form { display: grid; gap: 10px; }
+label { display: grid; gap: 5px; font-size: 13px; font-weight: 700; }
+input, select, textarea {
+  font: inherit; padding: 10px; border-radius: 10px; border: 1px solid #cfc6b8;
+}
+footer { background: var(--navy); color: #c9d6e3; padding: 28px 0; }
+.map { height: 360px; border-radius: 16px; border: 1px solid var(--line); margin: 12px 0; }
+.start-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; max-width: 640px; }
+.start-card {
+  background: #fff; border: 2px solid var(--line); border-radius: 16px;
+  padding: 18px 14px; text-decoration: none; color: var(--ink); min-height: 110px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.start-card:hover { border-color: var(--teal); }
+.start-card strong { font-size: 18px; }
+.start-card span { color: var(--muted); font-size: 14px; }
+.radio-bar { margin-top: 22px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.pin {
+  background: var(--navy); color: #fff; text-decoration: none;
+  border-radius: 999px; padding: 8px 12px; font-size: 13px; font-weight: 700;
+}
+.help-fab {
+  position: fixed; right: 16px; bottom: 16px; z-index: 40;
+  background: #f4c542; border: 0; border-radius: 999px; padding: 12px 16px;
+  font-weight: 800; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,.15);
+}
+.clippy {
+  position: fixed; right: 16px; bottom: 70px; z-index: 41; width: min(280px, calc(100% - 24px));
+  background: #fffbe6; border: 2px solid #e2b93b; border-radius: 16px; padding: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.18);
+}
+.clippy p { margin: 6px 0; font-size: 14px; }
+.clippy-face { font-size: 28px; }
+.clippy-name { font-weight: 800; margin: 0 !important; }
+
+.trial-banner {
+  position: sticky; top: 0; z-index: 35;
+  background: linear-gradient(90deg, #c2410c, #ea580c 40%, #0f766e);
+  color: #fff; text-align: center;
+  padding: 10px 14px; font-weight: 800; font-size: 15px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.12);
+}
+.trial-banner a {
+  color: #fff; text-decoration: none;
+  border-bottom: 2px solid rgba(255,255,255,.55);
+}
+.trial-banner a:hover { border-bottom-color: #fff; }
+.nav { top: 0; }
+body.has-trial-banner .nav { top: 42px; }
+.btn-primary { background: var(--teal); color: #fff; }
+.btn-ask {
+  background: #fff8e7;
+  color: #0a2f8f;
+  border: 2px solid #0a2f8f;
+  font-weight: 800;
+  box-shadow: 0 4px 14px rgba(10,47,143,.18);
+}
+.btn-ask:hover { background: #0a2f8f; color: #fff; }
+.btn-secondary { background: #dcefec; color: var(--navy); }
+.btn-ghost { background: #dcefec; color: var(--navy); }
+.actions .btn-primary { box-shadow: 0 4px 14px rgba(15,118,110,.28); }
+.actions .btn-ask {
+  padding: 14px 20px; font-size: 16px; border-radius: 14px;
+}
+.search-wrap { margin: 0 0 16px; }
+.search-wrap input {
+  width: 100%; max-width: 420px; font: inherit; padding: 12px 14px;
+  border-radius: 12px; border: 1px solid #cfc6b8; background: #fff;
+}
+.accordion { display: grid; gap: 10px; }
+.acc-item {
+  background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+}
+.acc-head {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: #fff; border: 0; padding: 14px 16px; cursor: pointer; font: inherit; font-weight: 800;
+  color: var(--navy); text-align: left;
+}
+.acc-head:hover { background: #f3faf8; }
+.acc-head .acc-count {
+  font-size: 12px; font-weight: 700; color: var(--muted);
+  background: var(--sand); border-radius: 999px; padding: 4px 10px;
+}
+.acc-head .acc-chevron { color: var(--teal); transition: transform .2s; }
+.acc-item.open .acc-chevron { transform: rotate(180deg); }
+.acc-body { display: none; padding: 0 12px 12px; }
+.acc-item.open .acc-body { display: block; }
+.acc-body .grid { margin-top: 4px; }
+.card.clickable { cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.card.clickable:hover { border-color: var(--teal); box-shadow: 0 4px 14px rgba(18,38,58,.08); }
+.publish-note {
+  margin-top: 18px; background: #e7f3f1; border: 1px solid #b7ddd8;
+  border-radius: 14px; padding: 14px 16px;
+}
+.publish-note strong { color: var(--teal); display: block; margin-bottom: 6px; }
+.publish-note ol { margin: 0; padding-left: 18px; color: var(--ink); }
+.publish-note li { margin: 4px 0; font-size: 14px; }
+.demo-tag {
+  display: inline-block; font-size: 11px; font-weight: 800; color: #92400e;
+  background: #fef3c7; border-radius: 999px; padding: 2px 8px; margin-bottom: 6px;
+}
+
+.mvp-later { display: none !important; }
+.start-card.muted, .soon-card {
+  background: #f3f4f6; border-style: dashed; color: var(--muted); cursor: default;
+  pointer-events: none;
+}
+.start-card.muted:hover { border-color: var(--line); }
+.soon-banner {
+  background: #fff8e7; border: 1px solid #f0d58a; border-radius: 14px;
+  padding: 16px 18px; margin: 0 0 18px;
+}
+.soon-banner strong { display: block; color: #92400e; margin-bottom: 4px; }
+.soon-banner p { margin: 0; color: var(--muted); font-size: 14px; }
+.nav-soon {
+  color: #9aa6b2 !important; font-size: 13px; font-weight: 700;
+  cursor: default; pointer-events: none; white-space: nowrap;
+}
+/* Collapse text nav before it wraps into a tall sticky header */
+@media (max-width: 1100px) {
+  .nav-links a.nav-text { display: none; }
+  .nav-links { gap: 8px; }
+  .nav-links .btn { padding: 9px 12px; font-size: 13px; }
+  html { scroll-padding-top: 110px; }
+  section[id], .form[id], h2 { scroll-margin-top: 110px; }
+}
+@media (max-width: 820px) {
+  .hero-grid, .split, .prices, .start-grid { grid-template-columns: 1fr; }
+  .nav-links a:not(.btn) { display: none; }
+  .nav-links .btn-ghost { display: none; } /* keep one primary CTA on small screens */
+  .nav-fx-wrap .fx-tip { display: none; } /* full fxNote stays under prices */
+  .trial-banner { font-size: 13px; padding: 9px 10px; }
+  body.has-trial-banner .nav { top: 40px; }
+  html { scroll-padding-top: 100px; }
+  section[id], .form[id], h2 { scroll-margin-top: 100px; }
+}
+
+.fx-bar {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--line); border-radius: 999px; padding: 4px 6px; background: #fff;
+}
+.fx-bar button {
+  border: 0; background: transparent; border-radius: 999px; padding: 5px 10px;
+  font: inherit; font-size: 12px; font-weight: 800; color: var(--muted); cursor: pointer;
+}
+.fx-bar button.active { background: var(--teal); color: #fff; }
+.fx-note { font-size: 12px; color: var(--muted); margin: 8px 0 0; }
+.fx-tip {
+  display: none;
+}
+.nav-fx-wrap { display: inline-flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.nav-fx-wrap .fx-tip {
+  display: block; font-size: 10px; color: var(--muted); max-width: 160px; line-height: 1.2; text-align: right;
+}
+.trust-inline {
+  margin-top: 18px; padding: 12px 14px; border-radius: 14px;
+  background: #fff; border: 1px solid var(--line); max-width: 520px;
+}
+.trust-inline strong { display: block; color: var(--navy); font-size: 13px; margin-bottom: 4px; }
+.trust-inline .trust-short { margin: 0 0 6px; color: var(--muted); font-size: 14px; font-weight: 700; }
+.trust-inline a { color: var(--teal); font-weight: 800; font-size: 13px; text-decoration: none; }
+.trust-inline a:hover { text-decoration: underline; }
+.featured-rubros {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin: 0 0 16px;
+}
+.featured-rubros .card {
+  border: 2px solid #cfe8e4; background: linear-gradient(180deg, #f4fbfa, #fff);
+  min-height: 96px; cursor: pointer; transition: border-color .15s, transform .15s;
+}
+.featured-rubros .card:hover { border-color: var(--teal); transform: translateY(-1px); }
+.featured-rubros .card h3 { font-size: 16px; }
+#toggleAllRubros { margin-bottom: 14px; }
+.all-rubros-panel[hidden] { display: none !important; }
+.reviews-empty { margin: 0 0 8px; }
+.share-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.share-btn {
+  border: 1px solid var(--line); background: #fff; color: var(--navy);
+  border-radius: 8px; padding: 6px 10px; font-size: 12px; font-weight: 700; cursor: pointer;
+}
+.share-btn:hover { border-color: var(--teal); color: var(--teal); }
+.share-btn.copied { background: #dcefec; border-color: var(--teal); color: var(--teal); }
+.reviews-list { display: grid; gap: 10px; margin-bottom: 18px; }
+.review {
+  background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px;
+}
+.review .stars { color: #d97706; font-weight: 800; letter-spacing: 1px; }
+.review .meta { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.stars-pick { display: flex; gap: 4px; flex-wrap: wrap; }
+.stars-pick label {
+  display: inline-flex; align-items: center; gap: 2px; font-weight: 700;
+  border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; cursor: pointer;
+}
+.stars-pick input { accent-color: var(--teal); }
+.contact-alt {
+  margin-top: 22px; background: #fff; border: 1px dashed #b7ddd8;
+  border-radius: 14px; padding: 16px;
+}
+.contact-alt h3 { margin: 0 0 6px; font-size: 16px; color: var(--navy); }
+.form-ok {
+  display: none; margin-top: 10px; padding: 10px 12px; border-radius: 10px;
+  background: #dcfce7; color: #166534; font-weight: 700; font-size: 14px;
+}
+.form-ok.show { display: block; }
+.turnstile-slot {
+  margin: 4px 0 2px;
+  min-height: 65px;
+}
+.hp-field {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+.rules-box {
+  background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px;
+}
+.rules-box summary {
+  cursor: pointer; font-weight: 800; color: var(--navy); list-style: none;
+}
+.rules-box summary::-webkit-details-marker { display: none; }
+.rules-box ul { margin: 12px 0 0; padding-left: 18px; color: var(--muted); }
+.rules-box li { margin: 6px 0; font-size: 14px; }
+.footer-links { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
+.footer-links a { color: #5eead4; text-decoration: none; font-size: 14px; }
+.price-shown { font-weight: 700; color: var(--ink); }
+
+.actions .btn-primary {
+  padding: 14px 20px; font-size: 16px; border-radius: 14px;
+}
+.actions .btn-secondary, .actions .btn-sm {
+  padding: 9px 14px; font-size: 13px; background: #eef4f3; color: var(--navy);
+  box-shadow: none;
+}
+.trust-box {
+  margin-top: 16px; background: #fff; border: 1px solid var(--line);
+  border-radius: 14px; padding: 14px 16px;
+}
+.trust-box strong { display: block; margin-bottom: 8px; color: var(--navy); font-size: 14px; }
+.trust-box ul { margin: 0 0 10px; padding-left: 18px; color: var(--muted); }
+.trust-box li { margin: 4px 0; font-size: 13px; }
+.trust-box a { color: var(--teal); font-weight: 800; font-size: 13px; text-decoration: none; }
+.trust-box a:hover { text-decoration: underline; }
+.example-tag {
+  display: inline-block; font-size: 11px; font-weight: 800; color: #1e3a5f;
+  background: #e0e7ff; border-radius: 999px; padding: 2px 8px; margin-bottom: 6px;
+}
+.empty-state { color: var(--muted); font-size: 15px; padding: 12px 0; }
+.kind-tag-servicio { color: var(--teal); }
+
+</style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body class="has-trial-banner">
+  <div class="trial-banner" role="banner">
+    <a href="#ofrecer" data-i="trialBanner"></a>
+  </div>
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#inicio">Bura<span>codeLuis</span></a>
+      <div class="nav-links">
+        <a class="nav-text" href="#servicios" data-i="navServ"></a>
+        <a class="nav-text" href="#servicios-publicados" data-i="pubServTitle"></a>
+        <a class="nav-text" href="#start" data-i="startTitle"></a>
+        <a class="nav-text" href="#comentarios" data-i="reviewsTitle"></a>
+        <a class="nav-text" href="#reglas" data-i="rulesNav"></a>
+        <span class="nav-text nav-soon" data-i="navSoon" aria-hidden="true"></span>
+        <div class="nav-fx-wrap">
+          <div class="fx-bar" id="fxBar" title="Moneda / Moeda" role="group" aria-label="Currency">
+            <button type="button" data-fx="ars">ARS</button>
+            <button type="button" data-fx="brl">BRL</button>
+            <button type="button" data-fx="both" data-i="fxBoth">ambas</button>
+          </div>
+          <span class="fx-tip" data-i="fxNote"></span>
+        </div>
+        <button class="lang" id="langBtn" type="button">PT</button>
+        <button class="lang" id="musicBtn" type="button" data-i="musicBtn"></button>
+        <a class="btn btn-ask" href="#pedir" data-i="ctaNeed"></a>
+        <a class="btn btn-ghost" href="#ofrecer" data-i="ctaOffer"></a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero" id="inicio">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow" data-i="eyebrow"></p>
+        <h1 data-i="heroTitle"></h1>
+        <p class="lead" data-i="heroLead"></p>
+        <div class="actions">
+          <a class="btn btn-ask" href="#pedir" data-i="heroNeed"></a>
+          <a class="btn btn-primary" href="#ofrecer" data-i="heroOffer"></a>
+        </div>
+        <div class="trust-inline" id="heroTrust">
+          <strong data-i="trustTitle"></strong>
+          <p class="trust-short" data-i="trustShort"></p>
+          <a href="#reglas" data-i="trustMore"></a>
+        </div>
+      </div>
+      <div class="stats">
+        <b data-i="stat1n"></b>
+        <p class="stats-main" data-i="stat1"></p>
+        <p class="stats-sub"><span data-i="stat2n"></span> <span data-i="stat2"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="start" class="alt">
+    <div class="wrap">
+      <h2 data-i="startTitle"></h2>
+      <div class="start-grid">
+        <a class="start-card" href="#pedir"><strong data-i="startNeed"></strong><span data-i="startNeedD"></span></a>
+        <a class="start-card" href="#ofrecer"><strong data-i="startOffer"></strong><span data-i="startOfferD"></span></a>
+      </div>
+      <div class="soon-banner" style="margin-top:16px;max-width:640px">
+        <strong data-i="soonTitle"></strong>
+        <p data-i="soonLead"></p>
+      </div>
+      <div class="radio-bar">
+        <strong data-i="radioTitle"></strong>
+        <a class="pin" href="https://radioarg.net/nacional-paso-de-los-libres" target="_blank" rel="noopener" data-i="radioLibres"></a>
+        <a class="pin" href="https://radiosaovivo.net/radio-uruguaiana-fm-102-1/" target="_blank" rel="noopener" data-i="radioBr"></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="servicios">
+    <div class="wrap">
+      <h2 data-i="servTitle"></h2>
+      <p class="sub" data-i="servLead"></p>
+      <div class="featured-rubros" id="featuredRubros"></div>
+      <button type="button" class="btn btn-ghost" id="toggleAllRubros" data-i="servShowAll" aria-expanded="false"></button>
+      <div id="allRubrosPanel" class="all-rubros-panel" hidden>
+        <div class="search-wrap">
+          <label class="visually-hidden" for="servSearch" data-i="servSearchLabel" style="position:absolute;left:-9999px"></label>
+          <input type="search" id="servSearch" autocomplete="off" data-i-placeholder="servSearchPh" />
+        </div>
+        <div class="accordion" id="serviciosGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" id="servicios-publicados">
+    <div class="wrap">
+      <h2 data-i="pubServTitle"></h2>
+      <p class="sub" data-i="pubServLead"></p>
+      <div class="shops" id="publishedServices"></div>
+    </div>
+  </section>
+
+  <section id="como">
+    <div class="wrap">
+      <h2 data-i="howTitle"></h2>
+      <div class="steps" id="steps"></div>
+      <div class="publish-note" id="publishNote">
+        <strong data-i="publishNoteTitle"></strong>
+        <ol>
+          <li data-i="publishStep1"></li>
+          <li data-i="publishStep2"></li>
+          <li data-i="publishStep3"></li>
+        </ol>
+        <p class="sub" style="margin:10px 0 0" data-i="publishNoteFoot"></p>
+        <a class="btn btn-primary" href="#ofrecer" style="margin-top:10px" data-i="heroOffer"></a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2 data-i="priceTitle"></h2>
+      <p class="fx-note" data-i="fxNote"></p>
+      <div class="prices">
+        <div class="price"><strong>Clientes</strong><p data-i="priceClient"></p></div>
+        <div class="price"><strong>Proveedores</strong><p data-i="priceProv"></p></div>
+        <div class="price"><strong>Comercios</strong><p data-i="priceShop"></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="venta" class="mvp-later" aria-hidden="true">
+    <div class="wrap">
+      <h2 data-i="marketTitle"></h2>
+      <p class="sub" data-i="marketLead"></p>
+      <div class="shops" id="products"></div>
+    </div>
+  </section>
+
+  <section class="alt mvp-later" id="usados" aria-hidden="true">
+    <div class="wrap">
+      <h2 data-i="usedTitle"></h2>
+      <p class="sub" data-i="usedLead"></p>
+      <div class="shops" id="used"></div>
+    </div>
+  </section>
+
+  <section id="remates" class="mvp-later" aria-hidden="true">
+    <div class="wrap">
+      <h2 data-i="auctionTitle"></h2>
+      <p class="sub" data-i="auctionLead"></p>
+      <div class="shops" id="auctions"></div>
+    </div>
+  </section>
+
+  <section class="alt mvp-later" id="publicar" aria-hidden="true">
+    <div class="wrap split">
+      <div>
+        <h2 data-i="sellProduct"></h2>
+        <p class="sub" data-i="marketLead"></p>
+      </div>
+      <form class="form" data-kind="product">
+        <label><span data-i="name"></span><input name="nombre" required /></label>
+        <label><span data-i="phone"></span><input name="whatsapp" required /></label>
+        <label><span data-i="rubro"></span><select name="categoria" id="catProduct" required></select></label>
+        <label><span data-i="productName"></span><input name="producto" required /></label>
+        <label><span data-i="price"></span><input name="precio" placeholder="ARS ..." /></label>
+        <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="turnstile-slot" aria-label="captcha"></div>
+        <button class="btn" type="submit" data-i="send"></button>
+      </form>
+    </div>
+    <div class="wrap split" style="margin-top:28px">
+      <div>
+        <h2 data-i="sellUsed"></h2>
+        <p class="sub" data-i="usedLead"></p>
+      </div>
+      <form class="form" data-kind="used">
+        <label><span data-i="name"></span><input name="nombre" required /></label>
+        <label><span data-i="phone"></span><input name="whatsapp" required /></label>
+        <label><span data-i="productName"></span><input name="producto" required /></label>
+        <label><span data-i="price"></span><input name="precio" required /></label>
+        <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="turnstile-slot" aria-label="captcha"></div>
+        <button class="btn" type="submit" data-i="send"></button>
+      </form>
+    </div>
+    <div class="wrap split" style="margin-top:28px">
+      <div>
+        <h2 data-i="sellAuction"></h2>
+        <p class="sub" data-i="auctionLead"></p>
+      </div>
+      <form class="form" data-kind="auction">
+        <label><span data-i="name"></span><input name="nombre" required /></label>
+        <label><span data-i="phone"></span><input name="whatsapp" required /></label>
+        <label><span data-i="productName"></span><input name="producto" required /></label>
+        <label><span data-i="minBid"></span><input name="minimo" required /></label>
+        <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="turnstile-slot" aria-label="captcha"></div>
+        <button class="btn" type="submit" data-i="send"></button>
+      </form>
+    </div>
+  </section>
+
+  <section id="mapa" class="mvp-later" aria-hidden="true">
+    <div class="wrap">
+      <h2 data-i="mapTitle"></h2>
+      <p class="sub" data-i="mapLead"></p>
+      <div id="map" class="map"></div>
+      <p class="sub" data-i="mapHint"></p>
+      <form class="form" data-kind="pin" style="margin-top:16px">
+        <label><span data-i="shopName"></span><input name="nombre" required /></label>
+        <label><span data-i="phone"></span><input name="whatsapp" required /></label>
+        <label><span data-i="mapAddr"></span><input name="direccion" placeholder="Calle y número" /></label>
+        <input type="hidden" name="lat" id="pinLat" />
+        <input type="hidden" name="lng" id="pinLng" />
+        <div class="actions">
+          <button class="btn btn-ghost" type="button" id="useGps" data-i="mapGps"></button>
+          <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="turnstile-slot" aria-label="captcha"></div>
+        <button class="btn" type="submit" data-i="send"></button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="alt mvp-later" id="comercios" aria-hidden="true">
+    <div class="wrap">
+      <h2 data-i="shopsTitle"></h2>
+      <p class="sub" data-i="shopsLead"></p>
+      <div class="shops" id="shops"></div>
+    </div>
+  </section>
+
+  <section id="pedir">
+    <div class="wrap split">
+      <div>
+        <h2 data-i="formNeedTitle"></h2>
+        <p class="sub" data-i="formNeedLead"></p>
+      </div>
+      <form class="form" data-kind="need">
+        <label><span data-i="name"></span><input name="nombre" required /></label>
+        <label><span data-i="phone"></span><input name="whatsapp" required /></label>
+        <label><span data-i="rubro"></span><select name="rubro" id="rubroNeed" required></select></label>
+        <label><span data-i="detail"></span><textarea name="detalle" rows="4" required></textarea></label>
+        <div class="turnstile-slot" aria-label="captcha"></div>
+        <button class="btn" type="submit" data-i="send"></button>
+      </form>
+    </div>
+  </section>
+
+  <section class="alt" id="ofrecer">
+    <div class="wrap split">
+      <div>
+        <h2 data-i="formOfferTitle"></h2>
+        <p class="sub" data-i="formOfferLead"></p>
+        <ol style="margin:0;padding-left:18px;color:var(--muted);font-size:14px">
+          <li data-i="publishStep1"></li>
+          <li data-i="publishStep2"></li>
+          <li data-i="publishStep3"></li>
+        </ol>
+      </div>
+      <form class="form" data-kind="offer">
+        <label><span data-i="name"></span><input name="nombre" required /></label>
+        <label><span data-i="phone"></span><input name="whatsapp" required /></label>
+        <label><span data-i="rubro"></span><select name="rubro" id="rubroOffer" required></select></label>
+        <label><span data-i="zone"></span><input name="zona" /></label>
+        <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="turnstile-slot" aria-label="captcha"></div>
+        <button class="btn" type="submit" data-i="sendOffer"></button>
+      </form>
+    </div>
+  </section>
+
+  <section id="comercio" class="mvp-later" aria-hidden="true">
+    <div class="wrap split">
+      <div>
+        <h2 data-i="formShopTitle"></h2>
+        <p class="sub" data-i="shopsLead"></p>
+      </div>
+      <form class="form" data-kind="shop">
+        <label><span data-i="shopName"></span><input name="nombre" required /></label>
+        <label><span data-i="phone"></span><input name="whatsapp" required /></label>
+        <label><span data-i="offers"></span><textarea name="ofertas" rows="4" required></textarea></label>
+        <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="turnstile-slot" aria-label="captcha"></div>
+        <button class="btn" type="submit" data-i="send"></button>
+      </form>
+    </div>
+  </section>
+
+  <section class="alt" id="comentarios">
+    <div class="wrap">
+      <h2 data-i="reviewsTitle"></h2>
+      <p class="sub" data-i="reviewsLead"></p>
+      <div class="reviews-list" id="reviewsList"></div>
+      <div class="split">
+        <div>
+          <h3 style="margin:0 0 8px" data-i="reviewFormTitle"></h3>
+          <p class="sub" data-i="reviewFormLead"></p>
+          <form class="form" id="reviewForm" data-kind="review-local">
+            <label><span data-i="name"></span><input name="nombre" required maxlength="60" /></label>
+            <label><span data-i="reviewContact"></span><input name="contacto" required maxlength="120" data-i-placeholder="reviewContactPh" /></label>
+            <label><span data-i="reviewStars"></span>
+              <div class="stars-pick">
+                <label><input type="radio" name="stars" value="5" checked /> ★★★★★</label>
+                <label><input type="radio" name="stars" value="4" /> ★★★★</label>
+                <label><input type="radio" name="stars" value="3" /> ★★★</label>
+                <label><input type="radio" name="stars" value="2" /> ★★</label>
+                <label><input type="radio" name="stars" value="1" /> ★</label>
+              </div>
+            </label>
+            <label><span data-i="reviewCity"></span>
+              <select name="city">
+                <option value="Libres">Paso de los Libres</option>
+                <option value="Uruguaiana">Uruguaiana</option>
+              </select>
+            </label>
+            <label><span data-i="rubro"></span><input name="rubro" maxlength="80" data-i-placeholder="reviewRubroPh" /></label>
+            <label><span data-i="reviewComment"></span><textarea name="comment" rows="3" required maxlength="280"></textarea></label>
+            <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <div class="turnstile-slot" aria-label="captcha"></div>
+        <button class="btn" type="submit" data-i="reviewSubmit"></button>
+            <div class="form-ok" id="reviewOk" data-i="reviewOk"></div>
+          </form>
+        </div>
+        <div>
+          <h3 style="margin:0 0 8px" data-i="commentsTitle"></h3>
+          <p class="sub" data-i="commentsLead"></p>
+          <p>AR: 3772 445319 · BR: +55 55 9148-8778</p>
+          <form class="form" data-kind="comment">
+            <label><span data-i="name"></span><input name="nombre" required /></label>
+            <label><span data-i="phone"></span><input name="whatsapp" required /></label>
+            <label><span data-i="commentType"></span>
+              <select name="tipo" required>
+                <option value="OPINION" data-i="commentOp"></option>
+                <option value="RECLAMO" data-i="commentClaim"></option>
+                <option value="SUGERENCIA" data-i="commentSug"></option>
+              </select>
+            </label>
+            <label><span data-i="dest"></span>
+              <select name="destino">
+                <option value="AR" data-i="destAR"></option>
+                <option value="BR" data-i="destBR"></option>
+              </select>
+            </label>
+            <label><span data-i="commentMsg"></span><textarea name="mensaje" rows="4" required></textarea></label>
+            <div class="turnstile-slot" aria-label="captcha"></div>
+            <button class="btn" type="submit" data-i="send"></button>
+          </form>
+
+          <div class="contact-alt" id="contacto">
+            <h3 data-i="contactAltTitle"></h3>
+            <p class="sub" data-i="contactAltLead"></p>
+            <form class="form" id="contactForm" data-kind="contact-local">
+              <label><span data-i="name"></span><input name="nombre" required /></label>
+              <label><span data-i="contactReach"></span><input name="contacto" required data-i-placeholder="contactReachPh" /></label>
+              <label><span data-i="dest"></span>
+                <select name="destino">
+                  <option value="AR" data-i="destAR"></option>
+                  <option value="BR" data-i="destBR"></option>
+                </select>
+              </label>
+              <label><span data-i="commentMsg"></span><textarea name="mensaje" rows="4" required></textarea></label>
+              <div class="turnstile-slot" aria-label="captcha"></div>
+              <button class="btn btn-ghost" type="submit" data-i="contactSubmit"></button>
+              <div class="form-ok" id="contactOk" data-i="contactOk"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="reglas">
+    <div class="wrap">
+      <h2 data-i="rulesTitle"></h2>
+      <p class="sub" data-i="rulesLead"></p>
+      <details class="rules-box" open>
+        <summary data-i="rulesSummary"></summary>
+        <ul>
+          <li data-i="rule1"></li>
+          <li data-i="rule2"></li>
+          <li data-i="rule3"></li>
+          <li data-i="rule4"></li>
+          <li data-i="rule5"></li>
+          <li data-i="rule6"></li>
+        </ul>
+      </details>
+      <p class="sub" style="margin-top:14px" data-i="privacyNote"></p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <p><strong>BuracodeLuis</strong></p>
+      <p data-i="footer"></p>
+      <p class="sub" data-i="privacyNote"></p>
+      <div class="footer-links">
+        <a href="#reglas" data-i="rulesNav"></a>
+        <a href="#comentarios" data-i="reviewsTitle"></a>
+        <a href="#contacto" data-i="contactAltTitle"></a>
+      </div>
+      <p>© 2026 · Propietario y administrador: Víctor Manuel Espíndola</p>
+      <p>Paso de los Libres / Uruguaiana · WhatsApp AR 3772 445319 · BR +55 55 9148-8778</p>
+    </div>
+  </footer>
+
+  <button class="help-fab" id="helpOpen" type="button" data-i="helpOpen"></button>
+  <aside class="clippy" id="clippy" hidden>
+    <div class="clippy-face" aria-hidden="true">📎</div>
+    <p class="clippy-name" data-i="helpName"></p>
+    <p data-i="helpHi"></p>
+    <p data-i="help1"></p>
+    <p data-i="help2"></p>
+    <p data-i="help3"></p>
+    <p data-i="help4"></p>
+    <button class="btn" id="helpClose" type="button" data-i="helpClose"></button>
+  </aside>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1"></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+// Parámetros editables
+window.SITE = {
+  name: "BuracodeLuis",
+  owner: "Víctor Manuel Espíndola",
+  cityEs: "Paso de los Libres",
+  cityPt: "Passo de los Libres / Uruguaiana",
+  whatsapp: "543772445319",
+  whatsappAR: "543772445319",
+  whatsappBR: "555591488778",
+  // Optional: set to enable mailto on contact form (else localStorage only)
+  contactEmail: "",
+  priceAfterTrial: "ARS 1.000",
+  trialMonths: 3,
+  map: { lat: -29.7136, lng: -57.0894, zoom: 14 },
+  supabaseUrl: "https://kslhlktxlgtgoquhjhnz.supabase.co",
+  supabaseKey: "sb_publishable_fV1Dv_25YI2BUwnT9AB0-w_aPtvpLUT",
+  turnstileSiteKey: "0x4AAAAAAEpVAC7PmmyJ_eMD",
+  functionsUrl: "https://kslhlktxlgtgoquhjhnz.supabase.co/functions/v1/submit-protected",
+};
+
+// Tipo de cambio de referencia (NO live). ARS por 1 BRL. Actualizá a mano.
+// Ej.: si 1 BRL ≈ 200 ARS → FX_ARS_PER_BRL = 200
+const FX_ARS_PER_BRL = 200;
+
+window.I18N = {
+  es: {
+    lang: "Español",
+    otherLang: "Português",
+    navServ: "Servicios",
+    navMarket: "Venta",
+    navUsed: "Usados",
+    navAuction: "Remates",
+    navHow: "Cómo funciona",
+    navShops: "Comercios",
+    navJoin: "Sumate",
+    navSoon: "Próximamente: usados / remates",
+    soonTitle: "Próximamente — otra página",
+    soonLead: "Usados y remates van en otra web. Acá nos enfocamos en oficios y servicios.",
+    ctaNeed: "Solicitar presupuesto",
+    ctaOffer: "Publicar mi servicio",
+    eyebrow: "Oficios y servicios · Libres–Uruguaiana",
+    heroTitle: "El clasificado de oficios de confianza para Libres y Uruguaiana. Sin comisiones.",
+    heroLead:
+      "Pedí un presupuesto o publicá tu oficio. 3 meses gratis. Sin comisiones. Usados y remates van en otra página.",
+    heroNeed: "Solicitar presupuesto",
+    heroOffer: "Publicar mi servicio",
+    heroShop: "Anunciar mi comercio",
+    stat1n: "3 meses GRATIS",
+    stat1: "Publicá tu servicio GRATIS por 3 meses. Sin comisiones.",
+    stat2n: "Desde el 4º mes:",
+    stat2: "ARS 1.000 por mes para mantener tu publicación.",
+    stat3n: "",
+    stat3: "",
+    servTitle: "Rubros",
+    servLead: "Oficios, cuidados, trámites, frontera y más.",
+    howTitle: "Cómo funciona",
+    steps: [
+      ["1", "Pedí o publicá", "Solicitá un presupuesto o publicá tu oficio con el formulario de la página."],
+      ["2", "Completás tus datos", "Rubro, zona y contacto. Tu aviso queda en revisión."],
+      ["3", "Publicás gratis 3 meses", "Al aprobarse, tu servicio queda visible. Después, ARS 1.000/mes."],
+      ["4", "Coordinás y cobrás vos", "Presupuesto y pago directo. Sin comisión de la página."],
+    ],
+    priceTitle: "Precios claros",
+    priceClient: "Clientes: siempre gratis.",
+    priceProv: "Proveedores: gratis 3 meses. Sin comisiones. Desde el 4º mes, ARS 1.000/mes para mantener tu publicación.",
+    priceShop: "Comercios: pagan publicidad y tienen su propia vidriera de ofertas.",
+    shopsTitle: "Ofertas de comercios",
+    shopsLead: "Cada comercio tiene su apartado. Ideal para shoppings y negocios de Uruguaiana y Libres.",
+    shopCta: "Quiero mi espacio",
+    formNeedTitle: "Pedir un servicio",
+    formNeedLead: "Te contactamos por WhatsApp. No tiene costo.",
+    formOfferTitle: "Ofrecer un servicio",
+    formOfferLead: "Completá el formulario: tu aviso queda en revisión y, al aprobarse, se publica en la página. Los primeros 3 meses son gratis.",
+    formShopTitle: "Anunciar mi comercio",
+    name: "Nombre",
+    phone: "WhatsApp",
+    rubro: "Rubro",
+    detail: "Detalle",
+    zone: "Zona",
+    shopName: "Nombre del comercio",
+    offers: "Qué ofertas querés mostrar",
+    send: "Enviar por WhatsApp",
+    sendOffer: "Enviar",
+    footer: "Sin comisión. Oficios y servicios entre Libres y Uruguaiana. Usados y remates, en otra página.",
+    marketTitle: "Venta de productos",
+    marketLead: "Como un Mercado Libre local: herrería, crochet, plantas, artesanías y lo que produzcas.",
+    usedTitle: "Usados",
+    usedLead: "Cosas que ya no usás, a precio fijo. Coordinás entrega en Libres o Uruguaiana.",
+    auctionTitle: "Remates",
+    auctionLead: "Publicás un piso. Gana quien haga la mejor oferta antes del cierre.",
+    bid: "Ofertar",
+    sellProduct: "Vender un producto",
+    sellUsed: "Publicar un usado",
+    sellAuction: "Poner en remate",
+    productName: "Qué vendés",
+    price: "Precio",
+    minBid: "Oferta mínima",
+    heroSell: "Vender o rematar producto",
+    startTitle: "¿Qué querés hacer?",
+    startNeed: "Solicitar presupuesto",
+    startNeedD: "Contanos qué necesitás y te contactamos",
+    startOffer: "Publicar mi servicio",
+    startOfferD: "Formulario en la página · 3 meses gratis",
+    startSell: "Vender algo",
+    startSellD: "Productos nuevos o usados",
+    startAuc: "Rematar",
+    startAucD: "Gana la mejor oferta",
+    radioTitle: "Radio",
+    radioLibres: "LT12 Nacional Libres",
+    radioBr: "Rádio Uruguaiana 102.1",
+    musicBtn: "Music",
+    musicOn: "Music",
+    musicOff: "Music",
+    helpName: "Luisito",
+    helpHi: "Hola, soy Luisito. Te ayudo a usar la página.",
+    help1: "1. Elegí: solicitar presupuesto o publicar tu servicio.",
+    help2: "2. Completá tu nombre, WhatsApp y el rubro.",
+    help3: "3. Enviá el formulario. Pedidos llegan por WhatsApp; publicar servicio es por el sitio.",
+    help4: "4. Los primeros 3 meses publicar es gratis.",
+    helpClose: "Entendido",
+    helpOpen: "¿Ayuda?",
+    mapTitle: "Mapa de la ciudad",
+    mapLead: "Tocá el mapa para marcar tu comercio o puesto. OpenStreetMap, sin costo.",
+    mapHint: "También podés usar tu ubicación del celular.",
+    mapAddr: "Dirección",
+    mapGps: "Usar mi ubicación",
+    commentsTitle: "Comentarios, opiniones y reclamos",
+    commentsLead: "Escribinos. Llega al WhatsApp de Víctor Manuel Espíndola en Argentina o Brasil.",
+    commentType: "Tipo",
+    commentOp: "Opinión",
+    commentClaim: "Reclamo",
+    commentSug: "Sugerencia",
+    commentMsg: "Mensaje",
+    dest: "Enviar al WhatsApp de",
+    destAR: "Argentina 3772 445319",
+    destBR: "Brasil +55 55 9148-8778",
+    trialBanner: "¡Publicá GRATIS por 3 meses! → Publicar mi servicio",
+    servSearchPh: "Buscar oficio o servicio…",
+    servSearchLabel: "Buscar rubros",
+    groupOficios: "Oficios",
+    groupCuidados: "Cuidados y Salud",
+    groupEventos: "Eventos",
+    groupTramites: "Trámites",
+    groupHogar: "Servicios para el hogar y más",
+    publishNoteTitle: "¿Querés publicar tu servicio?",
+    publishStep1: "Escribí tu nombre y WhatsApp (sin clave ni registro aparte).",
+    publishStep2: "Elegí tu rubro y zona de trabajo.",
+    publishStep3: "Enviá el formulario: tu aviso queda en revisión y, al aprobarse, se publica.",
+    publishNoteFoot: "Sin contraseña. Publicás desde el formulario. Los primeros 3 meses son gratis.",
+    demoLabel: "Demo",
+    fxBoth: "ambas",
+    fxNote: "Precios de referencia. Consultá el tipo de cambio al contactar.",
+    share: "Compartir",
+    shareWa: "WhatsApp",
+    shareCopy: "Copiar link",
+    shareCopied: "¡Copiado!",
+    reviewsTitle: "Opiniones y reputación",
+    reviewsLead: "Opiniones reales de vecinos. Las nuevas quedan en revisión y, al aprobarse, aparecen acá.",
+    reviewsEmpty: "Todavía no hay opiniones publicadas. Sé el primero en dejar una reseña.",
+    reviewFormTitle: "Dejá tu reseña",
+    reviewFormLead: "Nombre, WhatsApp o email, estrellas y comentario. Requerido para publicar.",
+    reviewStars: "Estrellas",
+    reviewCity: "Ciudad",
+    reviewComment: "Comentario",
+    reviewContact: "WhatsApp o email",
+    reviewContactPh: "3772… o tu@email.com",
+    reviewRubroPh: "Rubro u oficio (opcional)",
+    reviewSubmit: "Publicar reseña",
+    reviewOk: "¡Gracias! Tu reseña quedó en revisión y no se publica sola. Cuando la aprobemos, aparece en la página.",
+    reviewExampleTag: "Reseñas de ejemplo",
+    pubServTitle: "Servicios publicados",
+    pubServLead: "Oficios y servicios reales publicados por vecinos de Libres y Uruguaiana.",
+    pubServEmpty: "Todavía no hay servicios publicados — sé el primero.",
+    pubServWa: "WhatsApp",
+    trustTitle: "Confianza rápida",
+    trustShort: "Sin comisiones · Contacto directo · 3 meses gratis",
+    trust1: "Sin comisiones",
+    trust2: "Contacto directo",
+    trust3: "3 meses gratis",
+    trust4: "",
+    trustMore: "Ver reglas →",
+    servShowAll: "Ver todos los rubros",
+    servHideAll: "Ocultar rubros",
+    contactAltTitle: "¿Preferís no usar WhatsApp? Escribinos acá",
+    contactAltLead: "Nombre, email o teléfono y mensaje. Se guarda localmente (y mailto si configurás el email del sitio).",
+    contactReach: "Email o teléfono",
+    contactReachPh: "tu@email.com o 3772…",
+    contactSubmit: "Enviar mensaje",
+    contactOk: "Mensaje guardado. Gracias por escribirnos.",
+    rulesNav: "Reglas",
+    rulesTitle: "Reglas de publicación",
+    rulesLead: "Para que Libres y Uruguaiana confíen en la página.",
+    rulesSummary: "Ver reglas anti-fraude y de buena fe",
+    rule1: "Prohibido estafas, engaños o precios falsos. Publicá precios honestos.",
+    rule2: "No se permiten bienes ilegales, robados ni contenidos prohibidos.",
+    rule3: "El contacto (WhatsApp / teléfono / email) debe ser real y tuyo.",
+    rule4: "Fotos y descripciones deben coincidir con lo que ofrecés.",
+    rule5: "La página no intermedia pagos: coordinás y cobrás vos. Cuidado con señas a desconocidos.",
+    rule6: "Podemos ocultar avisos que incumplan estas reglas o generen reclamos reiterados.",
+    publishOk: "¡Recibido! Tu aviso quedó en revisión y no se publica solo. Cuando lo aprobemos, aparece en la página.",
+    publishFail: "No se pudo publicar. Revisá los datos o intentá de nuevo.",
+    publishSlow: "Esperá unos segundos antes de publicar de nuevo.",
+    captchaNeed: "Completá el captcha antes de enviar.",
+    captchaFail: "No se pudo verificar el captcha. Probá de nuevo.",
+    reviewSlow: "Esperá unos segundos antes de enviar otra reseña.",
+    privacyNote: "Se publican avisos y opiniones solo después de moderación. El WhatsApp que indiques se usa para contactarte. Para pedir baja o corrección, escribinos al WhatsApp del administrador.",
+  },
+  pt: {
+    lang: "Português",
+    otherLang: "Español",
+    navServ: "Serviços",
+    navMarket: "Venda",
+    navUsed: "Usados",
+    navAuction: "Leilões",
+    navHow: "Como funciona",
+    navShops: "Comércios",
+    navJoin: "Entrar",
+    navSoon: "Em breve: usados / leilões",
+    soonTitle: "Em breve — outra página",
+    soonLead: "Usados e leilões ficam em outro site. Aqui focamos em ofícios e serviços.",
+    ctaNeed: "Solicitar orçamento",
+    ctaOffer: "Publicar meu serviço",
+    eyebrow: "Ofícios e serviços · Libres–Uruguaiana",
+    heroTitle: "O classificado de ofícios de confiança para Libres e Uruguaiana. Sem comissões.",
+    heroLead:
+      "Peça um orçamento ou publique seu ofício. 3 meses grátis. Sem comissões. Usados e leilões ficam em outra página.",
+    heroNeed: "Solicitar orçamento",
+    heroOffer: "Publicar meu serviço",
+    heroShop: "Anunciar meu comércio",
+    stat1n: "3 meses GRÁTIS",
+    stat1: "Publique seu serviço GRÁTIS por 3 meses. Sem comissões.",
+    stat2n: "A partir do 4º mês:",
+    stat2: "ARS 1.000 por mês para manter sua publicação.",
+    stat3n: "",
+    stat3: "",
+    servTitle: "Categorias",
+    servLead: "Ofícios, cuidados, despachos, fronteira e mais.",
+    howTitle: "Como funciona",
+    steps: [
+      ["1", "Peça ou publique", "Solicite um orçamento ou publique seu ofício pelo formulário da página."],
+      ["2", "Complete seus dados", "Categoria, zona e contato. Seu anúncio fica em revisão."],
+      ["3", "Publique grátis 3 meses", "Após a aprovação, seu serviço fica visível. Depois, ARS 1.000/mês."],
+      ["4", "Combine e cobre você", "Orçamento e pagamento direto. Sem comissão da página."],
+    ],
+    priceTitle: "Preços claros",
+    priceClient: "Clientes: sempre grátis.",
+    priceProv: "Prestadores: grátis por 3 meses. Sem comissões. A partir do 4º mês, ARS 1.000/mês para manter a publicação.",
+    priceShop: "Comércios: pagam publicidade e têm a própria vitrine de ofertas.",
+    shopsTitle: "Ofertas dos comércios",
+    shopsLead: "Cada comércio tem o seu espaço. Pensado para lojas de Uruguaiana e Libres.",
+    shopCta: "Quero meu espaço",
+    formNeedTitle: "Pedir um serviço",
+    formNeedLead: "Falamos no WhatsApp. Sem custo.",
+    formOfferTitle: "Oferecer um serviço",
+    formOfferLead: "Preencha o formulário: seu anúncio fica em revisão e, ao ser aprovado, aparece na página. Os primeiros 3 meses são grátis.",
+    formShopTitle: "Anunciar meu comércio",
+    name: "Nome",
+    phone: "WhatsApp",
+    rubro: "Categoria",
+    detail: "Detalhe",
+    zone: "Zona",
+    shopName: "Nome do comércio",
+    offers: "Quais ofertas quer mostrar",
+    send: "Enviar pelo WhatsApp",
+    sendOffer: "Enviar",
+    footer: "Sem comissão. Ofícios e serviços entre Libres e Uruguaiana. Usados e leilões, em outra página.",
+    marketTitle: "Venda de produtos",
+    marketLead: "Como um Mercado Livre local: serralheria, crochê, plantas, artesanato e o que você produz.",
+    usedTitle: "Usados",
+    usedLead: "O que você não usa mais, com preço fixo. Entrega em Libres ou Uruguaiana.",
+    auctionTitle: "Leilões / remates",
+    auctionLead: "Você coloca um lance mínimo. Ganha quem der o melhor preço até o fechamento.",
+    bid: "Dar lance",
+    sellProduct: "Vender um produto",
+    sellUsed: "Anunciar um usado",
+    sellAuction: "Colocar em leilão",
+    productName: "O que vende",
+    price: "Preço",
+    minBid: "Lance mínimo",
+    heroSell: "Vender ou leiloar produto",
+    startTitle: "O que você quer fazer?",
+    startNeed: "Solicitar orçamento",
+    startNeedD: "Conte o que precisa e falamos no WhatsApp",
+    startOffer: "Publicar meu serviço",
+    startOfferD: "Formulário na página · 3 meses grátis",
+    startSell: "Vender algo",
+    startSellD: "Produtos novos ou usados",
+    startAuc: "Leiloar",
+    startAucD: "Ganha o melhor lance",
+    radioTitle: "Rádio",
+    radioLibres: "LT12 Nacional Libres",
+    radioBr: "Rádio Uruguaiana 102.1",
+    musicBtn: "Music",
+    musicOn: "Music",
+    musicOff: "Music",
+    helpName: "Luisito",
+    helpHi: "Olá, eu sou o Luisito. Te ajudo a usar a página.",
+    help1: "1. Escolha: solicitar orçamento ou publicar seu serviço.",
+    help2: "2. Preencha nome, WhatsApp e a categoria.",
+    help3: "3. Envie o formulário. Pedidos vão pelo WhatsApp; publicar serviço é pelo site.",
+    help4: "4. Os primeiros 3 meses publicar é grátis.",
+    helpClose: "Entendi",
+    helpOpen: "Ajuda?",
+    mapTitle: "Mapa da cidade",
+    mapLead: "Toque no mapa para marcar seu comércio. OpenStreetMap, sem custo.",
+    mapHint: "Também pode usar a localização do celular.",
+    mapAddr: "Endereço",
+    mapGps: "Usar minha localização",
+    commentsTitle: "Comentários, opiniões e reclamações",
+    commentsLead: "Escreva. Chega no WhatsApp de Víctor Manuel Espíndola na Argentina ou no Brasil.",
+    commentType: "Tipo",
+    commentOp: "Opinião",
+    commentClaim: "Reclamação",
+    commentSug: "Sugestão",
+    commentMsg: "Mensagem",
+    dest: "Enviar ao WhatsApp de",
+    destAR: "Argentina 3772 445319",
+    destBR: "Brasil +55 55 9148-8778",
+    trialBanner: "Publique GRÁTIS por 3 meses! → Publicar meu serviço",
+    servSearchPh: "Buscar ofício ou serviço…",
+    servSearchLabel: "Buscar categorias",
+    groupOficios: "Ofícios",
+    groupCuidados: "Cuidados e Saúde",
+    groupEventos: "Eventos",
+    groupTramites: "Despachos",
+    groupHogar: "Serviços para o lar e mais",
+    publishNoteTitle: "Quer publicar seu serviço?",
+    publishStep1: "Informe nome e WhatsApp (sem senha nem cadastro separado).",
+    publishStep2: "Escolha a categoria e a zona de trabalho.",
+    publishStep3: "Envie o formulário: seu anúncio fica em revisão e, ao ser aprovado, é publicado.",
+    publishNoteFoot: "Sem senha. Você publica pelo formulário. Os primeiros 3 meses são grátis.",
+    demoLabel: "Demo",
+    fxBoth: "ambas",
+    fxNote: "Preços de referência. Consulte o tipo de câmbio ao entrar em contato.",
+    share: "Compartilhar",
+    shareWa: "WhatsApp",
+    shareCopy: "Copiar link",
+    shareCopied: "Copiado!",
+    reviewsTitle: "Opiniões e reputação",
+    reviewsLead: "Avaliações reais de vizinhos. As novas ficam em revisão e, ao serem aprovadas, aparecem aqui.",
+    reviewsEmpty: "Ainda não há avaliações publicadas. Seja o primeiro a deixar uma opinião.",
+    reviewFormTitle: "Deixe sua avaliação",
+    reviewFormLead: "Nome, WhatsApp ou e-mail, estrelas e comentário. Obrigatório para publicar.",
+    reviewStars: "Estrelas",
+    reviewCity: "Cidade",
+    reviewComment: "Comentário",
+    reviewContact: "WhatsApp ou e-mail",
+    reviewContactPh: "55… ou seu@email.com",
+    reviewRubroPh: "Categoria ou ofício (opcional)",
+    reviewSubmit: "Publicar avaliação",
+    reviewOk: "Obrigado! Sua avaliação ficou em revisão e não publica sozinha. Quando aprovarmos, aparece na página.",
+    reviewExampleTag: "Primeiras opiniões (exemplo)",
+    pubServTitle: "Serviços publicados",
+    pubServLead: "Ofícios e serviços reais publicados por vizinhos de Libres e Uruguaiana.",
+    pubServEmpty: "Ainda não há serviços publicados — seja o primeiro.",
+    pubServWa: "WhatsApp",
+    trustTitle: "Confiança rápida",
+    trustShort: "Sem comissões · Contato direto · 3 meses grátis",
+    trust1: "Sem comissões",
+    trust2: "Contato direto",
+    trust3: "3 meses grátis",
+    trust4: "",
+    trustMore: "Ver regras →",
+    servShowAll: "Ver todas as categorias",
+    servHideAll: "Ocultar categorias",
+    contactAltTitle: "Prefere não usar WhatsApp? Escreva aqui",
+    contactAltLead: "Nome, e-mail ou telefone e mensagem. Salvo localmente (e mailto se configurar o e-mail do site).",
+    contactReach: "E-mail ou telefone",
+    contactReachPh: "seu@email.com ou 55…",
+    contactSubmit: "Enviar mensagem",
+    contactOk: "Mensagem salva. Obrigado por escrever.",
+    rulesNav: "Regras",
+    rulesTitle: "Regras de publicação",
+    rulesLead: "Para Libres e Uruguaiana confiarem na página.",
+    rulesSummary: "Ver regras antifraude e de boa-fé",
+    rule1: "Proibido golpes, enganos ou preços falsos. Publique preços honestos.",
+    rule2: "Não são permitidos bens ilegais, roubados nem conteúdos proibidos.",
+    rule3: "O contato (WhatsApp / telefone / e-mail) deve ser real e seu.",
+    rule4: "Fotos e descrições devem bater com o que você oferece.",
+    rule5: "A página não intermedia pagamentos: combine e cobre você. Cuidado com sinais a desconhecidos.",
+    rule6: "Podemos ocultar anúncios que descumpram estas regras ou gerem reclamações repetidas.",
+    publishOk: "Recebido! Seu anúncio ficou em revisão e não publica sozinho. Quando aprovarmos, aparece na página.",
+    publishFail: "Não foi possível publicar. Confira os dados ou tente de novo.",
+    publishSlow: "Aguarde alguns segundos antes de publicar de novo.",
+    captchaNeed: "Complete o captcha antes de enviar.",
+    captchaFail: "Não foi possível verificar o captcha. Tente de novo.",
+    reviewSlow: "Aguarde alguns segundos antes de enviar outra avaliação.",
+    privacyNote: "Avisos e opiniões só são publicados após moderação. O WhatsApp indicado serve para contato. Para pedir remoção ou correção, escreva no WhatsApp do administrador.",
+  },
+};
+
+window.SERVICES = [
+  { es: "Soldadura", pt: "Solda", d_es: "Trabajos metálicos y reparaciones", d_pt: "Metal e reparos", group: "oficios" },
+  { es: "Pintura", pt: "Pintura", d_es: "Interiores, exteriores y fachadas", d_pt: "Interior, exterior e fachadas", group: "oficios" },
+  { es: "Carpintería", pt: "Carpintaria", d_es: "Muebles, aberturas y reparaciones", d_pt: "Móveis e consertos", group: "oficios" },
+  { es: "Albañilería", pt: "Pedreiro", d_es: "Construcción, refacciones y obras", d_pt: "Obra e reforma", group: "oficios" },
+  { es: "Plomería / gas", pt: "Encanamento / gás", d_es: "Pérdidas, destapes, termotanques", d_pt: "Vazamentos e instalações", group: "oficios" },
+  { es: "Electricidad", pt: "Elétrica", d_es: "Tableros, cortocircuitos, iluminación", d_pt: "Quadro, curto e iluminação", group: "oficios" },
+  { es: "Techista", pt: "Telhadista", d_es: "Gotera, chapas y canaletas", d_pt: "Goteira e telhado", group: "oficios" },
+  { es: "Herrería", pt: "Serralheria", d_es: "Rejas, portones, estructuras y venta de piezas", d_pt: "Grades, portões e venda de peças", group: "oficios" },
+  { es: "Yesería / durlock", pt: "Gesso / drywall", d_es: "Cielorrasos y divisiones", d_pt: "Forro e divisórias", group: "oficios" },
+  { es: "Jardinería", pt: "Jardinagem", d_es: "Césped, poda, desmalezado", d_pt: "Grama, poda e limpeza de terreno", group: "oficios" },
+  { es: "Cerrajería", pt: "Chaveiro", d_es: "Aperturas y cambios de cerradura", d_pt: "Abertura e troca de fechadura", group: "oficios" },
+  { es: "Vidriería", pt: "Vidraçaria", d_es: "Vidrios, espejos, aberturas", d_pt: "Vidro e espelhos", group: "oficios" },
+  { es: "Pisos / cerámica", pt: "Pisos / cerâmica", d_es: "Colocación y alisado", d_pt: "Assentamento e nivelamento", group: "oficios" },
+  { es: "Aire acondicionado", pt: "Ar-condicionado", d_es: "Instalación y service", d_pt: "Instalação e manutenção", group: "oficios" },
+  { es: "Línea blanca", pt: "Eletrodomésticos", d_es: "Heladeras y lavarropas", d_pt: "Geladeira e máquina", group: "oficios" },
+  { es: "Tapicería", pt: "Estofados", d_es: "Sillones, sillas, autos", d_pt: "Sofá, cadeiras e autos", group: "oficios" },
+  { es: "Mecánica / gomería", pt: "Mecânica / borracharia", d_es: "Service, batería y auxilio", d_pt: "Revisão, bateria e socorro", group: "oficios" },
+  { es: "Peón de obra", pt: "Ajudante de obra", d_es: "Ayudante por día", d_pt: "Diária de obra", group: "oficios" },
+  { es: "Alambrador", pt: "Cercas / arame", d_es: "Campos y periurbano", d_pt: "Campo e periurbano", group: "oficios" },
+  { es: "Pozos / cámaras", pt: "Fossa / caixa", d_es: "Destape y limpieza", d_pt: "Desentupimento", group: "oficios" },
+  { es: "Limpieza de tanques", pt: "Limpeza de caixas d'água", d_es: "Hogares y edificios", d_pt: "Casas e prédios", group: "oficios" },
+  { es: "Enfermería", pt: "Enfermagem", d_es: "Cuidados a domicilio", d_pt: "Cuidados em casa", group: "cuidados" },
+  { es: "Cuidado de mayores", pt: "Cuidado de idosos", d_es: "Acompañamiento diurno o nocturno", d_pt: "Acompanhamento dia ou noite", group: "cuidados" },
+  { es: "Niñeras", pt: "Babás", d_es: "Cuidado de chicos por horas o jornada", d_pt: "Cuidado de crianças por hora ou dia", group: "cuidados" },
+  { es: "Cuidado de internados", pt: "Cuidado de internados", d_es: "Acompañamiento en internación o post-alta", d_pt: "Acompanhamento em internação", group: "cuidados" },
+  { es: "Acompañamiento", pt: "Acompanhamento", d_es: "Trámites, turnos, viajes y compañía", d_pt: "Consultas, filas, viagens e companhia", group: "cuidados" },
+  { es: "Cocinera", pt: "Cozinheira", d_es: "Comidas en casa, viandas o eventos", d_pt: "Comida em casa, marmitas ou eventos", group: "cuidados" },
+  { es: "Servicio doméstico", pt: "Empregada doméstica", d_es: "Casa, ropa y organización del hogar", d_pt: "Casa, roupa e organização", group: "cuidados" },
+  { es: "Peluquería a domicilio", pt: "Cabeleireiro em casa", d_es: "Corte, color y barbería", d_pt: "Corte, cor e barbearia", group: "cuidados" },
+  { es: "Veterinaria / paseador", pt: "Veterinário / passeador", d_es: "Mascotas a domicilio", d_pt: "Pets em casa", group: "cuidados" },
+  { es: "Clases de manejo", pt: "Aulas de direção", d_es: "Práctica y preparación para el registro", d_pt: "Prática e preparação para a CNH", group: "tramites" },
+  { es: "Profesor particular", pt: "Aulas particulares", d_es: "Apoyo escolar e idiomas", d_pt: "Reforço e idiomas", group: "tramites" },
+  { es: "Trámites en Uruguayana", pt: "Despachos em Uruguaiana", d_es: "Colas, compras y gestiones", d_pt: "Filas, compras e despachos", group: "tramites" },
+  { es: "Gestoría / trámites", pt: "Despachante", d_es: "Municipalidad, ANSES, DNI", d_pt: "Prefeitura e documentos", group: "tramites" },
+  { es: "CV y empleo", pt: "Currículo e emprego", d_es: "Armado de CV y búsqueda", d_pt: "Currículo e vagas", group: "tramites" },
+  { es: "Asesor monotributo", pt: "Contador / MEI", d_es: "Alta, factura y categoría", d_pt: "Abertura e notas", group: "tramites" },
+  { es: "Paquetería", pt: "Entregas / encomendas", d_es: "Envíos y entregas locales", d_pt: "Entregas locais", group: "hogar" },
+  { es: "Remis", pt: "Remis / transfer", d_es: "Traslados privados y turismo", d_pt: "Traslado particular e turismo", group: "hogar" },
+  { es: "Crochet / tejido", pt: "Crochê / tricô", d_es: "Prendas, mantas y encargos", d_pt: "Peças, mantas e encomendas", group: "hogar" },
+  { es: "Vivero / plantas", pt: "Viveiro / plantas", d_es: "Plantas, macetas y jardín", d_pt: "Plantas, vasos e jardim", group: "hogar" },
+  { es: "Limpieza", pt: "Limpeza", d_es: "Hogares, oficinas y post-obra", d_pt: "Casa, escritório e pós-obra", group: "hogar" },
+  { es: "Fumigación", pt: "Dedetização", d_es: "Plagas y prevención de dengue", d_pt: "Pragas e dengue", group: "hogar" },
+  { es: "Fletes / mudanzas", pt: "Fretes / mudanças", d_es: "Camioneta, camión y peones", d_pt: "Utilitário, caminhão e ajudantes", group: "hogar" },
+  { es: "Motomensajería", pt: "Moto frete", d_es: "Trámites rápidos en la ciudad", d_pt: "Recados rápidos", group: "hogar" },
+  { es: "Traslados a terminal", pt: "Transfer rodoviária", d_es: "Terminal, viajes y turismo", d_pt: "Rodoviária e viagens", group: "hogar" },
+  { es: "Chofer por día", pt: "Motorista por dia", d_es: "Viajes, trámites y turismo", d_pt: "Viagens e turismo", group: "hogar" },
+  { es: "Lavado de autos", pt: "Lavagem de carros", d_es: "A domicilio o en taller", d_pt: "Em casa ou no pátio", group: "hogar" },
+  { es: "Eventos / DJ / sonido", pt: "Eventos / DJ / som", d_es: "Fiestas y ferias", d_pt: "Festas e feiras", group: "eventos" },
+  { es: "Foto y video", pt: "Foto e vídeo", d_es: "Eventos y productos", d_pt: "Eventos e produtos", group: "eventos" },
+  { es: "Catering / lunch", pt: "Buffet / lunch", d_es: "Encargos para eventos", d_pt: "Encomendas para eventos", group: "eventos" },
+  { es: "Costura", pt: "Costura", d_es: "Arreglos de ropa y uniformes", d_pt: "Ajustes e uniformes", group: "hogar" },
+  { es: "Celulares y PCs", pt: "Celulares e PCs", d_es: "Reparación y formato", d_pt: "Conserto e formatação", group: "hogar" },
+  { es: "Cámaras / WiFi", pt: "Câmeras / WiFi", d_es: "Instalación en casa o comercio", d_pt: "Instalação em casa ou loja", group: "hogar" },
+];
+
+window.DEMO_SHOPS = [
+  { es: "Ferretería El Puente", pt: "Ferragem El Puente", offer_es: "10% en pinturas esta semana", offer_pt: "10% em tintas nesta semana", city: "Libres", lat: -29.7152, lng: -57.0870 },
+  { es: "Corralón Norte", pt: "Depósito Norte", offer_es: "Entrega de materiales en el día", offer_pt: "Entrega de material no mesmo dia", city: "Libres", lat: -29.7108, lng: -57.0925 },
+  { es: "Shopping Uruguaiana — locales", pt: "Shopping Uruguaiana — lojas", offer_es: "Reservá espacio para tu local", offer_pt: "Reserve espaço para a sua loja", city: "Uruguaiana", lat: -29.7550, lng: -57.0880 },
+  { es: "Remisería Costanera", pt: "Remise Costanera", offer_es: "Traslados al puente y terminal", offer_pt: "Transfers para a ponte e rodoviária", city: "Libres", lat: -29.7180, lng: -57.0855 },
+];
+
+window.PRODUCT_CATS = [
+  { es: "Herrería / rejas", pt: "Serralheria / grades" },
+  { es: "Crochet / tejido", pt: "Crochê / tricô" },
+  { es: "Plantas y vivero", pt: "Plantas e viveiro" },
+  { es: "Artesanías", pt: "Artesanato" },
+  { es: "Alimentos caseros", pt: "Comida caseira" },
+  { es: "Ropa y costura", pt: "Roupa e costura" },
+  { es: "Muebles", pt: "Móveis" },
+  { es: "Otros", pt: "Outros" },
+];
+
+window.DEMO_PRODUCTS = [
+  { es: "Portón de herrería a medida", pt: "Portão de serralheria sob medida", cat_es: "Herrería", cat_pt: "Serralheria", price: "Consultar" },
+  { es: "Mantas y caminos de crochet", pt: "Mantas e caminhos de crochê", cat_es: "Crochet", cat_pt: "Crochê", price: "ARS 12.000" },
+  { es: "Plantas de interior y suculentas", pt: "Plantas de interior e suculentas", cat_es: "Vivero", cat_pt: "Viveiro", price: "ARS 3.500" },
+];
+
+window.DEMO_USED = [
+  { es: "Bicicleta rodado 26", pt: "Bicicleta aro 26", price: "ARS 80.000" },
+  { es: "Heladera usada funcionando", pt: "Geladeira usada funcionando", price: "ARS 120.000" },
+  { es: "Juego de living", pt: "Conjunto de sala", price: "ARS 90.000" },
+];
+
+window.DEMO_AUCTIONS = [
+  { es: "Taladro + kit de mechas", pt: "Furadeira + kit de brocas", min: "ARS 15.000", ends_es: "Cierra viernes 20 h", ends_pt: "Fecha sexta 20 h" },
+  { es: "Lote de macetas y plantas", pt: "Lote de vasos e plantas", min: "ARS 8.000", ends_es: "Cierra domingo 18 h", ends_pt: "Fecha domingo 18 h" },
+  { es: "Reja usada 2 metros", pt: "Grade usada 2 metros", min: "ARS 25.000", ends_es: "Cierra lunes 12 h", ends_pt: "Fecha segunda 12 h" },
+];
+
+window.DEMO_REVIEWS = [
+  { name: "María G.", stars: 5, comment_es: "Excelente herrero, dejó el portón impecable.", comment_pt: "Excelente serralheiro, portão impecável.", city: "Libres", rubro: "Herrería" },
+  { name: "João P.", stars: 4, comment_es: "Compré plantas en el vivero demo: todo bien y cerca del puente.", comment_pt: "Comprei plantas no viveiro demo: tudo certo e perto da ponte.", city: "Uruguaiana", rubro: "Vivero" },
+  { name: "Lucía R.", stars: 5, comment_es: "La remisería llegó puntual al terminal.", comment_pt: "A remise chegou pontual na rodoviária.", city: "Libres", rubro: "Remis" },
+  { name: "Carlos M.", stars: 4, comment_es: "Usado de la bici como en la foto. Trato serio.", comment_pt: "Usado da bike igual à foto. Negócio sério.", city: "Libres", rubro: "Usados" },
+];
+
+const $ = (s) => document.querySelector(s);
+let lang = localStorage.getItem("bcl_lang") || "es";
+let currencyMode = localStorage.getItem("bcl_fx") || "both"; // ars | brl | both
+const REVIEWS_KEY = "bcl_reviews";
+const CONTACT_KEY = "bcl_contact_msgs";
+
+function t() {
+  return window.I18N[lang];
+}
+
+function parseArsAmount(str) {
+  if (!str) return null;
+  if (/consultar|a convenir|consultar/i.test(str)) return null;
+  const m = String(str).match(/ARS\s*([\d.]+)/i);
+  if (!m) return null;
+  const n = parseInt(m[1].replace(/\./g, ""), 10);
+  return Number.isFinite(n) ? n : null;
+}
+
+function formatArs(n) {
+  return "ARS " + n.toLocaleString("es-AR");
+}
+
+function formatBrlFromArs(n) {
+  const brl = n / FX_ARS_PER_BRL;
+  return "R$ " + brl.toLocaleString("pt-BR", { maximumFractionDigits: 0 });
+}
+
+function displayPrice(priceStr) {
+  const ars = parseArsAmount(priceStr);
+  if (ars == null) return priceStr;
+  if (currencyMode === "ars") return formatArs(ars);
+  if (currencyMode === "brl") return formatBrlFromArs(ars);
+  return formatArs(ars) + " · " + formatBrlFromArs(ars);
+}
+
+function starsHtml(n) {
+  const s = Math.max(1, Math.min(5, Number(n) || 1));
+  return "★".repeat(s) + "☆".repeat(5 - s);
+}
+
+function pageUrl(hash) {
+  const base = location.href.split("#")[0].split("?")[0];
+  return hash ? base + hash : base;
+}
+
+function sharePayload(title, priceLabel, hash) {
+  const url = pageUrl(hash);
+  const priceBit = priceLabel ? " — " + priceLabel : "";
+  const text = (window.SITE.name + ": " + title + priceBit + "\n" + url).trim();
+  return { title, text, url };
+}
+
+function shareRowHtml(id, title, priceLabel, hash) {
+  const dict = t();
+  return `<div class="share-row" data-share-id="${id}">
+    <button type="button" class="share-btn" data-share="wa" data-title="${escapeAttr(title)}" data-price="${escapeAttr(priceLabel || "")}" data-hash="${escapeAttr(hash || "")}">${dict.shareWa}</button>
+    <button type="button" class="share-btn" data-share="copy" data-title="${escapeAttr(title)}" data-price="${escapeAttr(priceLabel || "")}" data-hash="${escapeAttr(hash || "")}">${dict.shareCopy}</button>
+    <button type="button" class="share-btn" data-share="native" data-title="${escapeAttr(title)}" data-price="${escapeAttr(priceLabel || "")}" data-hash="${escapeAttr(hash || "")}" ${navigator.share ? "" : "hidden"}>${dict.share}</button>
+  </div>`;
+}
+
+function escapeAttr(s) {
+  return String(s || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+}
+
+function escapeHtml(s) {
+  return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function sb() {
+  if (!window._sb && window.supabase?.createClient && SITE.supabaseUrl && SITE.supabaseKey) {
+    window._sb = window.supabase.createClient(SITE.supabaseUrl, SITE.supabaseKey);
+  }
+  return window._sb;
+}
+async function fetchListings(kind) {
+  const client = sb();
+  if (!client) return [];
+  let q = client.from('listings').select('*').eq('status','published').order('created_at',{ascending:false}).limit(40);
+  if (kind) q = q.eq('kind', kind);
+  const { data, error } = await q;
+  if (error) { console.warn(error); return []; }
+  return data || [];
+}
+async function insertListing(row, captchaToken) {
+  return submitProtected("listing", row, captchaToken);
+}
+
+async function fetchReviews() {
+  const client = sb();
+  if (!client) return { ok: false, rows: [] };
+  const { data, error } = await client
+    .from('reviews')
+    .select('*')
+    .eq('status', 'published')
+    .order('created_at', { ascending: false })
+    .limit(40);
+  if (error) {
+    console.warn('reviews fetch', error);
+    return { ok: false, rows: [] };
+  }
+  return { ok: true, rows: data || [] };
+}
+
+async function insertReview(row, captchaToken) {
+  return submitProtected("review", row, captchaToken);
+}
+
+function renderRealServiceCards(rows) {
+  const waLabel = t().pubServWa || "WhatsApp";
+  return rows.map((row, i) => {
+    const title = row.title || row.rubro || "";
+    const zone = row.zone || row.city || row.description || "";
+    const tag = lang === "es" ? "Servicio" : "Serviço";
+    return `
+    <article class="shop">
+      <div class="tag kind-tag-servicio">${escapeHtml(tag)}</div>
+      <h3>${escapeHtml(title)}</h3>
+      ${zone ? `<p>${escapeHtml(zone)}</p>` : ""}
+      ${listingContactHtml(row) || (row.whatsapp ? `<p style="margin-top:8px"><a class="btn btn-ghost" style="padding:7px 12px;font-size:12px" href="https://wa.me/${waDigits(row.whatsapp)}" target="_blank" rel="noopener">${escapeHtml(waLabel)}</a></p>` : "")}
+      ${shareRowHtml("svc-" + (row.id || i), title, zone, "#servicios-publicados")}
+    </article>`;
+  }).join("");
+}
+
+async function renderPublishedServices() {
+  const root = $("#publishedServices");
+  if (!root) return;
+  let rows = [];
+  try { rows = await fetchListings("servicio"); } catch (err) { console.warn(err); rows = []; }
+  if (rows.length) {
+    root.innerHTML = renderRealServiceCards(rows);
+    bindShareButtons(root);
+  } else {
+    root.innerHTML = `<p class="empty-state">${escapeHtml(t().pubServEmpty || "")}</p>`;
+  }
+}
+
+function waDigits(phone) {
+  return String(phone || "").replace(/\D/g, "");
+}
+
+/** Digits-only WhatsApp; length 8–15 or null if invalid. */
+function normalizeWhatsapp(w) {
+  const digits = waDigits(w);
+  if (digits.length < 8 || digits.length > 15) return null;
+  return digits;
+}
+
+const BCL_COOLDOWN_MS = 45000;
+function tooSoon(storageKey) {
+  try {
+    const last = Number(localStorage.getItem(storageKey) || 0);
+    if (last && Date.now() - last < BCL_COOLDOWN_MS) return true;
+  } catch (_) {}
+  return false;
+}
+function markSubmitTime(storageKey) {
+  try { localStorage.setItem(storageKey, String(Date.now())); } catch (_) {}
+}
+
+function submitProtectedError(status, body) {
+  const err = new Error((body && body.error) || "submit_failed");
+  err.status = status;
+  err.body = body;
+  return err;
+}
+
+async function submitProtected(type, payload, captchaToken) {
+  const url = SITE.functionsUrl;
+  if (!url) throw new Error("functionsUrl missing");
+  const token = String(captchaToken || "").trim();
+  if (!token) {
+    throw submitProtectedError(400, { error: "captcha_required" });
+  }
+  const headers = { "Content-Type": "application/json" };
+  if (SITE.supabaseKey) {
+    headers.Authorization = "Bearer " + SITE.supabaseKey;
+    headers.apikey = SITE.supabaseKey;
+  }
+  const res = await fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ type, turnstileToken: token, payload }),
+  });
+  let body = null;
+  try { body = await res.json(); } catch (_) { body = null; }
+  if (res.status === 429) throw submitProtectedError(429, body || { error: "rate_limited" });
+  // Compat: old EF without "gate" — don't block WhatsApp leads while redeploying
+  if (type === "gate" && body && body.error === "bad_type") {
+    console.warn("submit-protected missing gate; continuing");
+    return true;
+  }
+  if (!res.ok || !body || !body.ok) {
+    throw submitProtectedError(res.status, body || { error: "submit_failed" });
+  }
+  return true;
+}
+
+function getCaptchaToken(form) {
+  if (!form) return "";
+  const slot = form.querySelector(".turnstile-slot");
+  const wid = slot && slot.dataset.widgetId;
+  if (wid != null && wid !== "" && window.turnstile && window.turnstile.getResponse) {
+    try {
+      const tok = window.turnstile.getResponse(wid);
+      if (tok) return tok;
+    } catch (_) {}
+  }
+  const input = form.querySelector('input[name="cf-turnstile-response"]');
+  return (input && input.value) || "";
+}
+
+function resetCaptcha(form) {
+  const slot = form && form.querySelector(".turnstile-slot");
+  const wid = slot && slot.dataset.widgetId;
+  if (wid != null && wid !== "" && window.turnstile && window.turnstile.reset) {
+    try { window.turnstile.reset(wid); } catch (_) {}
+  }
+}
+
+function alertCaptchaOrFail(err) {
+  const status = err && err.status;
+  const code = err && err.body && err.body.error;
+  if (status === 429 || code === "rate_limited") {
+    alert(t().publishSlow || "Slow");
+    return;
+  }
+  if (code === "captcha_required" || code === "captcha_failed" || status === 403) {
+    alert(t().captchaFail || t().captchaNeed || "Captcha");
+    return;
+  }
+  alert(t().publishFail || "Error");
+}
+
+function initCaptchaWidgets() {
+  const key = SITE.turnstileSiteKey;
+  if (!key || !window.turnstile || !window.turnstile.render) return;
+  document.querySelectorAll(".turnstile-slot").forEach((slot) => {
+    if (slot.dataset.widgetId) return;
+    try {
+      const id = window.turnstile.render(slot, { sitekey: key, theme: "light" });
+      slot.dataset.widgetId = String(id);
+    } catch (err) {
+      console.warn("captcha render", err);
+    }
+  });
+}
+
+function whenCaptchaReady(cb, tries) {
+  const n = tries == null ? 40 : tries;
+  if (window.turnstile && window.turnstile.render) {
+    cb();
+    return;
+  }
+  if (n <= 0) return;
+  setTimeout(function () { whenCaptchaReady(cb, n - 1); }, 250);
+}
+
+function listingContactHtml(row) {
+  if (!row || !row.whatsapp) return "";
+  const digits = waDigits(row.whatsapp);
+  if (!digits) return "";
+  const label = escapeHtml(row.contact_name || t().phone);
+  return `<p style="margin-top:8px"><a class="btn btn-ghost" style="padding:7px 12px;font-size:12px" href="https://wa.me/${digits}" target="_blank" rel="noopener">${label}</a></p>`;
+}
+
+function bindShareButtons(root) {
+  (root || document).querySelectorAll(".share-btn").forEach((btn) => {
+    if (btn.dataset.bound) return;
+    btn.dataset.bound = "1";
+    btn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const { title, price, hash } = btn.dataset;
+      const payload = sharePayload(title, price, hash);
+      const kind = btn.dataset.share;
+      if (kind === "wa") {
+        window.open("https://wa.me/?text=" + encodeURIComponent(payload.text), "_blank");
+      } else if (kind === "copy") {
+        try {
+          await navigator.clipboard.writeText(payload.text);
+        } catch (_) {
+          const ta = document.createElement("textarea");
+          ta.value = payload.text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          ta.remove();
+        }
+        const prev = btn.textContent;
+        btn.textContent = t().shareCopied;
+        btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = prev; btn.classList.remove("copied"); }, 1600);
+      } else if (kind === "native" && navigator.share) {
+        try { await navigator.share({ title: payload.title, text: payload.text, url: payload.url }); } catch (_) {}
+      }
+    });
+  });
+}
+
+function syncFxBar() {
+  const bar = $("#fxBar");
+  if (!bar) return;
+  bar.querySelectorAll("button").forEach((b) => {
+    b.classList.toggle("active", b.dataset.fx === currencyMode);
+  });
+}
+
+function applyTexts() {
+  document.documentElement.lang = lang;
+  const dict = t();
+  document.querySelectorAll("[data-i]").forEach((el) => {
+    const key = el.getAttribute("data-i");
+    if (dict[key]) el.textContent = dict[key];
+  });
+  document.querySelectorAll("[data-i-placeholder]").forEach((el) => {
+    const key = el.getAttribute("data-i-placeholder");
+    if (dict[key]) el.setAttribute("placeholder", dict[key]);
+  });
+  $("#langBtn").textContent = lang === "es" ? "PT" : "ES";
+  syncFxBar();
+  renderServices();
+  renderSteps();
+  renderShops();
+  renderMarket();
+  renderPublishedServices();
+  renderReviews();
+  fillSelects();
+}
+
+const SERVICE_GROUPS = [
+  { id: "oficios", key: "groupOficios" },
+  { id: "cuidados", key: "groupCuidados" },
+  { id: "tramites", key: "groupTramites" },
+  { id: "eventos", key: "groupEventos" },
+  { id: "hogar", key: "groupHogar" },
+];
+
+let openGroups = new Set(["oficios"]);
+let servQuery = "";
+
+function serviceMatches(s, q) {
+  if (!q) return true;
+  const hay = `${s.es} ${s.pt} ${s.d_es} ${s.d_pt}`.toLowerCase();
+  return hay.includes(q);
+}
+
+const FEATURED_RUBROS = [
+  "Plomería / gas",
+  "Electricidad",
+  "Enfermería",
+  "Albañilería",
+  "Mecánica / gomería",
+  "Limpieza",
+];
+
+let allRubrosOpen = false;
+
+function bindRubroCard(card) {
+  const go = () => {
+    const sel = $("#rubroNeed");
+    if (sel) sel.value = card.dataset.rubro;
+    location.hash = "#pedir";
+    $("#pedir")?.scrollIntoView({ behavior: "smooth" });
+  };
+  card.addEventListener("click", go);
+  card.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
+  });
+}
+
+function renderFeaturedRubros() {
+  const root = $("#featuredRubros");
+  if (!root) return;
+  const items = FEATURED_RUBROS.map((name) => window.SERVICES.find((s) => s.es === name)).filter(Boolean);
+  root.innerHTML = items.map((s) => `
+    <article class="card clickable" data-rubro="${s.es}" role="button" tabindex="0">
+      <h3>${lang === "es" ? s.es : s.pt}</h3>
+      <p>${lang === "es" ? s.d_es : s.d_pt}</p>
+    </article>`).join("");
+  root.querySelectorAll(".card.clickable").forEach(bindRubroCard);
+}
+
+function syncAllRubrosToggle() {
+  const btn = $("#toggleAllRubros");
+  const panel = $("#allRubrosPanel");
+  if (!btn || !panel) return;
+  panel.hidden = !allRubrosOpen;
+  btn.setAttribute("aria-expanded", allRubrosOpen ? "true" : "false");
+  btn.textContent = allRubrosOpen ? (t().servHideAll || t().servShowAll) : (t().servShowAll || "");
+}
+
+function renderServices() {
+  renderFeaturedRubros();
+  syncAllRubrosToggle();
+  const root = $("#serviciosGrid");
+  if (!root) return;
+  const dict = t();
+  const q = (servQuery || "").trim().toLowerCase();
+  const searching = q.length > 0;
+  if (searching && !allRubrosOpen) {
+    allRubrosOpen = true;
+    syncAllRubrosToggle();
+  }
+
+  root.innerHTML = SERVICE_GROUPS.map((g) => {
+    const items = window.SERVICES.filter((s) => s.group === g.id && serviceMatches(s, q));
+    if (!items.length) return "";
+    const isOpen = searching || openGroups.has(g.id);
+    const cards = items.map((s) => `
+      <article class="card clickable" data-rubro="${s.es}" role="button" tabindex="0">
+        <h3>${lang === "es" ? s.es : s.pt}</h3>
+        <p>${lang === "es" ? s.d_es : s.d_pt}</p>
+      </article>`).join("");
+    return `
+      <div class="acc-item${isOpen ? " open" : ""}" data-group="${g.id}">
+        <button type="button" class="acc-head" aria-expanded="${isOpen}">
+          <span>${dict[g.key] || g.id}</span>
+          <span style="display:flex;align-items:center;gap:8px">
+            <span class="acc-count">${items.length}</span>
+            <span class="acc-chevron" aria-hidden="true">▾</span>
+          </span>
+        </button>
+        <div class="acc-body"><div class="grid">${cards}</div></div>
+      </div>`;
+  }).join("") || `<p class="sub">${lang === "es" ? "No hay rubros para esa búsqueda." : "Nenhuma categoria para essa busca."}</p>`;
+
+  root.querySelectorAll(".acc-head").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const item = btn.closest(".acc-item");
+      const id = item.dataset.group;
+      if (openGroups.has(id)) openGroups.delete(id);
+      else openGroups.add(id);
+      item.classList.toggle("open");
+      btn.setAttribute("aria-expanded", item.classList.contains("open"));
+    });
+  });
+
+  root.querySelectorAll(".card.clickable").forEach(bindRubroCard);
+}
+
+function renderSteps() {
+  $("#steps").innerHTML = t().steps.map((s) => `
+    <article class="step"><b>${s[0]}</b><h3>${s[1]}</h3><p>${s[2]}</p></article>
+  `).join("");
+}
+
+function renderDemoShops() {
+  return window.DEMO_SHOPS.map((s, i) => {
+    const title = lang === "es" ? s.es : s.pt;
+    const offer = lang === "es" ? s.offer_es : s.offer_pt;
+    return `
+    <article class="shop">
+      <span class="demo-tag">${t().demoLabel || "Demo"}</span>
+      <div class="tag">${escapeHtml(s.city)}</div>
+      <h3>${escapeHtml(title)}</h3>
+      <p>${escapeHtml(offer)}</p>
+      ${shareRowHtml("shop-" + i, title, offer, "#comercios")}
+    </article>`;
+  }).join("");
+}
+
+function renderRealShopCards(rows) {
+  return rows.map((row, i) => {
+    const title = row.title || "";
+    const offer = row.description || "";
+    const tag = row.city || row.zone || (lang === "es" ? "Comercio" : "Comércio");
+    return `
+    <article class="shop">
+      <div class="tag">${escapeHtml(tag)}</div>
+      <h3>${escapeHtml(title)}</h3>
+      ${offer ? `<p>${escapeHtml(offer)}</p>` : ""}
+      ${listingContactHtml(row)}
+      ${shareRowHtml("shop-" + (row.id || i), title, offer, "#comercios")}
+    </article>`;
+  }).join("");
+}
+
+async function renderShops() {
+  const root = $("#shops");
+  if (!root) return;
+  let rows = [];
+  try { rows = await fetchListings("comercio"); } catch (err) { console.warn(err); rows = []; }
+  root.innerHTML = rows.length ? renderRealShopCards(rows) : renderDemoShops();
+  bindShareButtons(root);
+}
+
+function renderDemoProducts() {
+  const demo = `<span class="demo-tag">${t().demoLabel || "Demo"}</span>`;
+  return window.DEMO_PRODUCTS.map((p, i) => {
+    const title = lang === "es" ? p.es : p.pt;
+    const price = displayPrice(p.price);
+    return `
+    <article class="shop">
+      ${demo}
+      <div class="tag">${escapeHtml((lang === "es" ? "Producto" : "Produto") + " · " + (lang === "es" ? p.cat_es : p.cat_pt))}</div>
+      <h3>${escapeHtml(title)}</h3>
+      <p class="price-shown">${escapeHtml(price)}</p>
+      ${shareRowHtml("prod-" + i, title, price, "#venta")}
+    </article>`;
+  }).join("");
+}
+
+function renderDemoUsed() {
+  const demo = `<span class="demo-tag">${t().demoLabel || "Demo"}</span>`;
+  return window.DEMO_USED.map((p, i) => {
+    const title = lang === "es" ? p.es : p.pt;
+    const price = displayPrice(p.price);
+    return `
+    <article class="shop">
+      ${demo}
+      <div class="tag">${lang === "es" ? "Usado" : "Usado"}</div>
+      <h3>${escapeHtml(title)}</h3>
+      <p class="price-shown">${escapeHtml(price)}</p>
+      ${shareRowHtml("used-" + i, title, price, "#usados")}
+    </article>`;
+  }).join("");
+}
+
+function renderDemoAuctions() {
+  const demo = `<span class="demo-tag">${t().demoLabel || "Demo"}</span>`;
+  return window.DEMO_AUCTIONS.map((p, i) => {
+    const title = lang === "es" ? p.es : p.pt;
+    const min = displayPrice(p.min);
+    const label = t().minBid + ": " + min;
+    return `
+    <article class="shop">
+      ${demo}
+      <div class="tag">${escapeHtml((lang === "es" ? "Remate" : "Leilão") + " · " + (lang === "es" ? p.ends_es : p.ends_pt))}</div>
+      <h3>${escapeHtml(title)}</h3>
+      <p class="price-shown">${escapeHtml(label)}</p>
+      ${shareRowHtml("auc-" + i, title, label, "#remates")}
+    </article>`;
+  }).join("");
+}
+
+function renderRealProductCards(rows) {
+  return rows.map((row, i) => {
+    const title = row.title || "";
+    const price = displayPrice(row.price_label || "");
+    const kind = lang === "es" ? "Producto" : "Produto";
+    const tag = row.category || row.rubro ? (kind + " · " + (row.category || row.rubro)) : kind;
+    return `
+    <article class="shop">
+      <div class="tag">${escapeHtml(tag)}</div>
+      <h3>${escapeHtml(title)}</h3>
+      ${price ? `<p class="price-shown">${escapeHtml(price)}</p>` : ""}
+      ${row.description ? `<p>${escapeHtml(row.description)}</p>` : ""}
+      ${listingContactHtml(row)}
+      ${shareRowHtml("prod-" + (row.id || i), title, price, "#venta")}
+    </article>`;
+  }).join("");
+}
+
+function renderRealUsedCards(rows) {
+  return rows.map((row, i) => {
+    const title = row.title || "";
+    const price = displayPrice(row.price_label || "");
+    return `
+    <article class="shop">
+      <div class="tag">${lang === "es" ? "Usado" : "Usado"}</div>
+      <h3>${escapeHtml(title)}</h3>
+      ${price ? `<p class="price-shown">${escapeHtml(price)}</p>` : ""}
+      ${row.description ? `<p>${escapeHtml(row.description)}</p>` : ""}
+      ${listingContactHtml(row)}
+      ${shareRowHtml("used-" + (row.id || i), title, price, "#usados")}
+    </article>`;
+  }).join("");
+}
+
+function renderRealAuctionCards(rows) {
+  return rows.map((row, i) => {
+    const title = row.title || "";
+    const minRaw = row.price_min_label || row.price_label || "";
+    const min = displayPrice(minRaw);
+    const label = minRaw ? (t().minBid + ": " + min) : "";
+    let ends = "";
+    if (row.ends_at) {
+      try {
+        ends = new Date(row.ends_at).toLocaleString(lang === "es" ? "es-AR" : "pt-BR");
+      } catch (_) { ends = String(row.ends_at); }
+    }
+    return `
+    <article class="shop">
+      ${ends ? `<div class="tag">${escapeHtml((lang === "es" ? "Remate" : "Leilão") + " · " + ends)}</div>` : `<div class="tag">${lang === "es" ? "Remate" : "Leilão"}</div>`}
+      <h3>${escapeHtml(title)}</h3>
+      ${label ? `<p class="price-shown">${escapeHtml(label)}</p>` : ""}
+      ${row.description ? `<p>${escapeHtml(row.description)}</p>` : ""}
+      ${listingContactHtml(row)}
+      ${shareRowHtml("auc-" + (row.id || i), title, label, "#remates")}
+    </article>`;
+  }).join("");
+}
+
+async function renderMarket() {
+  const productsEl = $("#products");
+  const usedEl = $("#used");
+  const auctionsEl = $("#auctions");
+  if (!productsEl || !usedEl || !auctionsEl) return;
+
+  let products = [], used = [], auctions = [];
+  try {
+    [products, used, auctions] = await Promise.all([
+      fetchListings("producto"),
+      fetchListings("usado"),
+      fetchListings("remate"),
+    ]);
+  } catch (err) {
+    console.warn(err);
+  }
+
+  productsEl.innerHTML = products.length ? renderRealProductCards(products) : renderDemoProducts();
+  usedEl.innerHTML = used.length ? renderRealUsedCards(used) : renderDemoUsed();
+  auctionsEl.innerHTML = auctions.length ? renderRealAuctionCards(auctions) : renderDemoAuctions();
+  bindShareButtons(productsEl);
+  bindShareButtons(usedEl);
+  bindShareButtons(auctionsEl);
+}
+
+function loadStoredReviews() {
+  try {
+    return JSON.parse(localStorage.getItem(REVIEWS_KEY) || "[]");
+  } catch (_) {
+    return [];
+  }
+}
+
+function saveStoredReviews(list) {
+  localStorage.setItem(REVIEWS_KEY, JSON.stringify(list));
+}
+
+function demoReviewsMapped() {
+  return (window.DEMO_REVIEWS || []).map((r, i) => ({
+    id: "demo-" + i,
+    name: r.name,
+    stars: r.stars,
+    comment: lang === "es" ? r.comment_es : r.comment_pt,
+    city: r.city,
+    rubro: r.rubro || "",
+    demo: true,
+  }));
+}
+
+function mapRemoteReview(r) {
+  return {
+    id: r.id,
+    name: r.name,
+    stars: r.stars,
+    comment: r.comment,
+    city: r.city || "",
+    rubro: r.rubro || "",
+    demo: false,
+  };
+}
+
+let reviewsFromSupabase = false;
+
+async function collectReviews() {
+  const remote = await fetchReviews();
+  reviewsFromSupabase = remote.ok;
+  if (remote.ok) {
+    // Never fall back to DEMO_/example cards — empty remote = empty UI + form
+    return (remote.rows || []).map(mapRemoteReview).filter((r) => !r.demo);
+  }
+  return loadStoredReviews().filter((r) => !r.demo && !String(r.id || "").startsWith("demo-"));
+}
+
+function reviewCardHtml(r) {
+  const example = r.demo
+    ? `<span class="example-tag">${escapeHtml(t().reviewExampleTag || t().demoLabel || "Demo")}</span>`
+    : "";
+  return `
+    <article class="review">
+      ${example}
+      <div class="stars" aria-label="${r.stars}/5">${starsHtml(r.stars)}</div>
+      <p>${escapeHtml(r.comment)}</p>
+      <div class="meta">${escapeHtml(r.name)} · ${escapeHtml(r.city)}${r.rubro ? " · " + escapeHtml(r.rubro) : ""}</div>
+    </article>`;
+}
+
+async function renderReviews() {
+  const root = $("#reviewsList");
+  if (!root) return;
+  const items = await collectReviews();
+  if (!items.length) {
+    root.innerHTML = `<p class="sub reviews-empty">${escapeHtml(t().reviewsEmpty || "")}</p>`;
+    return;
+  }
+  root.innerHTML = items.map(reviewCardHtml).join("");
+}
+
+function fillSelects() {
+  const opts = `<option value=""></option>` + window.SERVICES.map((s) => {
+    const label = lang === "es" ? s.es : s.pt;
+    return `<option value="${s.es}">${label}</option>`;
+  }).join("");
+  $("#rubroNeed").innerHTML = opts;
+  $("#rubroOffer").innerHTML = opts;
+  $("#catProduct").innerHTML = `<option value=""></option>` + window.PRODUCT_CATS.map((c) =>
+    `<option value="${c.es}">${lang === "es" ? c.es : c.pt}</option>`
+  ).join("");
+}
+
+function destNumber(form) {
+  const sel = form.querySelector("[name=destino]");
+  const dest = sel ? sel.value : (lang === "pt" ? "BR" : "AR");
+  return dest === "BR" ? window.SITE.whatsappBR : window.SITE.whatsappAR;
+}
+
+function wa(text, number) {
+  window.open(`https://wa.me/${number || window.SITE.whatsappAR}?text=${encodeURIComponent(text)}`, "_blank");
+}
+
+function mapFormToListing(kind, d) {
+  const base = {
+    status: "pending", // moderación: no sale en la home hasta que Victor publique
+    contact_name: (d.nombre || "").trim(),
+    whatsapp: (d.whatsapp || "").trim(),
+    description: "",
+  };
+  if (kind === "offer") {
+    return {
+      ...base,
+      kind: "servicio",
+      title: (d.rubro || "").trim(),
+      rubro: (d.rubro || "").trim(),
+      zone: (d.zona || "").trim() || null,
+      description: (d.zona || "").trim(),
+    };
+  }
+  if (kind === "product") {
+    return {
+      ...base,
+      kind: "producto",
+      title: (d.producto || "").trim(),
+      category: (d.categoria || "").trim() || null,
+      rubro: (d.categoria || "").trim() || null,
+      price_label: (d.precio || "").trim() || "Consultar",
+      description: (d.categoria || "").trim(),
+    };
+  }
+  if (kind === "used") {
+    return {
+      ...base,
+      kind: "usado",
+      title: (d.producto || "").trim(),
+      price_label: (d.precio || "").trim(),
+      description: "",
+    };
+  }
+  if (kind === "auction") {
+    return {
+      ...base,
+      kind: "remate",
+      title: (d.producto || "").trim(),
+      price_min_label: (d.minimo || "").trim(),
+      description: "",
+    };
+  }
+  if (kind === "shop") {
+    return {
+      ...base,
+      kind: "comercio",
+      title: (d.nombre || "").trim(),
+      description: (d.ofertas || "").trim(),
+    };
+  }
+  if (kind === "pin") {
+    const lat = d.lat !== undefined && d.lat !== "" ? Number(d.lat) : null;
+    const lng = d.lng !== undefined && d.lng !== "" ? Number(d.lng) : null;
+    return {
+      ...base,
+      kind: "comercio",
+      title: (d.nombre || "").trim(),
+      description: (d.direccion || "").trim(),
+      zone: (d.direccion || "").trim() || null,
+      lat: Number.isFinite(lat) ? lat : null,
+      lng: Number.isFinite(lng) ? lng : null,
+    };
+  }
+  return null;
+}
+
+function notifyVictorWa(kind, d, num) {
+  // Solo pedidos y comentarios/reclamos llegan a Víctor por WhatsApp.
+  // Altas (servicio/venta/usado/remate/comercio) se autogestionan en Supabase.
+  if (kind === "need") {
+    wa(`BuracodeLuis - PEDIDO\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nRubro: ${d.rubro}\nDetalle: ${d.detalle}`, num);
+  } else if (kind === "comment") {
+    wa(`BuracodeLuis - ${d.tipo}\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nMensaje: ${d.mensaje}`, num);
+  }
+}
+
+document.querySelectorAll("form").forEach((form) => {
+  form.addEventListener("submit", async (e) => {
+    const kind = form.dataset.kind;
+    if (kind === "review-local" || kind === "contact-local") return; // handled separately
+    e.preventDefault();
+    const d = Object.fromEntries(new FormData(form).entries());
+    const num = destNumber(form);
+    const listingKinds = new Set(["offer", "product", "used", "auction", "shop", "pin"]);
+
+    if (listingKinds.has(kind)) {
+      // Honeypot: bots that fill "website" get a silent fake success.
+      if (String(d.website || "").trim()) {
+        alert(t().publishOk || "OK");
+        form.reset();
+        return;
+      }
+      if (tooSoon("bcl_last_listing")) {
+        alert(t().publishSlow || "Slow");
+        return;
+      }
+      const row = mapFormToListing(kind, d);
+      try {
+        if (!row || !row.title || !row.contact_name || !row.whatsapp) {
+          throw new Error("incomplete");
+        }
+        const waNorm = normalizeWhatsapp(row.whatsapp);
+        if (!waNorm) {
+          alert(t().publishFail || "Error");
+          return;
+        }
+        row.whatsapp = waNorm;
+        row.status = "pending";
+        const captchaToken = getCaptchaToken(form);
+        if (!captchaToken) {
+          alert(t().captchaNeed || "Captcha");
+          return;
+        }
+        await insertListing(row, captchaToken);
+        markSubmitTime("bcl_last_listing");
+        await Promise.all([renderMarket(), renderShops(), renderPublishedServices()]);
+        alert(t().publishOk || "OK");
+        form.reset();
+        resetCaptcha(form);
+        if (kind === "pin") {
+          const latEl = document.getElementById("pinLat");
+          const lngEl = document.getElementById("pinLng");
+          if (latEl) latEl.value = "";
+          if (lngEl) lngEl.value = "";
+        }
+      } catch (err) {
+        console.warn(err);
+        resetCaptcha(form);
+        alertCaptchaOrFail(err);
+      }
+      return;
+    }
+
+    // need / comment: leave browser via WhatsApp — gate with Turnstile + rate limit first
+    if (kind === "need" || kind === "comment") {
+      const captchaToken = getCaptchaToken(form);
+      if (!captchaToken) {
+        alert(t().captchaNeed || "Captcha");
+        return;
+      }
+      try {
+        await submitProtected("gate", { whatsapp: d.whatsapp || "" }, captchaToken);
+        notifyVictorWa(kind, d, num);
+        form.reset();
+        resetCaptcha(form);
+      } catch (err) {
+        console.warn(err);
+        resetCaptcha(form);
+        alertCaptchaOrFail(err);
+      }
+      return;
+    }
+
+    notifyVictorWa(kind, d, num);
+  });
+});
+
+$("#langBtn").addEventListener("click", () => {
+  lang = lang === "es" ? "pt" : "es";
+  localStorage.setItem("bcl_lang", lang);
+  applyTexts();
+});
+
+$("#fxBar")?.querySelectorAll("button").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    currencyMode = btn.dataset.fx || "both";
+    localStorage.setItem("bcl_fx", currencyMode);
+    syncFxBar();
+    renderMarket();
+  });
+});
+
+$("#reviewForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const d = Object.fromEntries(new FormData(form).entries());
+
+  const showReviewOk = () => {
+    const ok = $("#reviewOk");
+    if (ok) {
+      ok.textContent = t().reviewOk || ok.textContent;
+      ok.classList.add("show");
+      setTimeout(() => ok.classList.remove("show"), 3500);
+    }
+  };
+
+  // Honeypot: silent fake success (no insert).
+  if (String(d.website || "").trim()) {
+    form.reset();
+    const star5hp = form.querySelector('input[name=stars][value="5"]');
+    if (star5hp) star5hp.checked = true;
+    showReviewOk();
+    return;
+  }
+  if (tooSoon("bcl_last_review")) {
+    alert(t().reviewSlow || "Slow");
+    return;
+  }
+
+  const entry = {
+    id: "u-" + Date.now(),
+    name: (d.nombre || "").trim(),
+    contact: (d.contacto || "").trim(),
+    stars: Number(d.stars) || 5,
+    comment: (d.comment || "").trim(),
+    city: d.city || "Libres",
+    rubro: (d.rubro || "").trim(),
+    demo: false,
+    ts: Date.now(),
+  };
+  if (!entry.name || !entry.contact || !entry.comment || !entry.stars) return;
+
+  const captchaToken = getCaptchaToken(form);
+  if (!captchaToken) {
+    alert(t().captchaNeed || "Captcha");
+    return;
+  }
+
+  try {
+    await insertReview({
+      name: entry.name,
+      contact: entry.contact,
+      stars: entry.stars,
+      comment: entry.comment,
+      city: entry.city,
+      rubro: entry.rubro || null,
+      status: "pending",
+    }, captchaToken);
+    markSubmitTime("bcl_last_review");
+    form.reset();
+    resetCaptcha(form);
+    const star5 = form.querySelector('input[name=stars][value="5"]');
+    if (star5) star5.checked = true;
+    await renderReviews();
+    showReviewOk();
+  } catch (err) {
+    console.warn("review insert", err);
+    resetCaptcha(form);
+    const status = err && err.status;
+    const code = err && err.body && err.body.error;
+    if (status === 429 || code === "rate_limited") {
+      alert(t().reviewSlow || t().publishSlow || "Slow");
+      return;
+    }
+    if (code === "captcha_required" || code === "captcha_failed" || status === 403) {
+      alert(t().captchaFail || t().captchaNeed || "Captcha");
+      return;
+    }
+    alert(t().publishFail || "Error");
+  }
+});
+
+$("#contactForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const d = Object.fromEntries(new FormData(form).entries());
+  const entry = {
+    id: "c-" + Date.now(),
+    name: (d.nombre || "").trim(),
+    contacto: (d.contacto || "").trim(),
+    destino: d.destino || "AR",
+    mensaje: (d.mensaje || "").trim(),
+    ts: Date.now(),
+  };
+  if (!entry.name || !entry.contacto || !entry.mensaje) return;
+
+  const captchaToken = getCaptchaToken(form);
+  if (!captchaToken) {
+    alert(t().captchaNeed || "Captcha");
+    return;
+  }
+  try {
+    await submitProtected("gate", { whatsapp: entry.contacto }, captchaToken);
+  } catch (err) {
+    console.warn(err);
+    resetCaptcha(form);
+    alertCaptchaOrFail(err);
+    return;
+  }
+
+  try {
+    const prev = JSON.parse(localStorage.getItem(CONTACT_KEY) || "[]");
+    prev.unshift(entry);
+    localStorage.setItem(CONTACT_KEY, JSON.stringify(prev.slice(0, 30)));
+  } catch (_) {}
+  const email = (window.SITE.contactEmail || "").trim();
+  if (email) {
+    const subject = encodeURIComponent("BuracodeLuis contacto (" + entry.destino + ")");
+    const body = encodeURIComponent(
+      "Nombre: " + entry.name + "\nContacto: " + entry.contacto +
+      "\nDestino: " + entry.destino + "\n\n" + entry.mensaje
+    );
+    window.location.href = "mailto:" + email + "?subject=" + subject + "&body=" + body;
+  }
+  form.reset();
+  resetCaptcha(form);
+  const ok = $("#contactOk");
+  if (ok) { ok.classList.add("show"); setTimeout(() => ok.classList.remove("show"), 4000); }
+});
+
+const clippy = $("#clippy");
+$("#helpOpen").addEventListener("click", () => {
+  clippy.hidden = !clippy.hidden;
+});
+$("#helpClose").addEventListener("click", () => {
+  clippy.hidden = true;
+});
+if (!localStorage.getItem("bcl_help_seen")) {
+  clippy.hidden = false;
+  localStorage.setItem("bcl_help_seen", "1");
+}
+
+const toggleAllRubrosBtn = $("#toggleAllRubros");
+if (toggleAllRubrosBtn) {
+  toggleAllRubrosBtn.addEventListener("click", () => {
+    allRubrosOpen = !allRubrosOpen;
+    syncAllRubrosToggle();
+    if (allRubrosOpen) {
+      $("#servSearch")?.focus();
+    }
+  });
+}
+
+const servSearchEl = $("#servSearch");
+if (servSearchEl) {
+  servSearchEl.addEventListener("input", () => {
+    servQuery = servSearchEl.value || "";
+    renderServices();
+  });
+}
+
+applyTexts();
+whenCaptchaReady(initCaptchaWidgets);
+
+(function () {
+  const el = document.getElementById("map");
+  if (!el || !window.L || !window.SITE) return;
+
+  const { lat, lng, zoom } = window.SITE.map;
+  const map = L.map("map").setView([lat, lng], zoom);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "&copy; OpenStreetMap",
+  }).addTo(map);
+
+  L.marker([lat, lng]).addTo(map).bindPopup("Paso de los Libres · centro");
+
+  (window.DEMO_SHOPS || []).forEach((s, i) => {
+    const la = typeof s.lat === "number" ? s.lat : lat + (i - 1.5) * 0.004;
+    const ln = typeof s.lng === "number" ? s.lng : lng + (i % 2 === 0 ? 0.005 : -0.004);
+    const name = s.es;
+    const offer = s.offer_es || "";
+    const popup = "<strong>" + name + "</strong><br>" + (s.city || "") +
+      (offer ? "<br>" + offer : "");
+    L.marker([la, ln]).addTo(map).bindPopup(popup);
+  });
+
+  let pin;
+  function setPin(la, ln) {
+    if (pin) map.removeLayer(pin);
+    pin = L.marker([la, ln]).addTo(map);
+    document.getElementById("pinLat").value = la.toFixed(6);
+    document.getElementById("pinLng").value = ln.toFixed(6);
+  }
+
+  map.on("click", (e) => setPin(e.latlng.lat, e.latlng.lng));
+
+  document.getElementById("useGps")?.addEventListener("click", () => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition((pos) => {
+      const la = pos.coords.latitude;
+      const ln = pos.coords.longitude;
+      map.setView([la, ln], 16);
+      setPin(la, ln);
+    });
+  });
+})();
+
+// Music: Mixkit Free License classic rock (CDN + local fallback). Button label: Music.
+(function () {
+  let audio = null;
+  let on = false;
+  const SOURCES = [
+    "https://assets.mixkit.co/music/954/954.mp3", // How Does it Feel — Michael Ramir C. (Mixkit Free)
+    "audio/indie-rock-bg.mp3",
+  ];
+
+  function setLabel() {
+    const btn = document.getElementById("musicBtn");
+    if (btn) btn.textContent = "Music";
+  }
+
+  function getAudio() {
+    if (audio) return audio;
+    audio = new Audio();
+    audio.loop = true;
+    audio.preload = "auto";
+    audio.volume = 0.45;
+    let i = 0;
+    audio.src = SOURCES[0];
+    audio.addEventListener("error", () => {
+      i += 1;
+      if (i < SOURCES.length) {
+        audio.src = SOURCES[i];
+        if (on) audio.play().catch(() => {});
+      }
+    });
+    return audio;
+  }
+
+  async function start() {
+    const a = getAudio();
+    try {
+      a.currentTime = 0;
+      await a.play();
+      on = true;
+      setLabel();
+    } catch (err) {
+      console.warn("music play", err);
+      // Retry once after a tick (some browsers need a second gesture-adjacent play)
+      try {
+        await new Promise((r) => setTimeout(r, 50));
+        await a.play();
+        on = true;
+        setLabel();
+      } catch (err2) {
+        console.warn("music play retry", err2);
+      }
+    }
+  }
+
+  function stop() {
+    if (audio) {
+      audio.pause();
+      try { audio.currentTime = 0; } catch (_) {}
+    }
+    on = false;
+    setLabel();
+  }
+
+  const btn = document.getElementById("musicBtn");
+  if (btn) {
+    btn.textContent = "Music";
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (on) stop();
+      else start();
+    });
+  }
+})();
+
+</script>
+</body>
+</html>
