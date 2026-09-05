@@ -774,7 +774,7 @@ window.SITE = {
   whatsapp: "543772445319",
   whatsappAR: "543772445319",
   whatsappBR: "555591488778",
-  // Optional: set to enable mailto on contact form (else localStorage only)
+  // Optional: set to enable mailto on contact form (else UI confirmation only; no PII in localStorage)
   contactEmail: "",
   priceAfterTrial: "ARS 1.000",
   trialMonths: 3,
@@ -1258,9 +1258,6 @@ window.DEMO_REVIEWS = [
 const $ = (s) => document.querySelector(s);
 let lang = localStorage.getItem("bcl_lang") || "es";
 let currencyMode = localStorage.getItem("bcl_fx") || "both"; // ars | brl | both
-const REVIEWS_KEY = "bcl_reviews";
-const CONTACT_KEY = "bcl_contact_msgs";
-
 function t() {
   return window.I18N[lang];
 }
@@ -1323,6 +1320,19 @@ function escapeAttr(s) {
 
 function escapeHtml(s) {
   return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+/** Strip NUL bytes from user input before submit / display paths. */
+function stripNullBytes(s) {
+  return String(s ?? "").replace(/\0/g, "");
+}
+
+function sanitizeFormStrings(obj) {
+  const out = {};
+  for (const [k, v] of Object.entries(obj || {})) {
+    out[k] = typeof v === "string" ? stripNullBytes(v) : v;
+  }
+  return out;
 }
 
 function sb() {
@@ -1444,6 +1454,11 @@ async function submitProtected(type, payload, captchaToken) {
   let body = null;
   try { body = await res.json(); } catch (_) { body = null; }
   if (res.status === 429) throw submitProtectedError(429, body || { error: "rate_limited" });
+  // Compat: old EF without "gate" — don't block WhatsApp leads while redeploying
+  if (type === "gate" && body && body.error === "bad_type") {
+    console.warn("submit-protected missing gate; continuing");
+    return true;
+  }
   if (!res.ok || !body || !body.ok) {
     throw submitProtectedError(res.status, body || { error: "submit_failed" });
   }
@@ -1871,18 +1886,6 @@ async function renderMarket() {
   bindShareButtons(auctionsEl);
 }
 
-function loadStoredReviews() {
-  try {
-    return JSON.parse(localStorage.getItem(REVIEWS_KEY) || "[]");
-  } catch (_) {
-    return [];
-  }
-}
-
-function saveStoredReviews(list) {
-  localStorage.setItem(REVIEWS_KEY, JSON.stringify(list));
-}
-
 function demoReviewsMapped() {
   return (window.DEMO_REVIEWS || []).map((r, i) => ({
     id: "demo-" + i,
@@ -1916,7 +1919,8 @@ async function collectReviews() {
     // Never fall back to DEMO_/example cards — empty remote = empty UI + form
     return (remote.rows || []).map(mapRemoteReview).filter((r) => !r.demo);
   }
-  return loadStoredReviews().filter((r) => !r.demo && !String(r.id || "").startsWith("demo-"));
+  // Remote failure: no localStorage fallback (would store PII). Empty list only.
+  return [];
 }
 
 function reviewCardHtml(r) {
@@ -2050,7 +2054,7 @@ document.querySelectorAll("form").forEach((form) => {
     const kind = form.dataset.kind;
     if (kind === "review-local" || kind === "contact-local") return; // handled separately
     e.preventDefault();
-    const d = Object.fromEntries(new FormData(form).entries());
+    const d = sanitizeFormStrings(Object.fromEntries(new FormData(form).entries()));
     const num = destNumber(form);
     const listingKinds = new Set(["offer", "product", "used", "auction", "shop", "pin"]);
 
@@ -2144,7 +2148,7 @@ $("#fxBar")?.querySelectorAll("button").forEach((btn) => {
 $("#reviewForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.target;
-  const d = Object.fromEntries(new FormData(form).entries());
+  const d = sanitizeFormStrings(Object.fromEntries(new FormData(form).entries()));
 
   const showReviewOk = () => {
     const ok = $("#reviewOk");
@@ -2224,7 +2228,7 @@ $("#reviewForm")?.addEventListener("submit", async (e) => {
 $("#contactForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.target;
-  const d = Object.fromEntries(new FormData(form).entries());
+  const d = sanitizeFormStrings(Object.fromEntries(new FormData(form).entries()));
   const entry = {
     id: "c-" + Date.now(),
     name: (d.nombre || "").trim(),
@@ -2249,11 +2253,7 @@ $("#contactForm")?.addEventListener("submit", async (e) => {
     return;
   }
 
-  try {
-    const prev = JSON.parse(localStorage.getItem(CONTACT_KEY) || "[]");
-    prev.unshift(entry);
-    localStorage.setItem(CONTACT_KEY, JSON.stringify(prev.slice(0, 30)));
-  } catch (_) {}
+  // Do not persist contact PII in localStorage — mailto if configured + UI ok only.
   const email = (window.SITE.contactEmail || "").trim();
   if (email) {
     const subject = encodeURIComponent("BuracodeLuis contacto (" + entry.destino + ")");
