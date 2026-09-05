@@ -220,6 +220,7 @@ body.has-trial-banner .nav { top: 42px; }
   .hero-grid, .split, .prices, .start-grid { grid-template-columns: 1fr; }
   .nav-links a:not(.btn) { display: none; }
   .nav-links .btn-ghost { display: none; } /* keep one primary CTA on small screens */
+  .nav-fx-wrap .fx-tip { display: none; } /* full fxNote stays under prices */
   .trial-banner { font-size: 13px; padding: 9px 10px; }
   body.has-trial-banner .nav { top: 40px; }
   html { scroll-padding-top: 100px; }
@@ -236,6 +237,33 @@ body.has-trial-banner .nav { top: 42px; }
 }
 .fx-bar button.active { background: var(--teal); color: #fff; }
 .fx-note { font-size: 12px; color: var(--muted); margin: 8px 0 0; }
+.fx-tip {
+  display: none;
+}
+.nav-fx-wrap { display: inline-flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.nav-fx-wrap .fx-tip {
+  display: block; font-size: 10px; color: var(--muted); max-width: 160px; line-height: 1.2; text-align: right;
+}
+.trust-inline {
+  margin-top: 18px; padding: 12px 14px; border-radius: 14px;
+  background: #fff; border: 1px solid var(--line); max-width: 520px;
+}
+.trust-inline strong { display: block; color: var(--navy); font-size: 13px; margin-bottom: 4px; }
+.trust-inline .trust-short { margin: 0 0 6px; color: var(--muted); font-size: 14px; font-weight: 700; }
+.trust-inline a { color: var(--teal); font-weight: 800; font-size: 13px; text-decoration: none; }
+.trust-inline a:hover { text-decoration: underline; }
+.featured-rubros {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin: 0 0 16px;
+}
+.featured-rubros .card {
+  border: 2px solid #cfe8e4; background: linear-gradient(180deg, #f4fbfa, #fff);
+  min-height: 96px; cursor: pointer; transition: border-color .15s, transform .15s;
+}
+.featured-rubros .card:hover { border-color: var(--teal); transform: translateY(-1px); }
+.featured-rubros .card h3 { font-size: 16px; }
+#toggleAllRubros { margin-bottom: 14px; }
+.all-rubros-panel[hidden] { display: none !important; }
+.reviews-empty { margin: 0 0 8px; }
 .share-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
 .share-btn {
   border: 1px solid var(--line); background: #fff; color: var(--navy);
@@ -332,10 +360,13 @@ body.has-trial-banner .nav { top: 42px; }
         <a class="nav-text" href="#comentarios" data-i="reviewsTitle"></a>
         <a class="nav-text" href="#reglas" data-i="rulesNav"></a>
         <span class="nav-text nav-soon" data-i="navSoon" aria-hidden="true"></span>
-        <div class="fx-bar" id="fxBar" title="Moneda / Moeda" role="group" aria-label="Currency">
-          <button type="button" data-fx="ars">ARS</button>
-          <button type="button" data-fx="brl">BRL</button>
-          <button type="button" data-fx="both" data-i="fxBoth">ambas</button>
+        <div class="nav-fx-wrap">
+          <div class="fx-bar" id="fxBar" title="Moneda / Moeda" role="group" aria-label="Currency">
+            <button type="button" data-fx="ars">ARS</button>
+            <button type="button" data-fx="brl">BRL</button>
+            <button type="button" data-fx="both" data-i="fxBoth">ambas</button>
+          </div>
+          <span class="fx-tip" data-i="fxNote"></span>
         </div>
         <button class="lang" id="langBtn" type="button">PT</button>
         <button class="lang" id="musicBtn" type="button" data-i="musicBtn"></button>
@@ -354,6 +385,11 @@ body.has-trial-banner .nav { top: 42px; }
         <div class="actions">
           <a class="btn btn-ask" href="#pedir" data-i="heroNeed"></a>
           <a class="btn btn-primary" href="#ofrecer" data-i="heroOffer"></a>
+        </div>
+        <div class="trust-inline" id="heroTrust">
+          <strong data-i="trustTitle"></strong>
+          <p class="trust-short" data-i="trustShort"></p>
+          <a href="#reglas" data-i="trustMore"></a>
         </div>
       </div>
       <div class="stats">
@@ -387,11 +423,15 @@ body.has-trial-banner .nav { top: 42px; }
     <div class="wrap">
       <h2 data-i="servTitle"></h2>
       <p class="sub" data-i="servLead"></p>
-      <div class="search-wrap">
-        <label class="visually-hidden" for="servSearch" data-i="servSearchLabel" style="position:absolute;left:-9999px"></label>
-        <input type="search" id="servSearch" autocomplete="off" data-i-placeholder="servSearchPh" />
+      <div class="featured-rubros" id="featuredRubros"></div>
+      <button type="button" class="btn btn-ghost" id="toggleAllRubros" data-i="servShowAll" aria-expanded="false"></button>
+      <div id="allRubrosPanel" class="all-rubros-panel" hidden>
+        <div class="search-wrap">
+          <label class="visually-hidden" for="servSearch" data-i="servSearchLabel" style="position:absolute;left:-9999px"></label>
+          <input type="search" id="servSearch" autocomplete="off" data-i-placeholder="servSearchPh" />
+        </div>
+        <div class="accordion" id="serviciosGrid"></div>
       </div>
-      <div class="accordion" id="serviciosGrid"></div>
     </div>
   </section>
 
@@ -540,16 +580,6 @@ body.has-trial-banner .nav { top: 42px; }
       <div>
         <h2 data-i="formNeedTitle"></h2>
         <p class="sub" data-i="formNeedLead"></p>
-        <div class="trust-box">
-          <strong data-i="trustTitle"></strong>
-          <ul>
-            <li data-i="trust1"></li>
-            <li data-i="trust2"></li>
-            <li data-i="trust3"></li>
-            <li data-i="trust4"></li>
-          </ul>
-          <a href="#reglas" data-i="trustMore"></a>
-        </div>
       </div>
       <form class="form" data-kind="need">
         <label><span data-i="name"></span><input name="nombre" required /></label>
@@ -571,16 +601,6 @@ body.has-trial-banner .nav { top: 42px; }
           <li data-i="publishStep2"></li>
           <li data-i="publishStep3"></li>
         </ol>
-        <div class="trust-box">
-          <strong data-i="trustTitle"></strong>
-          <ul>
-            <li data-i="trust1"></li>
-            <li data-i="trust2"></li>
-            <li data-i="trust3"></li>
-            <li data-i="trust4"></li>
-          </ul>
-          <a href="#reglas" data-i="trustMore"></a>
-        </div>
       </div>
       <form class="form" data-kind="offer">
         <label><span data-i="name"></span><input name="nombre" required /></label>
@@ -673,16 +693,6 @@ body.has-trial-banner .nav { top: 42px; }
           <div class="contact-alt" id="contacto">
             <h3 data-i="contactAltTitle"></h3>
             <p class="sub" data-i="contactAltLead"></p>
-        <div class="trust-box">
-          <strong data-i="trustTitle"></strong>
-          <ul>
-            <li data-i="trust1"></li>
-            <li data-i="trust2"></li>
-            <li data-i="trust3"></li>
-            <li data-i="trust4"></li>
-          </ul>
-          <a href="#reglas" data-i="trustMore"></a>
-        </div>
             <form class="form" id="contactForm" data-kind="contact-local">
               <label><span data-i="name"></span><input name="nombre" required /></label>
               <label><span data-i="contactReach"></span><input name="contacto" required data-i-placeholder="contactReachPh" /></label>
@@ -901,13 +911,14 @@ window.I18N = {
     publishNoteFoot: "Sin contraseña. Publicás desde el formulario. Los primeros 3 meses son gratis.",
     demoLabel: "Demo",
     fxBoth: "ambas",
-    fxNote: "Precios en ARS y BRL de referencia. Consultá el tipo de cambio del día al contactar.",
+    fxNote: "Precios de referencia. Consultá el tipo de cambio al contactar.",
     share: "Compartir",
     shareWa: "WhatsApp",
     shareCopy: "Copiar link",
     shareCopied: "¡Copiado!",
     reviewsTitle: "Opiniones y reputación",
-    reviewsLead: "Reseñas de ejemplo y opiniones reales de vecinos. Las nuevas se publican en la página.",
+    reviewsLead: "Opiniones reales de vecinos. Las nuevas quedan en revisión y, al aprobarse, aparecen acá.",
+    reviewsEmpty: "Todavía no hay opiniones publicadas. Sé el primero en dejar una reseña.",
     reviewFormTitle: "Dejá tu reseña",
     reviewFormLead: "Nombre, WhatsApp o email, estrellas y comentario. Requerido para publicar.",
     reviewStars: "Estrellas",
@@ -924,11 +935,14 @@ window.I18N = {
     pubServEmpty: "Todavía no hay servicios publicados — sé el primero.",
     pubServWa: "WhatsApp",
     trustTitle: "Confianza rápida",
-    trust1: "Sin comisiones: coordinás y cobrás vos.",
-    trust2: "Contacto real (WhatsApp / email) en cada aviso.",
-    trust3: "Precios y descripciones honestas; nada ilegal ni engañoso.",
-    trust4: "3 meses gratis para publicar tu servicio.",
-    trustMore: "Ver reglas completas →",
+    trustShort: "Sin comisiones · Contacto directo · 3 meses gratis",
+    trust1: "Sin comisiones",
+    trust2: "Contacto directo",
+    trust3: "3 meses gratis",
+    trust4: "",
+    trustMore: "Ver reglas →",
+    servShowAll: "Ver todos los rubros",
+    servHideAll: "Ocultar rubros",
     contactAltTitle: "¿Preferís no usar WhatsApp? Escribinos acá",
     contactAltLead: "Nombre, email o teléfono y mensaje. Se guarda localmente (y mailto si configurás el email del sitio).",
     contactReach: "Email o teléfono",
@@ -1078,13 +1092,14 @@ window.I18N = {
     publishNoteFoot: "Sem senha. Você publica pelo formulário. Os primeiros 3 meses são grátis.",
     demoLabel: "Demo",
     fxBoth: "ambas",
-    fxNote: "Preços em ARS e BRL de referência. Consulte a cotação do dia ao entrar em contato.",
+    fxNote: "Preços de referência. Consulte o tipo de câmbio ao entrar em contato.",
     share: "Compartilhar",
     shareWa: "WhatsApp",
     shareCopy: "Copiar link",
     shareCopied: "Copiado!",
     reviewsTitle: "Opiniões e reputação",
-    reviewsLead: "Primeiras opiniões (exemplo) e avaliações reais de vizinhos. As novas são publicadas na página.",
+    reviewsLead: "Avaliações reais de vizinhos. As novas ficam em revisão e, ao serem aprovadas, aparecem aqui.",
+    reviewsEmpty: "Ainda não há avaliações publicadas. Seja o primeiro a deixar uma opinião.",
     reviewFormTitle: "Deixe sua avaliação",
     reviewFormLead: "Nome, WhatsApp ou e-mail, estrelas e comentário. Obrigatório para publicar.",
     reviewStars: "Estrelas",
@@ -1101,11 +1116,14 @@ window.I18N = {
     pubServEmpty: "Ainda não há serviços publicados — seja o primeiro.",
     pubServWa: "WhatsApp",
     trustTitle: "Confiança rápida",
-    trust1: "Sem comissões: combine e cobre você.",
-    trust2: "Contato real (WhatsApp / e-mail) em cada anúncio.",
-    trust3: "Preços e descrições honestas; nada ilegal nem enganoso.",
-    trust4: "3 meses grátis para publicar seu serviço.",
-    trustMore: "Ver regras completas →",
+    trustShort: "Sem comissões · Contato direto · 3 meses grátis",
+    trust1: "Sem comissões",
+    trust2: "Contato direto",
+    trust3: "3 meses grátis",
+    trust4: "",
+    trustMore: "Ver regras →",
+    servShowAll: "Ver todas as categorias",
+    servHideAll: "Ocultar categorias",
     contactAltTitle: "Prefere não usar WhatsApp? Escreva aqui",
     contactAltLead: "Nome, e-mail ou telefone e mensagem. Salvo localmente (e mailto se configurar o e-mail do site).",
     contactReach: "E-mail ou telefone",
@@ -1574,12 +1592,63 @@ function serviceMatches(s, q) {
   return hay.includes(q);
 }
 
+const FEATURED_RUBROS = [
+  "Plomería / gas",
+  "Electricidad",
+  "Enfermería",
+  "Albañilería",
+  "Mecánica / gomería",
+  "Limpieza",
+];
+
+let allRubrosOpen = false;
+
+function bindRubroCard(card) {
+  const go = () => {
+    const sel = $("#rubroNeed");
+    if (sel) sel.value = card.dataset.rubro;
+    location.hash = "#pedir";
+    $("#pedir")?.scrollIntoView({ behavior: "smooth" });
+  };
+  card.addEventListener("click", go);
+  card.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
+  });
+}
+
+function renderFeaturedRubros() {
+  const root = $("#featuredRubros");
+  if (!root) return;
+  const items = FEATURED_RUBROS.map((name) => window.SERVICES.find((s) => s.es === name)).filter(Boolean);
+  root.innerHTML = items.map((s) => `
+    <article class="card clickable" data-rubro="${s.es}" role="button" tabindex="0">
+      <h3>${lang === "es" ? s.es : s.pt}</h3>
+      <p>${lang === "es" ? s.d_es : s.d_pt}</p>
+    </article>`).join("");
+  root.querySelectorAll(".card.clickable").forEach(bindRubroCard);
+}
+
+function syncAllRubrosToggle() {
+  const btn = $("#toggleAllRubros");
+  const panel = $("#allRubrosPanel");
+  if (!btn || !panel) return;
+  panel.hidden = !allRubrosOpen;
+  btn.setAttribute("aria-expanded", allRubrosOpen ? "true" : "false");
+  btn.textContent = allRubrosOpen ? (t().servHideAll || t().servShowAll) : (t().servShowAll || "");
+}
+
 function renderServices() {
+  renderFeaturedRubros();
+  syncAllRubrosToggle();
   const root = $("#serviciosGrid");
   if (!root) return;
   const dict = t();
   const q = (servQuery || "").trim().toLowerCase();
   const searching = q.length > 0;
+  if (searching && !allRubrosOpen) {
+    allRubrosOpen = true;
+    syncAllRubrosToggle();
+  }
 
   root.innerHTML = SERVICE_GROUPS.map((g) => {
     const items = window.SERVICES.filter((s) => s.group === g.id && serviceMatches(s, q));
@@ -1614,18 +1683,7 @@ function renderServices() {
     });
   });
 
-  root.querySelectorAll(".card.clickable").forEach((card) => {
-    const go = () => {
-      const sel = $("#rubroNeed");
-      if (sel) sel.value = card.dataset.rubro;
-      location.hash = "#pedir";
-      $("#pedir")?.scrollIntoView({ behavior: "smooth" });
-    };
-    card.addEventListener("click", go);
-    card.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
-    });
-  });
+  root.querySelectorAll(".card.clickable").forEach(bindRubroCard);
 }
 
 function renderSteps() {
@@ -1848,12 +1906,10 @@ async function collectReviews() {
   const remote = await fetchReviews();
   reviewsFromSupabase = remote.ok;
   if (remote.ok) {
-    const rows = (remote.rows || []).map(mapRemoteReview);
-    // If empty remote, still show labeled examples so the section isn't blank
-    return rows.length ? rows : demoReviewsMapped();
+    // Never fall back to DEMO_/example cards — empty remote = empty UI + form
+    return (remote.rows || []).map(mapRemoteReview).filter((r) => !r.demo);
   }
-  const stored = loadStoredReviews();
-  return stored.concat(demoReviewsMapped());
+  return loadStoredReviews().filter((r) => !r.demo && !String(r.id || "").startsWith("demo-"));
 }
 
 function reviewCardHtml(r) {
@@ -1873,6 +1929,10 @@ async function renderReviews() {
   const root = $("#reviewsList");
   if (!root) return;
   const items = await collectReviews();
+  if (!items.length) {
+    root.innerHTML = `<p class="sub reviews-empty">${escapeHtml(t().reviewsEmpty || "")}</p>`;
+    return;
+  }
   root.innerHTML = items.map(reviewCardHtml).join("");
 }
 
@@ -2176,6 +2236,17 @@ $("#helpClose").addEventListener("click", () => {
 if (!localStorage.getItem("bcl_help_seen")) {
   clippy.hidden = false;
   localStorage.setItem("bcl_help_seen", "1");
+}
+
+const toggleAllRubrosBtn = $("#toggleAllRubros");
+if (toggleAllRubrosBtn) {
+  toggleAllRubrosBtn.addEventListener("click", () => {
+    allRubrosOpen = !allRubrosOpen;
+    syncAllRubrosToggle();
+    if (allRubrosOpen) {
+      $("#servSearch")?.focus();
+    }
+  });
 }
 
 const servSearchEl = $("#servSearch");
