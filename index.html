@@ -6,8 +6,8 @@
   <!-- TODO (deferred): auth, live FX API, review moderation,
        real shop geocoding, email delivery for contact form.
        Backend: listings + reviews via Supabase. -->
-  <title>Buraco del Luis | Servicios y productos en Paso de los Libres y Uruguaiana</title>
-  <meta name="description" content="Encontrá oficios, comprá usados o publicá tu servicio sin comisiones en Paso de los Libres y Uruguaiana. 3 meses gratis." />
+  <title>Buraco del Luis | Oficios y servicios en Libres y Uruguaiana</title>
+  <meta name="description" content="Clasificado de oficios de confianza para Paso de los Libres y Uruguaiana. Sin comisiones. 3 meses gratis." />
   <style>
 :root {
   --navy: #12263a;
@@ -97,7 +97,7 @@ input, select, textarea {
 }
 footer { background: var(--navy); color: #c9d6e3; padding: 28px 0; }
 .map { height: 360px; border-radius: 16px; border: 1px solid var(--line); margin: 12px 0; }
-.start-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.start-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; max-width: 640px; }
 .start-card {
   background: #fff; border: 2px solid var(--line); border-radius: 16px;
   padding: 18px 14px; text-decoration: none; color: var(--ink); min-height: 110px;
@@ -190,6 +190,23 @@ body.has-trial-banner .nav { top: 42px; }
 .demo-tag {
   display: inline-block; font-size: 11px; font-weight: 800; color: #92400e;
   background: #fef3c7; border-radius: 999px; padding: 2px 8px; margin-bottom: 6px;
+}
+
+.mvp-later { display: none !important; }
+.start-card.muted, .soon-card {
+  background: #f3f4f6; border-style: dashed; color: var(--muted); cursor: default;
+  pointer-events: none;
+}
+.start-card.muted:hover { border-color: var(--line); }
+.soon-banner {
+  background: #fff8e7; border: 1px solid #f0d58a; border-radius: 14px;
+  padding: 16px 18px; margin: 0 0 18px;
+}
+.soon-banner strong { display: block; color: #92400e; margin-bottom: 4px; }
+.soon-banner p { margin: 0; color: var(--muted); font-size: 14px; }
+.nav-soon {
+  color: #9aa6b2 !important; font-size: 13px; font-weight: 700;
+  cursor: default; pointer-events: none; white-space: nowrap;
 }
 /* Collapse text nav before it wraps into a tall sticky header */
 @media (max-width: 1100px) {
@@ -311,14 +328,10 @@ body.has-trial-banner .nav { top: 42px; }
       <div class="nav-links">
         <a class="nav-text" href="#servicios" data-i="navServ"></a>
         <a class="nav-text" href="#servicios-publicados" data-i="pubServTitle"></a>
-        <a class="nav-text" href="#venta" data-i="navMarket"></a>
-        <a class="nav-text" href="#usados" data-i="navUsed"></a>
-        <a class="nav-text" href="#remates" data-i="navAuction"></a>
         <a class="nav-text" href="#start" data-i="startTitle"></a>
-        <a class="nav-text" href="#mapa" data-i="mapTitle"></a>
-        <a class="nav-text" href="#comercios" data-i="navShops"></a>
         <a class="nav-text" href="#comentarios" data-i="reviewsTitle"></a>
         <a class="nav-text" href="#reglas" data-i="rulesNav"></a>
+        <span class="nav-text nav-soon" data-i="navSoon" aria-hidden="true"></span>
         <div class="fx-bar" id="fxBar" title="Moneda / Moeda" role="group" aria-label="Currency">
           <button type="button" data-fx="ars">ARS</button>
           <button type="button" data-fx="brl">BRL</button>
@@ -341,8 +354,6 @@ body.has-trial-banner .nav { top: 42px; }
         <div class="actions">
           <a class="btn btn-ask" href="#pedir" data-i="heroNeed"></a>
           <a class="btn btn-primary" href="#ofrecer" data-i="heroOffer"></a>
-          <a class="btn btn-secondary btn-sm" href="#comercio" data-i="heroShop"></a>
-          <a class="btn btn-secondary btn-sm" href="#publicar" data-i="heroSell"></a>
         </div>
       </div>
       <div class="stats">
@@ -359,8 +370,10 @@ body.has-trial-banner .nav { top: 42px; }
       <div class="start-grid">
         <a class="start-card" href="#pedir"><strong data-i="startNeed"></strong><span data-i="startNeedD"></span></a>
         <a class="start-card" href="#ofrecer"><strong data-i="startOffer"></strong><span data-i="startOfferD"></span></a>
-        <a class="start-card" href="#publicar"><strong data-i="startSell"></strong><span data-i="startSellD"></span></a>
-        <a class="start-card" href="#remates"><strong data-i="startAuc"></strong><span data-i="startAucD"></span></a>
+      </div>
+      <div class="soon-banner" style="margin-top:16px;max-width:640px">
+        <strong data-i="soonTitle"></strong>
+        <p data-i="soonLead"></p>
       </div>
       <div class="radio-bar">
         <strong data-i="radioTitle"></strong>
@@ -419,7 +432,7 @@ body.has-trial-banner .nav { top: 42px; }
     </div>
   </section>
 
-  <section id="venta">
+  <section id="venta" class="mvp-later" aria-hidden="true">
     <div class="wrap">
       <h2 data-i="marketTitle"></h2>
       <p class="sub" data-i="marketLead"></p>
@@ -427,7 +440,7 @@ body.has-trial-banner .nav { top: 42px; }
     </div>
   </section>
 
-  <section class="alt" id="usados">
+  <section class="alt mvp-later" id="usados" aria-hidden="true">
     <div class="wrap">
       <h2 data-i="usedTitle"></h2>
       <p class="sub" data-i="usedLead"></p>
@@ -435,7 +448,7 @@ body.has-trial-banner .nav { top: 42px; }
     </div>
   </section>
 
-  <section id="remates">
+  <section id="remates" class="mvp-later" aria-hidden="true">
     <div class="wrap">
       <h2 data-i="auctionTitle"></h2>
       <p class="sub" data-i="auctionLead"></p>
@@ -443,7 +456,7 @@ body.has-trial-banner .nav { top: 42px; }
     </div>
   </section>
 
-  <section class="alt" id="publicar">
+  <section class="alt mvp-later" id="publicar" aria-hidden="true">
     <div class="wrap split">
       <div>
         <h2 data-i="sellProduct"></h2>
@@ -492,7 +505,7 @@ body.has-trial-banner .nav { top: 42px; }
     </div>
   </section>
 
-  <section id="mapa">
+  <section id="mapa" class="mvp-later" aria-hidden="true">
     <div class="wrap">
       <h2 data-i="mapTitle"></h2>
       <p class="sub" data-i="mapLead"></p>
@@ -514,7 +527,7 @@ body.has-trial-banner .nav { top: 42px; }
     </div>
   </section>
 
-  <section class="alt" id="comercios">
+  <section class="alt mvp-later" id="comercios" aria-hidden="true">
     <div class="wrap">
       <h2 data-i="shopsTitle"></h2>
       <p class="sub" data-i="shopsLead"></p>
@@ -576,12 +589,12 @@ body.has-trial-banner .nav { top: 42px; }
         <label><span data-i="zone"></span><input name="zona" /></label>
         <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="turnstile-slot" aria-label="captcha"></div>
-        <button class="btn" type="submit" data-i="send"></button>
+        <button class="btn" type="submit" data-i="sendOffer"></button>
       </form>
     </div>
   </section>
 
-  <section id="comercio">
+  <section id="comercio" class="mvp-later" aria-hidden="true">
     <div class="wrap split">
       <div>
         <h2 data-i="formShopTitle"></h2>
@@ -772,12 +785,15 @@ window.I18N = {
     navHow: "Cómo funciona",
     navShops: "Comercios",
     navJoin: "Sumate",
+    navSoon: "Próximamente: usados / remates",
+    soonTitle: "Próximamente — otra página",
+    soonLead: "Usados y remates van en otra web. Acá nos enfocamos en oficios y servicios.",
     ctaNeed: "Solicitar presupuesto",
     ctaOffer: "Publicar mi servicio",
-    eyebrow: "Paso de los Libres · puente con Uruguaiana",
-    heroTitle: "Servicios, productos, usados y remates de los dos lados del puente.",
+    eyebrow: "Oficios y servicios · Libres–Uruguaiana",
+    heroTitle: "El clasificado de oficios de confianza para Libres y Uruguaiana. Sin comisiones.",
     heroLead:
-      "Pedí un oficio, publicá tu servicio o vendé usados y remates entre Libres y Uruguaiana. Publicá GRATIS 3 meses. Sin comisiones.",
+      "Pedí un presupuesto o publicá tu oficio. 3 meses gratis. Sin comisiones. Usados y remates van en otra página.",
     heroNeed: "Solicitar presupuesto",
     heroOffer: "Publicar mi servicio",
     heroShop: "Anunciar mi comercio",
@@ -791,9 +807,9 @@ window.I18N = {
     servLead: "Oficios, cuidados, trámites, frontera y más.",
     howTitle: "Cómo funciona",
     steps: [
-      ["1", "Contacto por WhatsApp", "Pedís un presupuesto o te sumás como proveedor. Sin clave ni app extra."],
-      ["2", "Completás tus datos", "Rubro, zona y qué ofrecés. Armamos tu perfil en la página."],
-      ["3", "Publicás gratis 3 meses", "Tu servicio queda visible. Después, ARS 1.000 (ver BRL con el toggle)."],
+      ["1", "Pedí o publicá", "Solicitá un presupuesto o publicá tu oficio con el formulario de la página."],
+      ["2", "Completás tus datos", "Rubro, zona y contacto. Tu aviso queda en revisión."],
+      ["3", "Publicás gratis 3 meses", "Al aprobarse, tu servicio queda visible. Después, ARS 1.000/mes."],
       ["4", "Coordinás y cobrás vos", "Presupuesto y pago directo. Sin comisión de la página."],
     ],
     priceTitle: "Precios claros",
@@ -806,7 +822,7 @@ window.I18N = {
     formNeedTitle: "Pedir un servicio",
     formNeedLead: "Te contactamos por WhatsApp. No tiene costo.",
     formOfferTitle: "Ofrecer un servicio",
-    formOfferLead: "Sin clave: mandás tus datos por WhatsApp. Los primeros 3 meses no se cobra por publicar.",
+    formOfferLead: "Completá el formulario: tu aviso queda en revisión y, al aprobarse, se publica en la página. Los primeros 3 meses son gratis.",
     formShopTitle: "Anunciar mi comercio",
     name: "Nombre",
     phone: "WhatsApp",
@@ -816,7 +832,8 @@ window.I18N = {
     shopName: "Nombre del comercio",
     offers: "Qué ofertas querés mostrar",
     send: "Enviar por WhatsApp",
-    footer: "Sin comisión. Servicios, productos, usados y remates. Publicidad local en Libres y Uruguaiana.",
+    sendOffer: "Enviar",
+    footer: "Sin comisión. Oficios y servicios entre Libres y Uruguaiana. Usados y remates, en otra página.",
     marketTitle: "Venta de productos",
     marketLead: "Como un Mercado Libre local: herrería, crochet, plantas, artesanías y lo que produzcas.",
     usedTitle: "Usados",
@@ -835,7 +852,7 @@ window.I18N = {
     startNeed: "Solicitar presupuesto",
     startNeedD: "Contanos qué necesitás y te contactamos",
     startOffer: "Publicar mi servicio",
-    startOfferD: "Registro por WhatsApp · 3 meses gratis",
+    startOfferD: "Formulario en la página · 3 meses gratis",
     startSell: "Vender algo",
     startSellD: "Productos nuevos o usados",
     startAuc: "Rematar",
@@ -848,9 +865,9 @@ window.I18N = {
     musicOff: "Music",
     helpName: "Luisito",
     helpHi: "Hola, soy Luisito. Te ayudo a usar la página.",
-    help1: "1. Elegí qué querés: pedir, ofrecer, vender o rematar.",
-    help2: "2. Completá tu nombre y WhatsApp.",
-    help3: "3. Tocá enviar. Te abre WhatsApp, sin registrarte con clave.",
+    help1: "1. Elegí: solicitar presupuesto o publicar tu servicio.",
+    help2: "2. Completá tu nombre, WhatsApp y el rubro.",
+    help3: "3. Enviá el formulario. Pedidos llegan por WhatsApp; publicar servicio es por el sitio.",
     help4: "4. Los primeros 3 meses publicar es gratis.",
     helpClose: "Entendido",
     helpOpen: "¿Ayuda?",
@@ -880,8 +897,8 @@ window.I18N = {
     publishNoteTitle: "¿Querés publicar tu servicio?",
     publishStep1: "Escribí tu nombre y WhatsApp (sin clave ni registro aparte).",
     publishStep2: "Elegí tu rubro y zona de trabajo.",
-    publishStep3: "Enviá el formulario: se abre WhatsApp y te publicamos.",
-    publishNoteFoot: "Sin contraseña. Coordinás todo por WhatsApp. Los primeros 3 meses son gratis.",
+    publishStep3: "Enviá el formulario: tu aviso queda en revisión y, al aprobarse, se publica.",
+    publishNoteFoot: "Sin contraseña. Publicás desde el formulario. Los primeros 3 meses son gratis.",
     demoLabel: "Demo",
     fxBoth: "ambas",
     fxNote: "Precios en ARS y BRL de referencia. Consultá el tipo de cambio del día al contactar.",
@@ -903,7 +920,7 @@ window.I18N = {
     reviewOk: "¡Gracias! Tu reseña quedó en revisión y no se publica sola. Cuando la aprobemos, aparece en la página.",
     reviewExampleTag: "Reseñas de ejemplo",
     pubServTitle: "Servicios publicados",
-    pubServLead: "Oficios y servicios reales publicados por vecinos. Distinto de productos, usados o remates.",
+    pubServLead: "Oficios y servicios reales publicados por vecinos de Libres y Uruguaiana.",
     pubServEmpty: "Todavía no hay servicios publicados — sé el primero.",
     pubServWa: "WhatsApp",
     trustTitle: "Confianza rápida",
@@ -945,12 +962,15 @@ window.I18N = {
     navHow: "Como funciona",
     navShops: "Comércios",
     navJoin: "Entrar",
+    navSoon: "Em breve: usados / leilões",
+    soonTitle: "Em breve — outra página",
+    soonLead: "Usados e leilões ficam em outro site. Aqui focamos em ofícios e serviços.",
     ctaNeed: "Solicitar orçamento",
     ctaOffer: "Publicar meu serviço",
-    eyebrow: "Passo de los Libres · ponte com Uruguaiana",
-    heroTitle: "Serviços, produtos, usados e leilões dos dois lados da ponte.",
+    eyebrow: "Ofícios e serviços · Libres–Uruguaiana",
+    heroTitle: "O classificado de ofícios de confiança para Libres e Uruguaiana. Sem comissões.",
     heroLead:
-      "Peça um ofício, publique seu serviço ou venda usados e leilões entre Libres e Uruguaiana. Publique GRÁTIS por 3 meses. Sem comissões.",
+      "Peça um orçamento ou publique seu ofício. 3 meses grátis. Sem comissões. Usados e leilões ficam em outra página.",
     heroNeed: "Solicitar orçamento",
     heroOffer: "Publicar meu serviço",
     heroShop: "Anunciar meu comércio",
@@ -964,9 +984,9 @@ window.I18N = {
     servLead: "Ofícios, cuidados, despachos, fronteira e mais.",
     howTitle: "Como funciona",
     steps: [
-      ["1", "Contato no WhatsApp", "Peça orçamento ou cadastre-se como prestador. Sem senha nem app extra."],
-      ["2", "Complete seus dados", "Categoria, zona e o que oferece. Montamos seu perfil na página."],
-      ["3", "Publique grátis 3 meses", "Seu serviço fica visível. Depois, ARS 1.000 (veja BRL no seletor)."],
+      ["1", "Peça ou publique", "Solicite um orçamento ou publique seu ofício pelo formulário da página."],
+      ["2", "Complete seus dados", "Categoria, zona e contato. Seu anúncio fica em revisão."],
+      ["3", "Publique grátis 3 meses", "Após a aprovação, seu serviço fica visível. Depois, ARS 1.000/mês."],
       ["4", "Combine e cobre você", "Orçamento e pagamento direto. Sem comissão da página."],
     ],
     priceTitle: "Preços claros",
@@ -979,7 +999,7 @@ window.I18N = {
     formNeedTitle: "Pedir um serviço",
     formNeedLead: "Falamos no WhatsApp. Sem custo.",
     formOfferTitle: "Oferecer um serviço",
-    formOfferLead: "Sem senha: envie seus dados pelo WhatsApp. Os primeiros 3 meses são grátis para publicar.",
+    formOfferLead: "Preencha o formulário: seu anúncio fica em revisão e, ao ser aprovado, aparece na página. Os primeiros 3 meses são grátis.",
     formShopTitle: "Anunciar meu comércio",
     name: "Nome",
     phone: "WhatsApp",
@@ -989,7 +1009,8 @@ window.I18N = {
     shopName: "Nome do comércio",
     offers: "Quais ofertas quer mostrar",
     send: "Enviar pelo WhatsApp",
-    footer: "Sem comissão. Serviços, produtos, usados e leilões. Publicidade local em Libres e Uruguaiana.",
+    sendOffer: "Enviar",
+    footer: "Sem comissão. Ofícios e serviços entre Libres e Uruguaiana. Usados e leilões, em outra página.",
     marketTitle: "Venda de produtos",
     marketLead: "Como um Mercado Livre local: serralheria, crochê, plantas, artesanato e o que você produz.",
     usedTitle: "Usados",
@@ -1008,7 +1029,7 @@ window.I18N = {
     startNeed: "Solicitar orçamento",
     startNeedD: "Conte o que precisa e falamos no WhatsApp",
     startOffer: "Publicar meu serviço",
-    startOfferD: "Cadastro no WhatsApp · 3 meses grátis",
+    startOfferD: "Formulário na página · 3 meses grátis",
     startSell: "Vender algo",
     startSellD: "Produtos novos ou usados",
     startAuc: "Leiloar",
@@ -1021,9 +1042,9 @@ window.I18N = {
     musicOff: "Music",
     helpName: "Luisito",
     helpHi: "Olá, eu sou o Luisito. Te ajudo a usar a página.",
-    help1: "1. Escolha: pedir, oferecer, vender ou leiloar.",
-    help2: "2. Preencha nome e WhatsApp.",
-    help3: "3. Envie. Abre o WhatsApp, sem senha.",
+    help1: "1. Escolha: solicitar orçamento ou publicar seu serviço.",
+    help2: "2. Preencha nome, WhatsApp e a categoria.",
+    help3: "3. Envie o formulário. Pedidos vão pelo WhatsApp; publicar serviço é pelo site.",
     help4: "4. Os primeiros 3 meses publicar é grátis.",
     helpClose: "Entendi",
     helpOpen: "Ajuda?",
@@ -1053,8 +1074,8 @@ window.I18N = {
     publishNoteTitle: "Quer publicar seu serviço?",
     publishStep1: "Informe nome e WhatsApp (sem senha nem cadastro separado).",
     publishStep2: "Escolha a categoria e a zona de trabalho.",
-    publishStep3: "Envie o formulário: abre o WhatsApp e publicamos você.",
-    publishNoteFoot: "Sem senha. Tudo pelo WhatsApp. Os primeiros 3 meses são grátis.",
+    publishStep3: "Envie o formulário: seu anúncio fica em revisão e, ao ser aprovado, é publicado.",
+    publishNoteFoot: "Sem senha. Você publica pelo formulário. Os primeiros 3 meses são grátis.",
     demoLabel: "Demo",
     fxBoth: "ambas",
     fxNote: "Preços em ARS e BRL de referência. Consulte a cotação do dia ao entrar em contato.",
@@ -1076,7 +1097,7 @@ window.I18N = {
     reviewOk: "Obrigado! Sua avaliação ficou em revisão e não publica sozinha. Quando aprovarmos, aparece na página.",
     reviewExampleTag: "Primeiras opiniões (exemplo)",
     pubServTitle: "Serviços publicados",
-    pubServLead: "Ofícios e serviços reais publicados por vizinhos. Separado de produtos, usados ou leilões.",
+    pubServLead: "Ofícios e serviços reais publicados por vizinhos de Libres e Uruguaiana.",
     pubServEmpty: "Ainda não há serviços publicados — seja o primeiro.",
     pubServWa: "WhatsApp",
     trustTitle: "Confiança rápida",
