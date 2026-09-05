@@ -1,5 +1,6 @@
 -- Buraco del Luis — publicaciones
 -- Run in Supabase SQL Editor (or via MCP after auth)
+-- After baseline: also run submit-rate-limits.sql (drops anon inserts; Edge Function only).
 
 create extension if not exists "pgcrypto";
 

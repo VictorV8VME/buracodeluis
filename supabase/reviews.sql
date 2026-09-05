@@ -1,5 +1,6 @@
 -- Buraco del Luis — reseñas / avaliações
 -- Run in Supabase SQL Editor after schema.sql (listings)
+-- After baseline: also run submit-rate-limits.sql (drops anon inserts; Edge Function only).
 
 create extension if not exists "pgcrypto";
 
