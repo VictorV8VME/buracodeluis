@@ -12,7 +12,7 @@ create table if not exists public.reviews (
   city text check (city is null or city in ('Libres', 'Uruguaiana', 'Ambas')),
   rubro text,
   listing_id uuid null references public.listings(id) on delete set null,
-  status text not null default 'published' check (status in ('published', 'pending')),
+  status text not null default 'pending' check (status in ('published', 'pending')),
   created_at timestamptz not null default now()
 );
 
@@ -29,14 +29,14 @@ create policy "Public read published reviews"
   to anon, authenticated
   using (status = 'published');
 
--- Anyone can insert a review (published by default for v1)
+-- Anyone can insert a review as pending only (moderation before publish)
 drop policy if exists "Anon insert reviews" on public.reviews;
 create policy "Anon insert reviews"
   on public.reviews
   for insert
   to anon, authenticated
   with check (
-    status in ('published', 'pending')
+    status = 'pending'
     and char_length(name) >= 2
     and char_length(contact) >= 3
     and stars between 1 and 5
