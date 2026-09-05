@@ -248,6 +248,10 @@ body.has-trial-banner .nav { top: 42px; }
   background: #dcfce7; color: #166534; font-weight: 700; font-size: 14px;
 }
 .form-ok.show { display: block; }
+.turnstile-slot {
+  margin: 4px 0 2px;
+  min-height: 65px;
+}
 .hp-field {
   position: absolute;
   left: -10000px;
@@ -452,6 +456,7 @@ body.has-trial-banner .nav { top: 42px; }
         <label><span data-i="productName"></span><input name="producto" required /></label>
         <label><span data-i="price"></span><input name="precio" placeholder="ARS ..." /></label>
         <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="turnstile-slot" aria-label="captcha"></div>
         <button class="btn" type="submit" data-i="send"></button>
       </form>
     </div>
@@ -466,6 +471,7 @@ body.has-trial-banner .nav { top: 42px; }
         <label><span data-i="productName"></span><input name="producto" required /></label>
         <label><span data-i="price"></span><input name="precio" required /></label>
         <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="turnstile-slot" aria-label="captcha"></div>
         <button class="btn" type="submit" data-i="send"></button>
       </form>
     </div>
@@ -480,6 +486,7 @@ body.has-trial-banner .nav { top: 42px; }
         <label><span data-i="productName"></span><input name="producto" required /></label>
         <label><span data-i="minBid"></span><input name="minimo" required /></label>
         <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="turnstile-slot" aria-label="captcha"></div>
         <button class="btn" type="submit" data-i="send"></button>
       </form>
     </div>
@@ -500,6 +507,7 @@ body.has-trial-banner .nav { top: 42px; }
         <div class="actions">
           <button class="btn btn-ghost" type="button" id="useGps" data-i="mapGps"></button>
           <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="turnstile-slot" aria-label="captcha"></div>
         <button class="btn" type="submit" data-i="send"></button>
         </div>
       </form>
@@ -567,6 +575,7 @@ body.has-trial-banner .nav { top: 42px; }
         <label><span data-i="rubro"></span><select name="rubro" id="rubroOffer" required></select></label>
         <label><span data-i="zone"></span><input name="zona" /></label>
         <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="turnstile-slot" aria-label="captcha"></div>
         <button class="btn" type="submit" data-i="send"></button>
       </form>
     </div>
@@ -583,6 +592,7 @@ body.has-trial-banner .nav { top: 42px; }
         <label><span data-i="phone"></span><input name="whatsapp" required /></label>
         <label><span data-i="offers"></span><textarea name="ofertas" rows="4" required></textarea></label>
         <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="turnstile-slot" aria-label="captcha"></div>
         <button class="btn" type="submit" data-i="send"></button>
       </form>
     </div>
@@ -618,6 +628,7 @@ body.has-trial-banner .nav { top: 42px; }
             <label><span data-i="rubro"></span><input name="rubro" maxlength="80" data-i-placeholder="reviewRubroPh" /></label>
             <label><span data-i="reviewComment"></span><textarea name="comment" rows="3" required maxlength="280"></textarea></label>
             <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <div class="turnstile-slot" aria-label="captcha"></div>
         <button class="btn" type="submit" data-i="reviewSubmit"></button>
             <div class="form-ok" id="reviewOk" data-i="reviewOk"></div>
           </form>
@@ -724,6 +735,7 @@ body.has-trial-banner .nav { top: 42px; }
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
 // Parámetros editables
 window.SITE = {
@@ -741,6 +753,8 @@ window.SITE = {
   map: { lat: -29.7136, lng: -57.0894, zoom: 14 },
   supabaseUrl: "https://kslhlktxlgtgoquhjhnz.supabase.co",
   supabaseKey: "sb_publishable_fV1Dv_25YI2BUwnT9AB0-w_aPtvpLUT",
+  turnstileSiteKey: "0x4AAAAAAEpR6bYjT8AAdeKt",
+  functionsUrl: "https://kslhlktxlgtgoquhjhnz.supabase.co/functions/v1/submit-protected",
 };
 
 // Tipo de cambio de referencia (NO live). ARS por 1 BRL. Actualizá a mano.
@@ -917,6 +931,8 @@ window.I18N = {
     publishOk: "¡Recibido! Tu aviso quedó en revisión y no se publica solo. Cuando lo aprobemos, aparece en la página.",
     publishFail: "No se pudo publicar. Revisá los datos o intentá de nuevo.",
     publishSlow: "Esperá unos segundos antes de publicar de nuevo.",
+    captchaNeed: "Completá el captcha antes de enviar.",
+    captchaFail: "No se pudo verificar el captcha. Probá de nuevo.",
     reviewSlow: "Esperá unos segundos antes de enviar otra reseña.",
   },
   pt: {
@@ -1088,6 +1104,8 @@ window.I18N = {
     publishOk: "Recebido! Seu anúncio ficou em revisão e não publica sozinho. Quando aprovarmos, aparece na página.",
     publishFail: "Não foi possível publicar. Confira os dados ou tente de novo.",
     publishSlow: "Aguarde alguns segundos antes de publicar de novo.",
+    captchaNeed: "Complete o captcha antes de enviar.",
+    captchaFail: "Não foi possível verificar o captcha. Tente de novo.",
     reviewSlow: "Aguarde alguns segundos antes de enviar outra avaliação.",
   },
 };
@@ -1276,13 +1294,8 @@ async function fetchListings(kind) {
   if (error) { console.warn(error); return []; }
   return data || [];
 }
-async function insertListing(row) {
-  const client = sb();
-  if (!client) throw new Error('Supabase no configurado');
-  const payload = { ...row, status: "pending" };
-  const { error } = await client.from('listings').insert(payload);
-  if (error) throw error;
-  return true;
+async function insertListing(row, captchaToken) {
+  return submitProtected("listing", row, captchaToken);
 }
 
 async function fetchReviews() {
@@ -1301,13 +1314,8 @@ async function fetchReviews() {
   return { ok: true, rows: data || [] };
 }
 
-async function insertReview(row) {
-  const client = sb();
-  if (!client) throw new Error('Supabase no configurado');
-  const payload = { ...row, status: "pending" };
-  const { error } = await client.from('reviews').insert(payload);
-  if (error) throw error;
-  return true;
+async function insertReview(row, captchaToken) {
+  return submitProtected("review", row, captchaToken);
 }
 
 function renderRealServiceCards(rows) {
@@ -1361,6 +1369,99 @@ function tooSoon(storageKey) {
 }
 function markSubmitTime(storageKey) {
   try { localStorage.setItem(storageKey, String(Date.now())); } catch (_) {}
+}
+
+function submitProtectedError(status, body) {
+  const err = new Error((body && body.error) || "submit_failed");
+  err.status = status;
+  err.body = body;
+  return err;
+}
+
+async function submitProtected(type, payload, captchaToken) {
+  const url = SITE.functionsUrl;
+  if (!url) throw new Error("functionsUrl missing");
+  const token = String(captchaToken || "").trim();
+  if (!token) {
+    throw submitProtectedError(400, { error: "captcha_required" });
+  }
+  const headers = { "Content-Type": "application/json" };
+  if (SITE.supabaseKey) {
+    headers.Authorization = "Bearer " + SITE.supabaseKey;
+    headers.apikey = SITE.supabaseKey;
+  }
+  const res = await fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ type, turnstileToken: token, payload }),
+  });
+  let body = null;
+  try { body = await res.json(); } catch (_) { body = null; }
+  if (res.status === 429) throw submitProtectedError(429, body || { error: "rate_limited" });
+  if (!res.ok || !body || !body.ok) {
+    throw submitProtectedError(res.status, body || { error: "submit_failed" });
+  }
+  return true;
+}
+
+function getCaptchaToken(form) {
+  if (!form) return "";
+  const slot = form.querySelector(".turnstile-slot");
+  const wid = slot && slot.dataset.widgetId;
+  if (wid != null && wid !== "" && window.turnstile && window.turnstile.getResponse) {
+    try {
+      const tok = window.turnstile.getResponse(wid);
+      if (tok) return tok;
+    } catch (_) {}
+  }
+  const input = form.querySelector('input[name="cf-turnstile-response"]');
+  return (input && input.value) || "";
+}
+
+function resetCaptcha(form) {
+  const slot = form && form.querySelector(".turnstile-slot");
+  const wid = slot && slot.dataset.widgetId;
+  if (wid != null && wid !== "" && window.turnstile && window.turnstile.reset) {
+    try { window.turnstile.reset(wid); } catch (_) {}
+  }
+}
+
+function alertCaptchaOrFail(err) {
+  const status = err && err.status;
+  const code = err && err.body && err.body.error;
+  if (status === 429 || code === "rate_limited") {
+    alert(t().publishSlow || "Slow");
+    return;
+  }
+  if (code === "captcha_required" || code === "captcha_failed" || status === 403) {
+    alert(t().captchaFail || t().captchaNeed || "Captcha");
+    return;
+  }
+  alert(t().publishFail || "Error");
+}
+
+function initCaptchaWidgets() {
+  const key = SITE.turnstileSiteKey;
+  if (!key || !window.turnstile || !window.turnstile.render) return;
+  document.querySelectorAll(".turnstile-slot").forEach((slot) => {
+    if (slot.dataset.widgetId) return;
+    try {
+      const id = window.turnstile.render(slot, { sitekey: key, theme: "light" });
+      slot.dataset.widgetId = String(id);
+    } catch (err) {
+      console.warn("captcha render", err);
+    }
+  });
+}
+
+function whenCaptchaReady(cb, tries) {
+  const n = tries == null ? 40 : tries;
+  if (window.turnstile && window.turnstile.render) {
+    cb();
+    return;
+  }
+  if (n <= 0) return;
+  setTimeout(function () { whenCaptchaReady(cb, n - 1); }, 250);
 }
 
 function listingContactHtml(row) {
@@ -1888,11 +1989,17 @@ document.querySelectorAll("form").forEach((form) => {
         }
         row.whatsapp = waNorm;
         row.status = "pending";
-        await insertListing(row);
+        const captchaToken = getCaptchaToken(form);
+        if (!captchaToken) {
+          alert(t().captchaNeed || "Captcha");
+          return;
+        }
+        await insertListing(row, captchaToken);
         markSubmitTime("bcl_last_listing");
         await Promise.all([renderMarket(), renderShops(), renderPublishedServices()]);
         alert(t().publishOk || "OK");
         form.reset();
+        resetCaptcha(form);
         if (kind === "pin") {
           const latEl = document.getElementById("pinLat");
           const lngEl = document.getElementById("pinLng");
@@ -1901,7 +2008,8 @@ document.querySelectorAll("form").forEach((form) => {
         }
       } catch (err) {
         console.warn(err);
-        alert(t().publishFail || "Error");
+        resetCaptcha(form);
+        alertCaptchaOrFail(err);
       }
       return;
     }
@@ -1965,7 +2073,12 @@ $("#reviewForm")?.addEventListener("submit", async (e) => {
   };
   if (!entry.name || !entry.contact || !entry.comment || !entry.stars) return;
 
-  let savedRemote = false;
+  const captchaToken = getCaptchaToken(form);
+  if (!captchaToken) {
+    alert(t().captchaNeed || "Captcha");
+    return;
+  }
+
   try {
     await insertReview({
       name: entry.name,
@@ -1975,23 +2088,29 @@ $("#reviewForm")?.addEventListener("submit", async (e) => {
       city: entry.city,
       rubro: entry.rubro || null,
       status: "pending",
-    });
-    savedRemote = true;
+    }, captchaToken);
     markSubmitTime("bcl_last_review");
+    form.reset();
+    resetCaptcha(form);
+    const star5 = form.querySelector('input[name=stars][value="5"]');
+    if (star5) star5.checked = true;
+    await renderReviews();
+    showReviewOk();
   } catch (err) {
-    console.warn("review insert fallback local", err);
-    const list = loadStoredReviews();
-    list.unshift(entry);
-    saveStoredReviews(list.slice(0, 50));
-    markSubmitTime("bcl_last_review");
+    console.warn("review insert", err);
+    resetCaptcha(form);
+    const status = err && err.status;
+    const code = err && err.body && err.body.error;
+    if (status === 429 || code === "rate_limited") {
+      alert(t().reviewSlow || t().publishSlow || "Slow");
+      return;
+    }
+    if (code === "captcha_required" || code === "captcha_failed" || status === 403) {
+      alert(t().captchaFail || t().captchaNeed || "Captcha");
+      return;
+    }
+    alert(t().publishFail || "Error");
   }
-
-  form.reset();
-  const star5 = form.querySelector('input[name=stars][value="5"]');
-  if (star5) star5.checked = true;
-  await renderReviews();
-  showReviewOk();
-  void savedRemote;
 });
 
 $("#contactForm")?.addEventListener("submit", (e) => {
@@ -2047,6 +2166,7 @@ if (servSearchEl) {
 }
 
 applyTexts();
+whenCaptchaReady(initCaptchaWidgets);
 
 (function () {
   const el = document.getElementById("map");
