@@ -140,9 +140,20 @@ footer { background: var(--navy); color: #c9d6e3; padding: 28px 0; }
 .nav { top: 0; }
 body.has-trial-banner .nav { top: 42px; }
 .btn-primary { background: var(--teal); color: #fff; }
+.btn-ask {
+  background: #fff8e7;
+  color: #0a2f8f;
+  border: 2px solid #0a2f8f;
+  font-weight: 800;
+  box-shadow: 0 4px 14px rgba(10,47,143,.18);
+}
+.btn-ask:hover { background: #0a2f8f; color: #fff; }
 .btn-secondary { background: #dcefec; color: var(--navy); }
 .btn-ghost { background: #dcefec; color: var(--navy); }
 .actions .btn-primary { box-shadow: 0 4px 14px rgba(15,118,110,.28); }
+.actions .btn-ask {
+  padding: 14px 20px; font-size: 16px; border-radius: 14px;
+}
 .search-wrap { margin: 0 0 16px; }
 .search-wrap input {
   width: 100%; max-width: 420px; font: inherit; padding: 12px 14px;
@@ -301,7 +312,7 @@ body.has-trial-banner .nav { top: 42px; }
         </div>
         <button class="lang" id="langBtn" type="button">PT</button>
         <button class="lang" id="musicBtn" type="button" data-i="musicBtn"></button>
-        <a class="btn btn-primary" href="#pedir" data-i="ctaNeed"></a>
+        <a class="btn btn-ask" href="#pedir" data-i="ctaNeed"></a>
         <a class="btn btn-ghost" href="#ofrecer" data-i="ctaOffer"></a>
       </div>
     </div>
@@ -314,7 +325,7 @@ body.has-trial-banner .nav { top: 42px; }
         <h1 data-i="heroTitle"></h1>
         <p class="lead" data-i="heroLead"></p>
         <div class="actions">
-          <a class="btn btn-primary" href="#pedir" data-i="heroNeed"></a>
+          <a class="btn btn-ask" href="#pedir" data-i="heroNeed"></a>
           <a class="btn btn-primary" href="#ofrecer" data-i="heroOffer"></a>
           <a class="btn btn-secondary btn-sm" href="#comercio" data-i="heroShop"></a>
           <a class="btn btn-secondary btn-sm" href="#publicar" data-i="heroSell"></a>
@@ -801,7 +812,7 @@ window.I18N = {
     radioTitle: "Radio",
     radioLibres: "LT12 Nacional Libres",
     radioBr: "Rádio Uruguaiana 102.1",
-    musicBtn: "Rock de fondo",
+    musicBtn: "Música indie",
     musicOn: "Rock on",
     musicOff: "Rock off",
     helpName: "Luisito",
@@ -970,7 +981,7 @@ window.I18N = {
     radioTitle: "Rádio",
     radioLibres: "LT12 Nacional Libres",
     radioBr: "Rádio Uruguaiana 102.1",
-    musicBtn: "Rock de fundo",
+    musicBtn: "Música indie",
     musicOn: "Rock on",
     musicOff: "Rock off",
     helpName: "Luisito",
@@ -2001,192 +2012,48 @@ applyTexts();
   });
 })();
 
-// Rock viejo generado en el navegador (sin samples ni copyright).
-// Loop original: batería + power chords. No usa temas comerciales.
+// Tema indie/classic rock libre (Mixkit Free License) — archivo local, loop largo.
 (function () {
-  let ctx, master, timer, on = false;
-  const BPM = 96;
-  const BEAT = 60 / BPM;
+  let audio = null;
+  let on = false;
 
-  function ensure() {
-    if (ctx) return;
-    ctx = new (window.AudioContext || window.webkitAudioContext)();
-    master = ctx.createGain();
-    master.gain.value = 0.22;
-    const comp = ctx.createDynamicsCompressor();
-    comp.threshold.value = -18;
-    comp.knee.value = 12;
-    comp.ratio.value = 4;
-    comp.attack.value = 0.01;
-    comp.release.value = 0.2;
-    master.connect(comp);
-    comp.connect(ctx.destination);
+  function getAudio() {
+    if (audio) return audio;
+    audio = new Audio("audio/indie-rock-bg.mp3");
+    audio.loop = true;
+    audio.preload = "metadata";
+    audio.volume = 0.45;
+    return audio;
   }
 
-  function noiseBuffer(dur) {
-    const n = Math.floor(ctx.sampleRate * dur);
-    const buf = ctx.createBuffer(1, n, ctx.sampleRate);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
-    return buf;
-  }
-
-  function kick(t) {
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.type = "sine";
-    o.frequency.setValueAtTime(140, t);
-    o.frequency.exponentialRampToValueAtTime(42, t + 0.18);
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.9, t + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.28);
-    o.connect(g);
-    g.connect(master);
-    o.start(t);
-    o.stop(t + 0.3);
-  }
-
-  function snare(t) {
-    const src = ctx.createBufferSource();
-    src.buffer = noiseBuffer(0.25);
-    const bp = ctx.createBiquadFilter();
-    bp.type = "bandpass";
-    bp.frequency.value = 1800;
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.45, t + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
-    const o = ctx.createOscillator();
-    const og = ctx.createGain();
-    o.type = "triangle";
-    o.frequency.setValueAtTime(180, t);
-    og.gain.setValueAtTime(0.0001, t);
-    og.gain.exponentialRampToValueAtTime(0.25, t + 0.005);
-    og.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
-    src.connect(bp);
-    bp.connect(g);
-    g.connect(master);
-    o.connect(og);
-    og.connect(master);
-    src.start(t);
-    src.stop(t + 0.25);
-    o.start(t);
-    o.stop(t + 0.15);
-  }
-
-  function hat(t, open) {
-    const src = ctx.createBufferSource();
-    src.buffer = noiseBuffer(open ? 0.2 : 0.05);
-    const hp = ctx.createBiquadFilter();
-    hp.type = "highpass";
-    hp.frequency.value = 7000;
-    const g = ctx.createGain();
-    const peak = open ? 0.12 : 0.08;
-    const dur = open ? 0.16 : 0.04;
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(peak, t + 0.005);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    src.connect(hp);
-    hp.connect(g);
-    g.connect(master);
-    src.start(t);
-    src.stop(t + (open ? 0.22 : 0.06));
-  }
-
-  function powerChord(t, root, dur) {
-    // root + fifth + octave, saw -> mild distortion via waveshaper-ish overdrive gain
-    const freqs = [root, root * 1.5, root * 2];
-    const shaper = ctx.createWaveShaper();
-    const curve = new Float32Array(256);
-    for (let i = 0; i < 256; i++) {
-      const x = (i / 128) - 1;
-      curve[i] = Math.tanh(2.4 * x);
-    }
-    shaper.curve = curve;
-    const filt = ctx.createBiquadFilter();
-    filt.type = "lowpass";
-    filt.frequency.setValueAtTime(2200, t);
-    filt.frequency.linearRampToValueAtTime(1400, t + dur);
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.22, t + 0.03);
-    g.gain.setValueAtTime(0.18, t + dur * 0.7);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    freqs.forEach((f, i) => {
-      const o = ctx.createOscillator();
-      o.type = i === 0 ? "sawtooth" : "square";
-      o.frequency.setValueAtTime(f, t);
-      o.detune.setValueAtTime(i === 1 ? -6 : i === 2 ? 5 : 0, t);
-      o.connect(shaper);
-      o.start(t);
-      o.stop(t + dur + 0.02);
-    });
-    shaper.connect(filt);
-    filt.connect(g);
-    g.connect(master);
-  }
-
-  // Classic minor rock vamp (original progression, not a cover)
-  const CHORDS = [
-    82.41,  // E2
-    98.00,  // G2
-    73.42,  // D2
-    65.41,  // C2
-  ];
-
-  function bar(t0) {
-    for (let i = 0; i < 8; i++) {
-      const t = t0 + i * BEAT * 0.5; // 8th notes
-      hat(t, i === 3 || i === 7);
-      if (i % 2 === 0) kick(t);
-      if (i === 2 || i === 6) snare(t);
-    }
-    // half-bar chords x2
-    const chordDur = BEAT * 2;
-    const c = CHORDS[Math.floor((t0 * 10) % 4)] || CHORDS[0];
-  }
-
-  let barIndex = 0;
-  function loop() {
-    const t0 = ctx.currentTime + 0.05;
-    // 2 bars per interval
-    for (let b = 0; b < 2; b++) {
-      const bt = t0 + b * BEAT * 4;
-      const root = CHORDS[(barIndex + b) % CHORDS.length];
-      powerChord(bt, root, BEAT * 3.6);
-      for (let i = 0; i < 8; i++) {
-        const t = bt + i * BEAT * 0.5;
-        hat(t, i === 3 || i === 7);
-        if (i === 0 || i === 4) kick(t);
-        if (i === 2 || i === 6) snare(t);
-        if (i === 4) kick(t + BEAT * 0.25); // rock backbeat feel
-      }
-    }
-    barIndex = (barIndex + 2) % CHORDS.length;
-  }
-
-  function start() {
-    ensure();
-    if (ctx.state === "suspended") ctx.resume();
-    barIndex = 0;
-    loop();
-    timer = setInterval(loop, BEAT * 8 * 1000);
-    on = true;
+  function label(onState) {
     const btn = document.getElementById("musicBtn");
-    if (btn && window.I18N) {
-      const dict = window.I18N[document.documentElement.lang] || window.I18N.es;
-      btn.textContent = dict.musicOn || "Rock on";
+    if (!btn || !window.I18N) return;
+    const dict = window.I18N[document.documentElement.lang] || window.I18N.es;
+    btn.textContent = onState ? (dict.musicOn || "Rock on") : (dict.musicOff || "Rock off");
+  }
+
+  async function start() {
+    const a = getAudio();
+    try {
+      await a.play();
+      on = true;
+      label(true);
+    } catch (err) {
+      console.warn("music play", err);
+      alert((document.documentElement.lang === "pt")
+        ? "Toque de novo para ativar o áudio."
+        : "Tocá de nuevo para activar el audio.");
     }
   }
 
   function stop() {
-    clearInterval(timer);
-    on = false;
-    const btn = document.getElementById("musicBtn");
-    if (btn && window.I18N) {
-      const dict = window.I18N[document.documentElement.lang] || window.I18N.es;
-      btn.textContent = dict.musicOff || "Rock off";
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
     }
+    on = false;
+    label(false);
   }
 
   document.getElementById("musicBtn")?.addEventListener("click", () => {
