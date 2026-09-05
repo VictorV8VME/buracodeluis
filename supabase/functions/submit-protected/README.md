@@ -1,6 +1,6 @@
 # Edge Function: `submit-protected`
 
-Defensive submit path for listings, reviews, and egress **gate**: Cloudflare Turnstile verification + IP (and optional WhatsApp) rate limit (8 / 10 min) + insert as `pending` via service role (listing/review only).
+Defensive submit path for listings, reviews, and egress **gate**: Cloudflare Turnstile verification + IP (and optional WhatsApp) rate limit (5 / hour) + insert as `pending` via service role (listing/review only).
 
 **Parent / Victor deploys — do not push or deploy from the coding agent unless asked.**
 

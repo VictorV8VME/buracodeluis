@@ -4,7 +4,7 @@
  * Defensive only. Env: TURNSTILE_SECRET_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY.
  * Never returns raw DB error messages to the client.
  */
-import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
 const ALLOWED_ORIGINS = new Set([
   "https://buracodeluis.vercel.app",
@@ -86,8 +86,8 @@ const REVIEW_COLS = new Set([
   "listing_id",
 ]);
 
-const RATE_MAX = 8;
-const RATE_WINDOW_MS = 10 * 60 * 1000;
+const RATE_MAX = 5;
+const RATE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_BUCKET = "submit";
 
 function pickCols(
@@ -132,7 +132,7 @@ async function verifyTurnstile(
   return Boolean(data?.success);
 }
 
-/** Floor window start for the current 10-minute bucket (UTC). */
+/** Floor window start for the current hourly bucket (UTC). */
 function windowStart(now = Date.now()): string {
   const ms = Math.floor(now / RATE_WINDOW_MS) * RATE_WINDOW_MS;
   return new Date(ms).toISOString();
@@ -143,7 +143,7 @@ function windowStart(now = Date.now()): string {
  * Returns generic error codes only — never DB messages.
  */
 async function checkAndBumpRate(
-  admin: SupabaseClient,
+  admin: ReturnType<typeof createClient>,
   key: string,
 ): Promise<{ ok: true } | { ok: false; status: number; error: string }> {
   const win = windowStart();
