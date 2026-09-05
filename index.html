@@ -19,7 +19,11 @@
   --white: #fff;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  /* banner (~42px) + nav (~66px) so hash targets aren't hidden under sticky chrome */
+  scroll-padding-top: 120px;
+}
 body {
   margin: 0;
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
@@ -32,11 +36,18 @@ body {
   background: rgba(255,255,255,.94);
   border-bottom: 1px solid var(--line);
 }
-.nav-in { min-height: 66px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.brand { font-weight: 800; color: var(--navy); text-decoration: none; font-size: 20px; }
+.nav-in {
+  min-height: 66px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  flex-wrap: nowrap;
+}
+.brand { font-weight: 800; color: var(--navy); text-decoration: none; font-size: 20px; white-space: nowrap; flex-shrink: 0; }
 .brand span { color: var(--teal); }
-.nav-links { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
-.nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; }
+.nav-links {
+  display: flex; gap: 10px; align-items: center; flex-wrap: nowrap;
+  justify-content: flex-end; min-width: 0;
+}
+.nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; white-space: nowrap; }
+section[id], .form[id], h2 { scroll-margin-top: 120px; }
 .lang { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 10px; cursor: pointer; font-weight: 700; }
 .btn, button.btn {
   background: var(--teal); color: #fff; border: 0; border-radius: 12px;
@@ -169,11 +180,22 @@ body.has-trial-banner .nav { top: 42px; }
   display: inline-block; font-size: 11px; font-weight: 800; color: #92400e;
   background: #fef3c7; border-radius: 999px; padding: 2px 8px; margin-bottom: 6px;
 }
+/* Collapse text nav before it wraps into a tall sticky header */
+@media (max-width: 1100px) {
+  .nav-links a.nav-text { display: none; }
+  .nav-links { gap: 8px; }
+  .nav-links .btn { padding: 9px 12px; font-size: 13px; }
+  html { scroll-padding-top: 110px; }
+  section[id], .form[id], h2 { scroll-margin-top: 110px; }
+}
 @media (max-width: 820px) {
   .hero-grid, .split, .prices, .start-grid { grid-template-columns: 1fr; }
   .nav-links a:not(.btn) { display: none; }
+  .nav-links .btn-ghost { display: none; } /* keep one primary CTA on small screens */
   .trial-banner { font-size: 13px; padding: 9px 10px; }
   body.has-trial-banner .nav { top: 40px; }
+  html { scroll-padding-top: 100px; }
+  section[id], .form[id], h2 { scroll-margin-top: 100px; }
 }
 
 .fx-bar {
@@ -262,16 +284,16 @@ body.has-trial-banner .nav { top: 42px; }
     <div class="wrap nav-in">
       <a class="brand" href="#inicio">Bura<span>codeLuis</span></a>
       <div class="nav-links">
-        <a href="#servicios" data-i="navServ"></a>
-        <a href="#servicios-publicados" data-i="pubServTitle"></a>
-        <a href="#venta" data-i="navMarket"></a>
-        <a href="#usados" data-i="navUsed"></a>
-        <a href="#remates" data-i="navAuction"></a>
-        <a href="#start" data-i="startTitle"></a>
-        <a href="#mapa" data-i="mapTitle"></a>
-        <a href="#comercios" data-i="navShops"></a>
-        <a href="#comentarios" data-i="reviewsTitle"></a>
-        <a href="#reglas" data-i="rulesNav"></a>
+        <a class="nav-text" href="#servicios" data-i="navServ"></a>
+        <a class="nav-text" href="#servicios-publicados" data-i="pubServTitle"></a>
+        <a class="nav-text" href="#venta" data-i="navMarket"></a>
+        <a class="nav-text" href="#usados" data-i="navUsed"></a>
+        <a class="nav-text" href="#remates" data-i="navAuction"></a>
+        <a class="nav-text" href="#start" data-i="startTitle"></a>
+        <a class="nav-text" href="#mapa" data-i="mapTitle"></a>
+        <a class="nav-text" href="#comercios" data-i="navShops"></a>
+        <a class="nav-text" href="#comentarios" data-i="reviewsTitle"></a>
+        <a class="nav-text" href="#reglas" data-i="rulesNav"></a>
         <div class="fx-bar" id="fxBar" title="Moneda / Moeda" role="group" aria-label="Currency">
           <button type="button" data-fx="ars">ARS</button>
           <button type="button" data-fx="brl">BRL</button>
@@ -779,9 +801,9 @@ window.I18N = {
     radioTitle: "Radio",
     radioLibres: "LT12 Nacional Libres",
     radioBr: "Rádio Uruguaiana 102.1",
-    musicBtn: "Música de fondo",
-    musicOn: "Música on",
-    musicOff: "Música off",
+    musicBtn: "Rock de fondo",
+    musicOn: "Rock on",
+    musicOff: "Rock off",
     helpName: "Luisito",
     helpHi: "Hola, soy Luisito. Te ayudo a usar la página.",
     help1: "1. Elegí qué querés: pedir, ofrecer, vender o rematar.",
@@ -948,9 +970,9 @@ window.I18N = {
     radioTitle: "Rádio",
     radioLibres: "LT12 Nacional Libres",
     radioBr: "Rádio Uruguaiana 102.1",
-    musicBtn: "Música de fundo",
-    musicOn: "Música on",
-    musicOff: "Música off",
+    musicBtn: "Rock de fundo",
+    musicOn: "Rock on",
+    musicOff: "Rock off",
     helpName: "Luisito",
     helpHi: "Olá, eu sou o Luisito. Te ajudo a usar a página.",
     help1: "1. Escolha: pedir, oferecer, vender ou leiloar.",
@@ -1979,48 +2001,192 @@ applyTexts();
   });
 })();
 
-// Música generada en el navegador (sin archivos pagos ni copyright).
+// Rock viejo generado en el navegador (sin samples ni copyright).
+// Loop original: batería + power chords. No usa temas comerciales.
 (function () {
-  let ctx, timer, on = false;
+  let ctx, master, timer, on = false;
+  const BPM = 96;
+  const BEAT = 60 / BPM;
 
-  function beep(time, freq, dur, type, gainVal) {
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.type = type;
-    o.frequency.setValueAtTime(freq, time);
-    g.gain.setValueAtTime(0.0001, time);
-    g.gain.exponentialRampToValueAtTime(gainVal, time + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001, time + dur);
-    o.connect(g);
-    g.connect(ctx.destination);
-    o.start(time);
-    o.stop(time + dur + 0.02);
+  function ensure() {
+    if (ctx) return;
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    master = ctx.createGain();
+    master.gain.value = 0.22;
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -18;
+    comp.knee.value = 12;
+    comp.ratio.value = 4;
+    comp.attack.value = 0.01;
+    comp.release.value = 0.2;
+    master.connect(comp);
+    comp.connect(ctx.destination);
   }
 
+  function noiseBuffer(dur) {
+    const n = Math.floor(ctx.sampleRate * dur);
+    const buf = ctx.createBuffer(1, n, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+    return buf;
+  }
+
+  function kick(t) {
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = "sine";
+    o.frequency.setValueAtTime(140, t);
+    o.frequency.exponentialRampToValueAtTime(42, t + 0.18);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.9, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.28);
+    o.connect(g);
+    g.connect(master);
+    o.start(t);
+    o.stop(t + 0.3);
+  }
+
+  function snare(t) {
+    const src = ctx.createBufferSource();
+    src.buffer = noiseBuffer(0.25);
+    const bp = ctx.createBiquadFilter();
+    bp.type = "bandpass";
+    bp.frequency.value = 1800;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.45, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+    const o = ctx.createOscillator();
+    const og = ctx.createGain();
+    o.type = "triangle";
+    o.frequency.setValueAtTime(180, t);
+    og.gain.setValueAtTime(0.0001, t);
+    og.gain.exponentialRampToValueAtTime(0.25, t + 0.005);
+    og.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+    src.connect(bp);
+    bp.connect(g);
+    g.connect(master);
+    o.connect(og);
+    og.connect(master);
+    src.start(t);
+    src.stop(t + 0.25);
+    o.start(t);
+    o.stop(t + 0.15);
+  }
+
+  function hat(t, open) {
+    const src = ctx.createBufferSource();
+    src.buffer = noiseBuffer(open ? 0.2 : 0.05);
+    const hp = ctx.createBiquadFilter();
+    hp.type = "highpass";
+    hp.frequency.value = 7000;
+    const g = ctx.createGain();
+    const peak = open ? 0.12 : 0.08;
+    const dur = open ? 0.16 : 0.04;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(peak, t + 0.005);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(hp);
+    hp.connect(g);
+    g.connect(master);
+    src.start(t);
+    src.stop(t + (open ? 0.22 : 0.06));
+  }
+
+  function powerChord(t, root, dur) {
+    // root + fifth + octave, saw -> mild distortion via waveshaper-ish overdrive gain
+    const freqs = [root, root * 1.5, root * 2];
+    const shaper = ctx.createWaveShaper();
+    const curve = new Float32Array(256);
+    for (let i = 0; i < 256; i++) {
+      const x = (i / 128) - 1;
+      curve[i] = Math.tanh(2.4 * x);
+    }
+    shaper.curve = curve;
+    const filt = ctx.createBiquadFilter();
+    filt.type = "lowpass";
+    filt.frequency.setValueAtTime(2200, t);
+    filt.frequency.linearRampToValueAtTime(1400, t + dur);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.22, t + 0.03);
+    g.gain.setValueAtTime(0.18, t + dur * 0.7);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    freqs.forEach((f, i) => {
+      const o = ctx.createOscillator();
+      o.type = i === 0 ? "sawtooth" : "square";
+      o.frequency.setValueAtTime(f, t);
+      o.detune.setValueAtTime(i === 1 ? -6 : i === 2 ? 5 : 0, t);
+      o.connect(shaper);
+      o.start(t);
+      o.stop(t + dur + 0.02);
+    });
+    shaper.connect(filt);
+    filt.connect(g);
+    g.connect(master);
+  }
+
+  // Classic minor rock vamp (original progression, not a cover)
+  const CHORDS = [
+    82.41,  // E2
+    98.00,  // G2
+    73.42,  // D2
+    65.41,  // C2
+  ];
+
+  function bar(t0) {
+    for (let i = 0; i < 8; i++) {
+      const t = t0 + i * BEAT * 0.5; // 8th notes
+      hat(t, i === 3 || i === 7);
+      if (i % 2 === 0) kick(t);
+      if (i === 2 || i === 6) snare(t);
+    }
+    // half-bar chords x2
+    const chordDur = BEAT * 2;
+    const c = CHORDS[Math.floor((t0 * 10) % 4)] || CHORDS[0];
+  }
+
+  let barIndex = 0;
   function loop() {
     const t0 = ctx.currentTime + 0.05;
-    const notes = [523.25, 659.25, 783.99, 659.25, 880, 783.99, 659.25, 523.25];
-    notes.forEach((n, i) => {
-      beep(t0 + i * 0.22, n, 0.2, "triangle", 0.05);
-      if (i % 2 === 0) beep(t0 + i * 0.22, n / 2, 0.2, "sine", 0.03);
-    });
+    // 2 bars per interval
+    for (let b = 0; b < 2; b++) {
+      const bt = t0 + b * BEAT * 4;
+      const root = CHORDS[(barIndex + b) % CHORDS.length];
+      powerChord(bt, root, BEAT * 3.6);
+      for (let i = 0; i < 8; i++) {
+        const t = bt + i * BEAT * 0.5;
+        hat(t, i === 3 || i === 7);
+        if (i === 0 || i === 4) kick(t);
+        if (i === 2 || i === 6) snare(t);
+        if (i === 4) kick(t + BEAT * 0.25); // rock backbeat feel
+      }
+    }
+    barIndex = (barIndex + 2) % CHORDS.length;
   }
 
   function start() {
-    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    ensure();
     if (ctx.state === "suspended") ctx.resume();
+    barIndex = 0;
     loop();
-    timer = setInterval(loop, 1800);
+    timer = setInterval(loop, BEAT * 8 * 1000);
     on = true;
     const btn = document.getElementById("musicBtn");
-    if (btn && window.I18N) btn.textContent = (window.I18N[document.documentElement.lang] || window.I18N.es).musicOn;
+    if (btn && window.I18N) {
+      const dict = window.I18N[document.documentElement.lang] || window.I18N.es;
+      btn.textContent = dict.musicOn || "Rock on";
+    }
   }
 
   function stop() {
     clearInterval(timer);
     on = false;
     const btn = document.getElementById("musicBtn");
-    if (btn && window.I18N) btn.textContent = (window.I18N[document.documentElement.lang] || window.I18N.es).musicOff;
+    if (btn && window.I18N) {
+      const dict = window.I18N[document.documentElement.lang] || window.I18N.es;
+      btn.textContent = dict.musicOff || "Rock off";
+    }
   }
 
   document.getElementById("musicBtn")?.addEventListener("click", () => {
