@@ -209,16 +209,7 @@ body.has-beta-banner .nav { top: 44px; }
   pointer-events: none;
 }
 .start-card.muted:hover { border-color: var(--line); }
-.soon-banner {
-  background: #fff8e7; border: 1px solid #f0d58a; border-radius: 14px;
-  padding: 16px 18px; margin: 0 0 18px;
-}
-.soon-banner strong { display: block; color: #92400e; margin-bottom: 4px; }
-.soon-banner p { margin: 0; color: var(--muted); font-size: 14px; }
-.nav-soon {
-  color: #9aa6b2 !important; font-size: 13px; font-weight: 700;
-  cursor: default; pointer-events: none; white-space: nowrap;
-}
+
 /* Collapse text nav before it wraps into a tall sticky header */
 @media (max-width: 1100px) {
   .nav-links a.nav-text { display: none; }
@@ -399,7 +390,6 @@ form .actions {
         <a class="nav-text" href="#start" data-i="startTitle"></a>
         <a class="nav-text" href="#comentarios" data-i="reviewsTitle"></a>
         <a class="nav-text" href="#reglas" data-i="rulesNav"></a>
-        <span class="nav-text nav-soon" data-i="navSoon" aria-hidden="true"></span>
         <div class="nav-fx-wrap">
           <div class="fx-bar" id="fxBar" title="Moneda / Moeda" role="group" aria-label="Currency">
             <button type="button" data-fx="ars">ARS</button>
@@ -446,10 +436,6 @@ form .actions {
       <div class="start-grid">
         <a class="start-card" href="#pedir"><strong data-i="startNeed"></strong><span data-i="startNeedD"></span></a>
         <a class="start-card" href="#ofrecer"><strong data-i="startOffer"></strong><span data-i="startOfferD"></span></a>
-      </div>
-      <div class="soon-banner" style="margin-top:16px;max-width:640px">
-        <strong data-i="soonTitle"></strong>
-        <p data-i="soonLead"></p>
       </div>
       <div class="radio-bar">
         <strong data-i="radioTitle"></strong>
@@ -839,15 +825,12 @@ window.I18N = {
     navHow: "Cómo funciona",
     navShops: "Comercios",
     navJoin: "Sumate",
-    navSoon: "Próximamente: usados / remates",
-    soonTitle: "Próximamente — otra página",
-    soonLead: "Usados y remates van en otra web. Acá nos enfocamos en oficios y servicios.",
     ctaNeed: "Solicitar presupuesto",
     ctaOffer: "Publicar mi servicio",
     eyebrow: "Oficios y servicios · Libres–Uruguaiana",
     heroTitle: "El clasificado de oficios de confianza para Libres y Uruguaiana. Sin comisiones.",
     heroLead:
-      "Pedí un presupuesto o publicá tu oficio. Beta pública: publicar es gratis mientras dure. Sin comisiones. Usados y remates van en otra página.",
+      "Pedí un presupuesto o publicá tu oficio. Beta pública: publicar es gratis mientras dure. Sin comisiones.",
     heroNeed: "Solicitar presupuesto",
     heroOffer: "Publicar mi servicio",
     heroShop: "Anunciar mi comercio",
@@ -890,7 +873,7 @@ window.I18N = {
     offers: "Qué ofertas querés mostrar",
     send: "Enviar por WhatsApp",
     sendOffer: "Enviar",
-    footer: "Beta pública · Sin comisión. Oficios y servicios entre Libres y Uruguaiana. Usados y remates, en otra página.",
+    footer: "Beta pública · Sin comisión. Oficios y servicios entre Libres y Uruguaiana.",
     marketTitle: "Venta de productos",
     marketLead: "Como un Mercado Libre local: herrería, crochet, plantas, artesanías y lo que produzcas.",
     usedTitle: "Usados",
@@ -1024,15 +1007,12 @@ window.I18N = {
     navHow: "Como funciona",
     navShops: "Comércios",
     navJoin: "Entrar",
-    navSoon: "Em breve: usados / leilões",
-    soonTitle: "Em breve — outra página",
-    soonLead: "Usados e leilões ficam em outro site. Aqui focamos em ofícios e serviços.",
     ctaNeed: "Solicitar orçamento",
     ctaOffer: "Publicar meu serviço",
     eyebrow: "Ofícios e serviços · Libres–Uruguaiana",
     heroTitle: "O classificado de ofícios de confiança para Libres e Uruguaiana. Sem comissões.",
     heroLead:
-      "Peça um orçamento ou publique seu ofício. Beta pública: publicar é grátis enquanto durar. Sem comissões. Usados e leilões ficam em outra página.",
+      "Peça um orçamento ou publique seu ofício. Beta pública: publicar é grátis enquanto durar. Sem comissões.",
     heroNeed: "Solicitar orçamento",
     heroOffer: "Publicar meu serviço",
     heroShop: "Anunciar meu comércio",
@@ -1075,7 +1055,7 @@ window.I18N = {
     offers: "Quais ofertas quer mostrar",
     send: "Enviar pelo WhatsApp",
     sendOffer: "Enviar",
-    footer: "Beta pública · Sem comissão. Ofícios e serviços entre Libres e Uruguaiana. Usados e leilões, em outra página.",
+    footer: "Beta pública · Sem comissão. Ofícios e serviços entre Libres e Uruguaiana.",
     marketTitle: "Venda de produtos",
     marketLead: "Como um Mercado Livre local: serralheria, crochê, plantas, artesanato e o que você produz.",
     usedTitle: "Usados",
