@@ -7,7 +7,7 @@
        real shop geocoding, email delivery for contact form.
        Backend: listings + reviews via Supabase. -->
   <title>Buraco del Luis | Oficios y servicios en Libres y Uruguaiana</title>
-  <meta name="description" content="Clasificado de oficios de confianza para Paso de los Libres y Uruguaiana. Sin comisiones. 3 meses gratis." />
+  <meta name="description" content="Clasificado de oficios de confianza para Paso de los Libres y Uruguaiana. Beta pública · sin comisiones · publicar gratis." />
   <style>
 :root {
   --navy: #12263a;
@@ -21,8 +21,8 @@
 * { box-sizing: border-box; }
 html {
   scroll-behavior: smooth;
-  /* banner (~42px) + nav (~66px) so hash targets aren't hidden under sticky chrome */
-  scroll-padding-top: 120px;
+  /* beta banner (~44px) + nav (~66px) so hash targets aren't hidden under sticky chrome */
+  scroll-padding-top: 130px;
 }
 body {
   margin: 0;
@@ -38,16 +38,19 @@ body {
 }
 .nav-in {
   min-height: 66px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap; padding: 8px 0;
 }
 .brand { font-weight: 800; color: var(--navy); text-decoration: none; font-size: 20px; white-space: nowrap; flex-shrink: 0; }
 .brand span { color: var(--teal); }
 .nav-links {
-  display: flex; gap: 10px; align-items: center; flex-wrap: nowrap;
-  justify-content: flex-end; min-width: 0;
+  display: flex; gap: 10px 12px; align-items: center; flex-wrap: wrap;
+  justify-content: flex-end; min-width: 0; row-gap: 8px;
 }
 .nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; white-space: nowrap; }
-section[id], .form[id], h2 { scroll-margin-top: 120px; }
+.nav-links .btn, .nav-links .lang, .nav-links .fx-bar {
+  position: relative; z-index: 1; flex: 0 0 auto;
+}
+section[id], .form[id], h2 { scroll-margin-top: 130px; }
 .lang { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 10px; cursor: pointer; font-weight: 700; }
 .btn, button.btn {
   background: var(--teal); color: #fff; border: 0; border-radius: 12px;
@@ -60,7 +63,14 @@ section[id], .form[id], h2 { scroll-margin-top: 120px; }
 .eyebrow { color: var(--teal); font-weight: 800; text-transform: uppercase; letter-spacing: .04em; font-size: 12px; }
 h1 { font-size: clamp(30px, 5vw, 48px); line-height: 1.12; margin: 8px 0 14px; }
 .lead { color: var(--muted); font-size: 17px; }
-.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+.actions {
+  display: flex; gap: 12px; flex-wrap: wrap; margin-top: 22px;
+  align-items: center; position: relative;
+}
+.actions > .btn {
+  position: relative; z-index: 1; flex: 0 1 auto;
+  white-space: normal; text-align: center; max-width: 100%;
+}
 .stats { background: var(--navy); color: #fff; border-radius: 20px; padding: 24px 22px; }
 .stats b { display: block; color: #5eead4; font-size: clamp(26px, 4vw, 34px); line-height: 1.15; }
 .stats .stats-main { margin: 8px 0 16px; color: #fff; font-size: 16px; font-weight: 700; line-height: 1.35; }
@@ -125,20 +135,21 @@ footer { background: var(--navy); color: #c9d6e3; padding: 28px 0; }
 .clippy-face { font-size: 28px; }
 .clippy-name { font-weight: 800; margin: 0 !important; }
 
-.trial-banner {
+.beta-banner {
   position: sticky; top: 0; z-index: 35;
-  background: linear-gradient(90deg, #c2410c, #ea580c 40%, #0f766e);
+  background: linear-gradient(90deg, #0f766e, #0d9488 45%, #12263a);
   color: #fff; text-align: center;
   padding: 10px 14px; font-weight: 800; font-size: 15px;
+  line-height: 1.35;
   box-shadow: 0 2px 10px rgba(0,0,0,.12);
 }
-.trial-banner a {
+.beta-banner a {
   color: #fff; text-decoration: none;
   border-bottom: 2px solid rgba(255,255,255,.55);
 }
-.trial-banner a:hover { border-bottom-color: #fff; }
+.beta-banner a:hover { border-bottom-color: #fff; }
 .nav { top: 0; }
-body.has-trial-banner .nav { top: 42px; }
+body.has-beta-banner .nav { top: 44px; }
 .btn-primary { background: var(--teal); color: #fff; }
 .btn-ask {
   background: #fff8e7;
@@ -213,18 +224,20 @@ body.has-trial-banner .nav { top: 42px; }
   .nav-links a.nav-text { display: none; }
   .nav-links { gap: 8px; }
   .nav-links .btn { padding: 9px 12px; font-size: 13px; }
-  html { scroll-padding-top: 110px; }
-  section[id], .form[id], h2 { scroll-margin-top: 110px; }
+  html { scroll-padding-top: 120px; }
+  section[id], .form[id], h2 { scroll-margin-top: 120px; }
 }
 @media (max-width: 820px) {
   .hero-grid, .split, .prices, .start-grid { grid-template-columns: 1fr; }
   .nav-links a:not(.btn) { display: none; }
   .nav-links .btn-ghost { display: none; } /* keep one primary CTA on small screens */
   .nav-fx-wrap .fx-tip { display: none; } /* full fxNote stays under prices */
-  .trial-banner { font-size: 13px; padding: 9px 10px; }
-  body.has-trial-banner .nav { top: 40px; }
-  html { scroll-padding-top: 100px; }
-  section[id], .form[id], h2 { scroll-margin-top: 100px; }
+  .beta-banner { font-size: 13px; padding: 9px 10px; }
+  body.has-beta-banner .nav { top: 42px; }
+  html { scroll-padding-top: 110px; }
+  section[id], .form[id], h2 { scroll-margin-top: 110px; }
+  .actions { gap: 12px; }
+  .actions > .btn { width: auto; min-width: min(100%, 220px); }
 }
 
 .fx-bar {
@@ -343,12 +356,39 @@ body.has-trial-banner .nav { top: 42px; }
 .empty-state { color: var(--muted); font-size: 15px; padding: 12px 0; }
 .kind-tag-servicio { color: var(--teal); }
 
+.featured-rubros .card {
+  position: relative; z-index: 0;
+  display: flex; flex-direction: column; gap: 4px;
+}
+form > .btn[type="submit"],
+form .actions + .btn[type="submit"],
+.form > form > .btn {
+  justify-self: start;
+  width: auto;
+  max-width: 100%;
+  margin-top: 4px;
+}
+form .actions {
+  margin-top: 0;
+  gap: 10px;
+}
+#toggleAllRubros {
+  display: inline-flex;
+  position: relative;
+  z-index: 1;
+  margin-top: 4px;
+}
+.hero .lead, .hero .actions, .hero .trust-inline {
+  max-width: 560px;
+}
+
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
-<body class="has-trial-banner">
-  <div class="trial-banner" role="banner">
-    <a href="#ofrecer" data-i="trialBanner"></a>
+<body class="has-beta-banner">
+  <div class="beta-banner" role="banner">
+    <a href="#ofrecer" data-i="betaBanner"></a>
   </div>
   <header class="nav">
     <div class="wrap nav-in">
@@ -465,9 +505,9 @@ body.has-trial-banner .nav { top: 42px; }
       <h2 data-i="priceTitle"></h2>
       <p class="fx-note" data-i="fxNote"></p>
       <div class="prices">
-        <div class="price"><strong>Clientes</strong><p data-i="priceClient"></p></div>
-        <div class="price"><strong>Proveedores</strong><p data-i="priceProv"></p></div>
-        <div class="price"><strong>Comercios</strong><p data-i="priceShop"></p></div>
+        <div class="price"><strong data-i="priceClientLabel"></strong><p data-i="priceClient"></p></div>
+        <div class="price"><strong data-i="priceProvLabel"></strong><p data-i="priceProv"></p></div>
+        <div class="price"><strong data-i="priceShopLabel"></strong><p data-i="priceShop"></p></div>
       </div>
     </div>
   </section>
@@ -776,8 +816,7 @@ window.SITE = {
   whatsappBR: "555591488778",
   // Optional: set to enable mailto on contact form (else UI confirmation only; no PII in localStorage)
   contactEmail: "",
-  priceAfterTrial: "ARS 1.000",
-  trialMonths: 3,
+  beta: true,
   map: { lat: -29.7136, lng: -57.0894, zoom: 14 },
   supabaseUrl: "https://kslhlktxlgtgoquhjhnz.supabase.co",
   supabaseKey: "sb_publishable_fV1Dv_25YI2BUwnT9AB0-w_aPtvpLUT",
@@ -808,14 +847,14 @@ window.I18N = {
     eyebrow: "Oficios y servicios · Libres–Uruguaiana",
     heroTitle: "El clasificado de oficios de confianza para Libres y Uruguaiana. Sin comisiones.",
     heroLead:
-      "Pedí un presupuesto o publicá tu oficio. 3 meses gratis. Sin comisiones. Usados y remates van en otra página.",
+      "Pedí un presupuesto o publicá tu oficio. Beta pública: publicar es gratis mientras dure. Sin comisiones. Usados y remates van en otra página.",
     heroNeed: "Solicitar presupuesto",
     heroOffer: "Publicar mi servicio",
     heroShop: "Anunciar mi comercio",
-    stat1n: "3 meses GRATIS",
-    stat1: "Publicá tu servicio GRATIS por 3 meses. Sin comisiones.",
-    stat2n: "Desde el 4º mes:",
-    stat2: "ARS 1.000 por mes para mantener tu publicación.",
+    stat1n: "Beta pública",
+    stat1: "Publicá tu oficio gratis mientras dure la beta. Sin comisiones.",
+    stat2n: "Libres y Uruguaiana",
+    stat2: "Sin fecha de cobro. Publicar es gratis en la beta.",
     stat3n: "",
     stat3: "",
     servTitle: "Rubros",
@@ -824,20 +863,23 @@ window.I18N = {
     steps: [
       ["1", "Pedí o publicá", "Solicitá un presupuesto o publicá tu oficio con el formulario de la página."],
       ["2", "Completás tus datos", "Rubro, zona y contacto. Tu aviso queda en revisión."],
-      ["3", "Publicás gratis 3 meses", "Al aprobarse, tu servicio queda visible. Después, ARS 1.000/mes."],
+      ["3", "Se publica gratis (beta)", "Al aprobarse, tu servicio queda visible. En la beta no hay cobro."],
       ["4", "Coordinás y cobrás vos", "Presupuesto y pago directo. Sin comisión de la página."],
     ],
-    priceTitle: "Precios claros",
-    priceClient: "Clientes: siempre gratis.",
-    priceProv: "Proveedores: gratis 3 meses. Sin comisiones. Desde el 4º mes, ARS 1.000/mes para mantener tu publicación.",
-    priceShop: "Comercios: pagan publicidad y tienen su propia vidriera de ofertas.",
+    priceTitle: "Durante la beta",
+    priceClientLabel: "Clientes",
+    priceProvLabel: "Proveedores",
+    priceShopLabel: "Comercios",
+    priceClient: "Pedir presupuesto: siempre gratis.",
+    priceProv: "Publicar tu oficio: gratis mientras dure la beta. Sin comisiones. Sin fecha de cobro.",
+    priceShop: "Espacio para comercios: próximamente. En la beta el foco es oficios y servicios.",
     shopsTitle: "Ofertas de comercios",
     shopsLead: "Cada comercio tiene su apartado. Ideal para shoppings y negocios de Uruguaiana y Libres.",
     shopCta: "Quiero mi espacio",
     formNeedTitle: "Pedir un servicio",
     formNeedLead: "Te contactamos por WhatsApp. No tiene costo.",
     formOfferTitle: "Ofrecer un servicio",
-    formOfferLead: "Completá el formulario: tu aviso queda en revisión y, al aprobarse, se publica en la página. Los primeros 3 meses son gratis.",
+    formOfferLead: "Completá el formulario: tu aviso queda en revisión y, al aprobarse, se publica en la página. En la beta publicar es gratis.",
     formShopTitle: "Anunciar mi comercio",
     name: "Nombre",
     phone: "WhatsApp",
@@ -848,7 +890,7 @@ window.I18N = {
     offers: "Qué ofertas querés mostrar",
     send: "Enviar por WhatsApp",
     sendOffer: "Enviar",
-    footer: "Sin comisión. Oficios y servicios entre Libres y Uruguaiana. Usados y remates, en otra página.",
+    footer: "Beta pública · Sin comisión. Oficios y servicios entre Libres y Uruguaiana. Usados y remates, en otra página.",
     marketTitle: "Venta de productos",
     marketLead: "Como un Mercado Libre local: herrería, crochet, plantas, artesanías y lo que produzcas.",
     usedTitle: "Usados",
@@ -867,7 +909,7 @@ window.I18N = {
     startNeed: "Solicitar presupuesto",
     startNeedD: "Contanos qué necesitás y te contactamos",
     startOffer: "Publicar mi servicio",
-    startOfferD: "Formulario en la página · 3 meses gratis",
+    startOfferD: "Formulario en la página · gratis en la beta",
     startSell: "Vender algo",
     startSellD: "Productos nuevos o usados",
     startAuc: "Rematar",
@@ -883,7 +925,7 @@ window.I18N = {
     help1: "1. Elegí: solicitar presupuesto o publicar tu servicio.",
     help2: "2. Completá tu nombre, WhatsApp y el rubro.",
     help3: "3. Enviá el formulario. Pedidos llegan por WhatsApp; publicar servicio es por el sitio.",
-    help4: "4. Los primeros 3 meses publicar es gratis.",
+    help4: "4. En la beta pública publicar tu oficio es gratis.",
     helpClose: "Entendido",
     helpOpen: "¿Ayuda?",
     mapTitle: "Mapa de la ciudad",
@@ -901,7 +943,7 @@ window.I18N = {
     dest: "Enviar al WhatsApp de",
     destAR: "Argentina 3772 445319",
     destBR: "Brasil +55 55 9148-8778",
-    trialBanner: "¡Publicá GRATIS por 3 meses! → Publicar mi servicio",
+    betaBanner: "Beta pública · Libres y Uruguaiana · Publicá gratis →",
     servSearchPh: "Buscar oficio o servicio…",
     servSearchLabel: "Buscar rubros",
     groupOficios: "Oficios",
@@ -913,7 +955,7 @@ window.I18N = {
     publishStep1: "Escribí tu nombre y WhatsApp (sin clave ni registro aparte).",
     publishStep2: "Elegí tu rubro y zona de trabajo.",
     publishStep3: "Enviá el formulario: tu aviso queda en revisión y, al aprobarse, se publica.",
-    publishNoteFoot: "Sin contraseña. Publicás desde el formulario. Los primeros 3 meses son gratis.",
+    publishNoteFoot: "Sin contraseña. Publicás desde el formulario. En la beta es gratis.",
     demoLabel: "Demo",
     fxBoth: "ambas",
     fxNote: "Precios de referencia. Consultá el tipo de cambio al contactar.",
@@ -940,10 +982,10 @@ window.I18N = {
     pubServEmpty: "Todavía no hay servicios publicados — sé el primero.",
     pubServWa: "WhatsApp",
     trustTitle: "Confianza rápida",
-    trustShort: "Sin comisiones · Contacto directo · 3 meses gratis",
+    trustShort: "Sin comisiones · Contacto directo · Gratis en la beta",
     trust1: "Sin comisiones",
     trust2: "Contacto directo",
-    trust3: "3 meses gratis",
+    trust3: "Gratis en la beta",
     trust4: "",
     trustMore: "Ver reglas →",
     servShowAll: "Ver todos los rubros",
@@ -990,14 +1032,14 @@ window.I18N = {
     eyebrow: "Ofícios e serviços · Libres–Uruguaiana",
     heroTitle: "O classificado de ofícios de confiança para Libres e Uruguaiana. Sem comissões.",
     heroLead:
-      "Peça um orçamento ou publique seu ofício. 3 meses grátis. Sem comissões. Usados e leilões ficam em outra página.",
+      "Peça um orçamento ou publique seu ofício. Beta pública: publicar é grátis enquanto durar. Sem comissões. Usados e leilões ficam em outra página.",
     heroNeed: "Solicitar orçamento",
     heroOffer: "Publicar meu serviço",
     heroShop: "Anunciar meu comércio",
-    stat1n: "3 meses GRÁTIS",
-    stat1: "Publique seu serviço GRÁTIS por 3 meses. Sem comissões.",
-    stat2n: "A partir do 4º mês:",
-    stat2: "ARS 1.000 por mês para manter sua publicação.",
+    stat1n: "Beta pública",
+    stat1: "Publique seu ofício grátis enquanto durar a beta. Sem comissões.",
+    stat2n: "Libres e Uruguaiana",
+    stat2: "Sem data de cobrança. Publicar é grátis na beta.",
     stat3n: "",
     stat3: "",
     servTitle: "Categorias",
@@ -1006,20 +1048,23 @@ window.I18N = {
     steps: [
       ["1", "Peça ou publique", "Solicite um orçamento ou publique seu ofício pelo formulário da página."],
       ["2", "Complete seus dados", "Categoria, zona e contato. Seu anúncio fica em revisão."],
-      ["3", "Publique grátis 3 meses", "Após a aprovação, seu serviço fica visível. Depois, ARS 1.000/mês."],
+      ["3", "Publica grátis (beta)", "Após a aprovação, seu serviço fica visível. Na beta não há cobrança."],
       ["4", "Combine e cobre você", "Orçamento e pagamento direto. Sem comissão da página."],
     ],
-    priceTitle: "Preços claros",
-    priceClient: "Clientes: sempre grátis.",
-    priceProv: "Prestadores: grátis por 3 meses. Sem comissões. A partir do 4º mês, ARS 1.000/mês para manter a publicação.",
-    priceShop: "Comércios: pagam publicidade e têm a própria vitrine de ofertas.",
+    priceTitle: "Durante a beta",
+    priceClientLabel: "Clientes",
+    priceProvLabel: "Prestadores",
+    priceShopLabel: "Comércios",
+    priceClient: "Pedir orçamento: sempre grátis.",
+    priceProv: "Publicar seu ofício: grátis enquanto durar a beta. Sem comissões. Sem data de cobrança.",
+    priceShop: "Espaço para comércios: em breve. Na beta o foco é ofícios e serviços.",
     shopsTitle: "Ofertas dos comércios",
     shopsLead: "Cada comércio tem o seu espaço. Pensado para lojas de Uruguaiana e Libres.",
     shopCta: "Quero meu espaço",
     formNeedTitle: "Pedir um serviço",
     formNeedLead: "Falamos no WhatsApp. Sem custo.",
     formOfferTitle: "Oferecer um serviço",
-    formOfferLead: "Preencha o formulário: seu anúncio fica em revisão e, ao ser aprovado, aparece na página. Os primeiros 3 meses são grátis.",
+    formOfferLead: "Preencha o formulário: seu anúncio fica em revisão e, ao ser aprovado, aparece na página. Na beta publicar é grátis.",
     formShopTitle: "Anunciar meu comércio",
     name: "Nome",
     phone: "WhatsApp",
@@ -1030,7 +1075,7 @@ window.I18N = {
     offers: "Quais ofertas quer mostrar",
     send: "Enviar pelo WhatsApp",
     sendOffer: "Enviar",
-    footer: "Sem comissão. Ofícios e serviços entre Libres e Uruguaiana. Usados e leilões, em outra página.",
+    footer: "Beta pública · Sem comissão. Ofícios e serviços entre Libres e Uruguaiana. Usados e leilões, em outra página.",
     marketTitle: "Venda de produtos",
     marketLead: "Como um Mercado Livre local: serralheria, crochê, plantas, artesanato e o que você produz.",
     usedTitle: "Usados",
@@ -1049,7 +1094,7 @@ window.I18N = {
     startNeed: "Solicitar orçamento",
     startNeedD: "Conte o que precisa e falamos no WhatsApp",
     startOffer: "Publicar meu serviço",
-    startOfferD: "Formulário na página · 3 meses grátis",
+    startOfferD: "Formulário na página · grátis na beta",
     startSell: "Vender algo",
     startSellD: "Produtos novos ou usados",
     startAuc: "Leiloar",
@@ -1065,7 +1110,7 @@ window.I18N = {
     help1: "1. Escolha: solicitar orçamento ou publicar seu serviço.",
     help2: "2. Preencha nome, WhatsApp e a categoria.",
     help3: "3. Envie o formulário. Pedidos vão pelo WhatsApp; publicar serviço é pelo site.",
-    help4: "4. Os primeiros 3 meses publicar é grátis.",
+    help4: "4. Na beta pública publicar seu ofício é grátis.",
     helpClose: "Entendi",
     helpOpen: "Ajuda?",
     mapTitle: "Mapa da cidade",
@@ -1083,7 +1128,7 @@ window.I18N = {
     dest: "Enviar ao WhatsApp de",
     destAR: "Argentina 3772 445319",
     destBR: "Brasil +55 55 9148-8778",
-    trialBanner: "Publique GRÁTIS por 3 meses! → Publicar meu serviço",
+    betaBanner: "Beta pública · Libres e Uruguaiana · Publique grátis →",
     servSearchPh: "Buscar ofício ou serviço…",
     servSearchLabel: "Buscar categorias",
     groupOficios: "Ofícios",
@@ -1095,7 +1140,7 @@ window.I18N = {
     publishStep1: "Informe nome e WhatsApp (sem senha nem cadastro separado).",
     publishStep2: "Escolha a categoria e a zona de trabalho.",
     publishStep3: "Envie o formulário: seu anúncio fica em revisão e, ao ser aprovado, é publicado.",
-    publishNoteFoot: "Sem senha. Você publica pelo formulário. Os primeiros 3 meses são grátis.",
+    publishNoteFoot: "Sem senha. Você publica pelo formulário. Na beta é grátis.",
     demoLabel: "Demo",
     fxBoth: "ambas",
     fxNote: "Preços de referência. Consulte o tipo de câmbio ao entrar em contato.",
@@ -1122,10 +1167,10 @@ window.I18N = {
     pubServEmpty: "Ainda não há serviços publicados — seja o primeiro.",
     pubServWa: "WhatsApp",
     trustTitle: "Confiança rápida",
-    trustShort: "Sem comissões · Contato direto · 3 meses grátis",
+    trustShort: "Sem comissões · Contato direto · Grátis na beta",
     trust1: "Sem comissões",
     trust2: "Contato direto",
-    trust3: "3 meses grátis",
+    trust3: "Grátis na beta",
     trust4: "",
     trustMore: "Ver regras →",
     servShowAll: "Ver todas as categorias",
