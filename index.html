@@ -287,6 +287,41 @@ body.has-beta-banner .nav { top: 44px; }
 .trust-inline .trust-short { margin: 0 0 6px; color: var(--muted); font-size: 14px; font-weight: 700; }
 .trust-inline a { color: var(--teal); font-weight: 800; font-size: 13px; text-decoration: none; }
 .trust-inline a:hover { text-decoration: underline; }
+.hero-ask {
+  margin: 0 0 6px; font-size: 15px; font-weight: 800; color: var(--navy);
+}
+.benefit-list {
+  list-style: none; margin: 16px 0 0; padding: 0;
+  display: grid; gap: 8px; max-width: 560px;
+}
+.benefit-list li {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; font-weight: 700; color: var(--ink);
+}
+.benefit-list .bi {
+  width: 28px; height: 28px; border-radius: 999px; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #fef08a; color: #854d0e; font-size: 14px;
+}
+.rubro-chips {
+  display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 0; max-width: 560px;
+}
+.rubro-chip {
+  display: inline-flex; flex-direction: column; align-items: center; gap: 6px;
+  width: 72px; text-decoration: none; color: var(--ink); font-size: 11px; font-weight: 800;
+  text-align: center;
+}
+.rubro-chip .ri {
+  width: 52px; height: 52px; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #e7f3f1; border: 2px solid #b7e0da; font-size: 22px;
+}
+.rubro-chip:hover .ri { border-color: var(--teal); background: #dcefec; }
+.rubro-chip.more .ri { background: var(--navy); color: #fff; border-color: var(--navy); font-size: 18px; }
+.featured-rubros .card .ri {
+  display: inline-flex; width: 36px; height: 36px; border-radius: 999px;
+  align-items: center; justify-content: center; background: #e7f3f1; margin-bottom: 8px; font-size: 18px;
+}
 .featured-rubros {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin: 0 0 16px;
 }
@@ -400,7 +435,7 @@ form .actions {
   z-index: 1;
   margin-top: 4px;
 }
-.hero .lead, .hero .actions, .hero .trust-inline {
+.hero .lead, .hero .actions, .hero .trust-inline, .hero .benefit-list, .hero .rubro-chips, .hero .hero-ask {
   max-width: 560px;
 }
 
@@ -445,7 +480,16 @@ form .actions {
           <span data-i="heroTitle"></span>
           <span class="hero-accent" data-i="heroAccent"></span>
         </h1>
+        <p class="hero-ask" data-i="heroAsk"></p>
         <p class="lead" data-i="heroLead"></p>
+        <ul class="benefit-list" id="heroBenefits">
+          <li><span class="bi" aria-hidden="true">👤</span><span data-i="ben1"></span></li>
+          <li><span class="bi" aria-hidden="true">🔔</span><span data-i="ben2"></span></li>
+          <li><span class="bi" aria-hidden="true">✅</span><span data-i="ben3"></span></li>
+          <li><span class="bi" aria-hidden="true">💬</span><span data-i="ben4"></span></li>
+          <li><span class="bi" aria-hidden="true">∞</span><span data-i="ben5"></span></li>
+        </ul>
+        <div class="rubro-chips" id="heroRubroChips" aria-label="Rubros"></div>
         <div class="actions">
           <a class="btn btn-primary" href="#ofrecer" data-i="heroOffer"></a>
           <a class="btn btn-ask" href="#pedir" data-i="heroNeed"></a>
@@ -870,6 +914,13 @@ window.I18N = {
     heroTitle: "Conseguí clientes en tu ciudad",
     heroAccent: "sin comisiones.",
     heroLead: "Publicá gratis tu oficio y recibí contactos directos por WhatsApp.",
+    heroAsk: "¿Ofrecés servicios?",
+    ben1: "Perfil profesional gratis",
+    ben2: "Te llegan pedidos de tu zona",
+    ben3: "Publicás en minutos",
+    ben4: "Contacto directo por WhatsApp",
+    ben5: "Sin comisión por trabajo",
+    chipMore: "Y más",
     heroPhotoAlt: "Oficios y técnicos de la zona",
     heroNeed: "Solicitar presupuesto",
     heroOffer: "Publicar mi servicio",
@@ -1053,6 +1104,13 @@ window.I18N = {
     heroTitle: "Conquiste clientes na sua cidade",
     heroAccent: "sem comissões.",
     heroLead: "Publique grátis seu ofício e receba contatos diretos pelo WhatsApp.",
+    heroAsk: "Você oferece serviços?",
+    ben1: "Perfil profissional grátis",
+    ben2: "Receba pedidos da sua região",
+    ben3: "Publique em minutos",
+    ben4: "Contato direto pelo WhatsApp",
+    ben5: "Sem comissão por trabalho",
+    chipMore: "E mais",
     heroPhotoAlt: "Ofícios e técnicos da região",
     heroNeed: "Solicitar orçamento",
     heroOffer: "Publicar meu serviço",
@@ -1693,6 +1751,15 @@ const FEATURED_RUBROS = [
   "Limpieza",
 ];
 
+const RUBRO_ICONS = {
+  "Plomería / gas": "🔧",
+  "Electricidad": "⚡",
+  "Enfermería": "🩺",
+  "Albañilería": "🧱",
+  "Mecánica / gomería": "🚗",
+  "Limpieza": "🧹",
+};
+
 let allRubrosOpen = false;
 
 function bindRubroCard(card) {
@@ -1708,16 +1775,40 @@ function bindRubroCard(card) {
   });
 }
 
+function renderHeroRubroChips() {
+  const root = $("#heroRubroChips");
+  if (!root) return;
+  const chips = FEATURED_RUBROS.slice(0, 4).map((name) => {
+    const s = window.SERVICES.find((x) => x.es === name);
+    if (!s) return "";
+    const label = lang === "es" ? s.es.split(" / ")[0] : s.pt.split(" / ")[0];
+    const icon = RUBRO_ICONS[name] || "🛠️";
+    return `<a class="rubro-chip" href="#pedir" data-rubro="${s.es}"><span class="ri" aria-hidden="true">${icon}</span><span>${label}</span></a>`;
+  }).join("");
+  root.innerHTML = chips + `<a class="rubro-chip more" href="#servicios"><span class="ri" aria-hidden="true">+</span><span>${t().chipMore || ""}</span></a>`;
+  root.querySelectorAll(".rubro-chip[data-rubro]").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const sel = $("#rubroNeed");
+      if (sel) sel.value = el.dataset.rubro;
+      location.hash = "#pedir";
+      $("#pedir")?.scrollIntoView({ behavior: "smooth" });
+    });
+  });
+}
+
 function renderFeaturedRubros() {
   const root = $("#featuredRubros");
   if (!root) return;
   const items = FEATURED_RUBROS.map((name) => window.SERVICES.find((s) => s.es === name)).filter(Boolean);
   root.innerHTML = items.map((s) => `
     <article class="card clickable" data-rubro="${s.es}" role="button" tabindex="0">
+      <span class="ri" aria-hidden="true">${RUBRO_ICONS[s.es] || "🛠️"}</span>
       <h3>${lang === "es" ? s.es : s.pt}</h3>
       <p>${lang === "es" ? s.d_es : s.d_pt}</p>
     </article>`).join("");
   root.querySelectorAll(".card.clickable").forEach(bindRubroCard);
+  renderHeroRubroChips();
 }
 
 function syncAllRubrosToggle() {
