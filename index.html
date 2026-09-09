@@ -60,19 +60,6 @@ section[id], .form[id], h2 { scroll-margin-top: 130px; }
 .btn-ghost { background: #dcefec; color: var(--navy); }
 .hero { background: linear-gradient(165deg, #d8f0ec 0%, #f6f1e8 42%, #fff 85%); padding: 56px 0 40px; }
 .hero-grid { display: grid; grid-template-columns: 1.25fr .75fr; gap: 28px; align-items: center; }
-.badge-compare {
-  display: grid; gap: 10px; margin: 0 0 4px; max-width: 560px;
-}
-.badge-compare-note {
-  margin: 0; font-size: 12px; color: var(--muted); font-weight: 700;
-}
-.badge-option {
-  display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
-}
-.badge-option .opt-label {
-  font-size: 11px; font-weight: 800; color: var(--muted); letter-spacing: .04em;
-  text-transform: uppercase;
-}
 .eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
   margin: 0; padding: 8px 14px; border-radius: 999px;
@@ -84,14 +71,6 @@ section[id], .form[id], h2 { scroll-margin-top: 130px; }
   content: ""; width: 8px; height: 8px; border-radius: 50%;
   background: #5eead4; flex-shrink: 0;
 }
-.eyebrow.badge-red { background: var(--navy); }
-.eyebrow.badge-benefit { background: var(--teal); box-shadow: 0 6px 18px rgba(15,118,110,.28); }
-.eyebrow.badge-benefit::before { background: #fef3c7; }
-.eyebrow.badge-frontera {
-  background: #92400e; color: #fff7ed;
-  box-shadow: 0 6px 18px rgba(146,64,14,.25);
-}
-.eyebrow.badge-frontera::before { background: #fbbf24; }
 .eyebrow.badge-loud {
   padding: 10px 16px; font-size: 13px; letter-spacing: .08em;
   background: #0f766e; color: #ecfdf5;
@@ -461,25 +440,7 @@ form .actions {
   <section class="hero" id="inicio">
     <div class="wrap hero-grid">
       <div>
-        <div class="badge-compare" id="badgeCompare" aria-label="Opciones de badge">
-          <p class="badge-compare-note" data-i="badgeCompareNote"></p>
-          <div class="badge-option">
-            <span class="opt-label">1</span>
-            <p class="eyebrow badge-red" data-i="eyebrow1"></p>
-          </div>
-          <div class="badge-option">
-            <span class="opt-label">2</span>
-            <p class="eyebrow badge-benefit" data-i="eyebrow2"></p>
-          </div>
-          <div class="badge-option">
-            <span class="opt-label">3</span>
-            <p class="eyebrow badge-frontera" data-i="eyebrow3"></p>
-          </div>
-          <div class="badge-option">
-            <span class="opt-label">4</span>
-            <p class="eyebrow badge-loud" data-i="eyebrow4"></p>
-          </div>
-        </div>
+        <p class="eyebrow badge-loud" data-i="eyebrow"></p>
         <h1>
           <span data-i="heroTitle"></span>
           <span class="hero-accent" data-i="heroAccent"></span>
@@ -905,11 +866,6 @@ window.I18N = {
     navJoin: "Sumate",
     ctaNeed: "Solicitar presupuesto",
     ctaOffer: "Publicar mi servicio",
-    badgeCompareNote: "Probá los 4 badges — decime 1, 2, 3 o 4 y dejamos uno solo.",
-    eyebrow1: "Red de oficios · Libres–Uruguaiana",
-    eyebrow2: "Oficios sin comisión · Libres–Uruguaiana",
-    eyebrow3: "Clasificado de oficios · Frontera",
-    eyebrow4: "Red de oficios · Libres–Uruguaiana",
     eyebrow: "Red de oficios · Libres–Uruguaiana",
     heroTitle: "Conseguí clientes en tu ciudad",
     heroAccent: "sin comisiones.",
@@ -1093,11 +1049,6 @@ window.I18N = {
     navJoin: "Entrar",
     ctaNeed: "Solicitar orçamento",
     ctaOffer: "Publicar meu serviço",
-    badgeCompareNote: "Teste os 4 badges — diga 1, 2, 3 ou 4 e deixamos só um.",
-    eyebrow1: "Rede de ofícios · Libres–Uruguaiana",
-    eyebrow2: "Ofícios sem comissão · Libres–Uruguaiana",
-    eyebrow3: "Classificado de ofícios · Fronteira",
-    eyebrow4: "Rede de ofícios · Libres–Uruguaiana",
     eyebrow: "Rede de ofícios · Libres–Uruguaiana",
     heroTitle: "Conquiste clientes na sua cidade",
     heroAccent: "sem comissões.",
