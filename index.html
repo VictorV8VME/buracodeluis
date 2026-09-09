@@ -1515,11 +1515,19 @@ function renderRealServiceCards(rows) {
   }).join("");
 }
 
+// Temporary hide for test listings until hard-deleted in Supabase (RLS blocks anon DELETE).
+const HIDDEN_LISTING_IDS = new Set([
+  "8f79ea1f-307f-4106-9a90-07550d7dd69b", // Enfermería / Raul
+  "5ae15ddc-bf56-4f2d-95be-832f12e1ab04", // Soldadura / Victor E
+  "4eb4da7b-57b9-41b3-bad3-314ece6b4375", // Techista / Victor
+]);
+
 async function renderPublishedServices() {
   const root = $("#publishedServices");
   if (!root) return;
   let rows = [];
   try { rows = await fetchListings("servicio"); } catch (err) { console.warn(err); rows = []; }
+  rows = (rows || []).filter((r) => r && r.id && !HIDDEN_LISTING_IDS.has(r.id));
   if (rows.length) {
     root.innerHTML = renderRealServiceCards(rows);
     bindShareButtons(root);
