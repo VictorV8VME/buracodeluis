@@ -6,8 +6,8 @@
   <!-- TODO (deferred): auth, live FX API, review moderation,
        real shop geocoding, email delivery for contact form.
        Backend: listings + reviews via Supabase. -->
-  <title>Buraco del Luis | Oficios y servicios en Libres y Uruguaiana</title>
-  <meta name="description" content="Clasificado de oficios de confianza para Paso de los Libres y Uruguaiana. Beta pública · sin comisiones · publicar gratis." />
+  <title>LibresTrabaja | Oficios y servicios en Libres y Uruguaiana</title>
+  <meta name="description" content="LibresTrabaja: clasificado de oficios para Paso de los Libres y Uruguaiana. Beta pública · sin comisiones · publicar gratis." />
   <style>
 :root {
   --navy: #12263a;
@@ -406,7 +406,7 @@ form .actions {
   </div>
   <header class="nav">
     <div class="wrap nav-in">
-      <a class="brand" href="#inicio">Bura<span>codeLuis</span></a>
+      <a class="brand" href="#inicio">Libres<span>Trabaja</span></a>
       <div class="nav-links">
         <a class="nav-text" href="#servicios" data-i="navServ"></a>
         <a class="nav-text" href="#servicios-publicados" data-i="pubServTitle"></a>
@@ -793,7 +793,7 @@ form .actions {
 
   <footer>
     <div class="wrap">
-      <p><strong>BuracodeLuis</strong></p>
+      <p><strong>LibresTrabaja</strong></p>
       <p data-i="footer"></p>
       <p class="sub" data-i="privacyNote"></p>
       <div class="footer-links">
@@ -824,7 +824,7 @@ form .actions {
 <script>
 // Parámetros editables
 window.SITE = {
-  name: "BuracodeLuis",
+  name: "LibresTrabaja",
   owner: "Víctor Manuel Espíndola",
   cityEs: "Paso de los Libres",
   cityPt: "Passo de los Libres / Uruguaiana",
@@ -2105,9 +2105,9 @@ function notifyVictorWa(kind, d, num) {
   // Solo pedidos y comentarios/reclamos llegan a Víctor por WhatsApp.
   // Altas (servicio/venta/usado/remate/comercio) se autogestionan en Supabase.
   if (kind === "need") {
-    wa(`BuracodeLuis - PEDIDO\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nRubro: ${d.rubro}\nDetalle: ${d.detalle}`, num);
+    wa(`${window.SITE.name} - PEDIDO\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nRubro: ${d.rubro}\nDetalle: ${d.detalle}`, num);
   } else if (kind === "comment") {
-    wa(`BuracodeLuis - ${d.tipo}\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nMensaje: ${d.mensaje}`, num);
+    wa(`${window.SITE.name} - ${d.tipo}\nNombre: ${d.nombre}\nWhatsApp: ${d.whatsapp}\nMensaje: ${d.mensaje}`, num);
   }
 }
 
@@ -2318,7 +2318,7 @@ $("#contactForm")?.addEventListener("submit", async (e) => {
   // Do not persist contact PII in localStorage — mailto if configured + UI ok only.
   const email = (window.SITE.contactEmail || "").trim();
   if (email) {
-    const subject = encodeURIComponent("BuracodeLuis contacto (" + entry.destino + ")");
+    const subject = encodeURIComponent(window.SITE.name + " contacto (" + entry.destino + ")");
     const body = encodeURIComponent(
       "Nombre: " + entry.name + "\nContacto: " + entry.contacto +
       "\nDestino: " + entry.destino + "\n\n" + entry.mensaje
