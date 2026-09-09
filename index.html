@@ -58,11 +58,34 @@ section[id], .form[id], h2 { scroll-margin-top: 130px; }
   cursor: pointer; font-size: 14px;
 }
 .btn-ghost { background: #dcefec; color: var(--navy); }
-.hero { background: linear-gradient(180deg, #e7f3f1, #fff 72%); padding: 56px 0 40px; }
+.hero { background: linear-gradient(165deg, #d8f0ec 0%, #f6f1e8 42%, #fff 85%); padding: 56px 0 40px; }
 .hero-grid { display: grid; grid-template-columns: 1.25fr .75fr; gap: 28px; align-items: center; }
-.eyebrow { color: var(--teal); font-weight: 800; text-transform: uppercase; letter-spacing: .04em; font-size: 12px; }
-h1 { font-size: clamp(30px, 5vw, 48px); line-height: 1.12; margin: 8px 0 14px; }
-.lead { color: var(--muted); font-size: 17px; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin: 0; padding: 8px 14px; border-radius: 999px;
+  background: var(--navy); color: #fff;
+  font-weight: 800; text-transform: uppercase; letter-spacing: .06em; font-size: 12px;
+  box-shadow: 0 6px 18px rgba(18,38,58,.18);
+}
+.eyebrow::before {
+  content: ""; width: 8px; height: 8px; border-radius: 50%;
+  background: #5eead4; flex-shrink: 0;
+}
+h1 { font-size: clamp(30px, 5vw, 48px); line-height: 1.12; margin: 12px 0 14px; color: var(--ink); }
+h1 .hero-accent {
+  display: block; margin-top: 4px;
+  color: var(--teal); font-weight: 800;
+}
+.lead { color: var(--muted); font-size: 17px; max-width: 36em; }
+.hero-visual { display: grid; gap: 14px; }
+.hero-photo {
+  margin: 0; border-radius: 20px; overflow: hidden;
+  border: 1px solid var(--line); background: #dcefec;
+  aspect-ratio: 4 / 3; max-height: 280px;
+}
+.hero-photo img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
 .actions {
   display: flex; gap: 12px; flex-wrap: wrap; margin-top: 22px;
   align-items: center; position: relative;
@@ -410,11 +433,14 @@ form .actions {
     <div class="wrap hero-grid">
       <div>
         <p class="eyebrow" data-i="eyebrow"></p>
-        <h1 data-i="heroTitle"></h1>
+        <h1>
+          <span data-i="heroTitle"></span>
+          <span class="hero-accent" data-i="heroAccent"></span>
+        </h1>
         <p class="lead" data-i="heroLead"></p>
         <div class="actions">
-          <a class="btn btn-ask" href="#pedir" data-i="heroNeed"></a>
           <a class="btn btn-primary" href="#ofrecer" data-i="heroOffer"></a>
+          <a class="btn btn-ask" href="#pedir" data-i="heroNeed"></a>
         </div>
         <div class="trust-inline" id="heroTrust">
           <strong data-i="trustTitle"></strong>
@@ -422,10 +448,15 @@ form .actions {
           <a href="#reglas" data-i="trustMore"></a>
         </div>
       </div>
-      <div class="stats">
-        <b data-i="stat1n"></b>
-        <p class="stats-main" data-i="stat1"></p>
-        <p class="stats-sub"><span data-i="stat2n"></span> <span data-i="stat2"></span></p>
+      <div class="hero-visual">
+        <figure class="hero-photo">
+          <img src="assets/hero-oficios.jpg" width="900" height="675" alt="" data-i-alt="heroPhotoAlt" loading="eager" decoding="async" />
+        </figure>
+        <div class="stats">
+          <b data-i="stat1n"></b>
+          <p class="stats-main" data-i="stat1"></p>
+          <p class="stats-sub"><span data-i="stat2n"></span> <span data-i="stat2"></span></p>
+        </div>
       </div>
     </div>
   </section>
@@ -827,17 +858,18 @@ window.I18N = {
     navJoin: "Sumate",
     ctaNeed: "Solicitar presupuesto",
     ctaOffer: "Publicar mi servicio",
-    eyebrow: "Oficios y servicios · Libres–Uruguaiana",
-    heroTitle: "El clasificado de oficios de confianza para Libres y Uruguaiana. Sin comisiones.",
-    heroLead:
-      "Pedí un presupuesto o publicá tu oficio. Beta pública: publicar es gratis mientras dure. Sin comisiones.",
+    eyebrow: "Oficios · Libres–Uruguaiana",
+    heroTitle: "Conseguí clientes en tu ciudad",
+    heroAccent: "sin comisiones.",
+    heroLead: "Publicá gratis tu oficio y recibí contactos directos por WhatsApp.",
+    heroPhotoAlt: "Oficios y técnicos de la zona",
     heroNeed: "Solicitar presupuesto",
     heroOffer: "Publicar mi servicio",
     heroShop: "Anunciar mi comercio",
-    stat1n: "Beta pública",
-    stat1: "Publicá tu oficio gratis mientras dure la beta. Sin comisiones.",
+    stat1n: "Sin comisión",
+    stat1: "Publicá tu oficio y coordinás directo por WhatsApp.",
     stat2n: "Libres y Uruguaiana",
-    stat2: "Sin fecha de cobro. Publicar es gratis en la beta.",
+    stat2: "Beta pública: publicar sigue gratis.",
     stat3n: "",
     stat3: "",
     servTitle: "Rubros",
@@ -965,7 +997,7 @@ window.I18N = {
     pubServEmpty: "Todavía no hay servicios publicados — sé el primero.",
     pubServWa: "WhatsApp",
     trustTitle: "Confianza rápida",
-    trustShort: "Sin comisiones · Contacto directo · Gratis en la beta",
+    trustShort: "Sin comisiones · WhatsApp directo · Gratis en la beta",
     trust1: "Sin comisiones",
     trust2: "Contacto directo",
     trust3: "Gratis en la beta",
@@ -1009,17 +1041,18 @@ window.I18N = {
     navJoin: "Entrar",
     ctaNeed: "Solicitar orçamento",
     ctaOffer: "Publicar meu serviço",
-    eyebrow: "Ofícios e serviços · Libres–Uruguaiana",
-    heroTitle: "O classificado de ofícios de confiança para Libres e Uruguaiana. Sem comissões.",
-    heroLead:
-      "Peça um orçamento ou publique seu ofício. Beta pública: publicar é grátis enquanto durar. Sem comissões.",
+    eyebrow: "Ofícios · Libres–Uruguaiana",
+    heroTitle: "Conquiste clientes na sua cidade",
+    heroAccent: "sem comissões.",
+    heroLead: "Publique grátis seu ofício e receba contatos diretos pelo WhatsApp.",
+    heroPhotoAlt: "Ofícios e técnicos da região",
     heroNeed: "Solicitar orçamento",
     heroOffer: "Publicar meu serviço",
     heroShop: "Anunciar meu comércio",
-    stat1n: "Beta pública",
-    stat1: "Publique seu ofício grátis enquanto durar a beta. Sem comissões.",
+    stat1n: "Sem comissão",
+    stat1: "Publique seu ofício e combine direto pelo WhatsApp.",
     stat2n: "Libres e Uruguaiana",
-    stat2: "Sem data de cobrança. Publicar é grátis na beta.",
+    stat2: "Beta pública: publicar continua grátis.",
     stat3n: "",
     stat3: "",
     servTitle: "Categorias",
@@ -1147,7 +1180,7 @@ window.I18N = {
     pubServEmpty: "Ainda não há serviços publicados — seja o primeiro.",
     pubServWa: "WhatsApp",
     trustTitle: "Confiança rápida",
-    trustShort: "Sem comissões · Contato direto · Grátis na beta",
+    trustShort: "Sem comissões · WhatsApp direto · Grátis na beta",
     trust1: "Sem comissões",
     trust2: "Contato direto",
     trust3: "Grátis na beta",
@@ -1610,6 +1643,10 @@ function applyTexts() {
   document.querySelectorAll("[data-i-placeholder]").forEach((el) => {
     const key = el.getAttribute("data-i-placeholder");
     if (dict[key]) el.setAttribute("placeholder", dict[key]);
+  });
+  document.querySelectorAll("[data-i-alt]").forEach((el) => {
+    const key = el.getAttribute("data-i-alt");
+    if (dict[key]) el.setAttribute("alt", dict[key]);
   });
   $("#langBtn").textContent = lang === "es" ? "PT" : "ES";
   syncFxBar();
