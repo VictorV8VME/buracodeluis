@@ -6,8 +6,8 @@
   <!-- TODO (deferred): auth, live FX API, review moderation,
        real shop geocoding, email delivery for contact form.
        Backend: listings + reviews via Supabase. -->
-  <title>LibresTrabaja | Oficios y servicios en Libres y Uruguaiana</title>
-  <meta name="description" content="LibresTrabaja: clasificado de oficios para Paso de los Libres y Uruguaiana. Beta pública · sin comisiones · publicar gratis." />
+  <title>LibresTrabaja — Conseguí clientes sin comisiones</title>
+  <meta name="description" content="LibresTrabaja: conseguí clientes sin comisiones en Paso de los Libres y Uruguaiana. Beta pública · publicar tu oficio gratis." />
   <style>
 :root {
   --navy: #12263a;
@@ -591,6 +591,35 @@ form .actions {
   .nav-in { flex-wrap: nowrap; }
   .nav-links { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 }
+
+#beta {
+  padding: 28px 0;
+}
+#beta h2 {
+  font-size: 24px;
+  margin: 0 0 4px;
+}
+#beta .fx-note {
+  margin: 0 0 12px;
+  font-size: 12px;
+}
+#beta .prices { gap: 8px; }
+#beta .price {
+  padding: 10px 12px;
+}
+#beta .price strong { margin-bottom: 4px; font-size: 14px; }
+#beta .price p { margin: 0; font-size: 13px; line-height: 1.35; }
+.featured-note {
+  margin: 8px 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--teal);
+}
+.all-rubros-panel .more-rubros-title {
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: var(--navy);
+}
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
@@ -678,8 +707,10 @@ form .actions {
       <h2 data-i="servTitle"></h2>
       <p class="sub" data-i="servLead"></p>
       <div class="featured-rubros" id="featuredRubros"></div>
+      <p class="featured-note" data-i="featuredNote"></p>
       <button type="button" class="btn btn-ghost" id="toggleAllRubros" data-i="servShowAll" aria-expanded="false"></button>
       <div id="allRubrosPanel" class="all-rubros-panel" hidden>
+        <h3 class="more-rubros-title" data-i="moreRubrosTitle"></h3>
         <div class="search-wrap">
           <label class="visually-hidden" for="servSearch" data-i="servSearchLabel" style="position:absolute;left:-9999px"></label>
           <input type="search" id="servSearch" autocomplete="off" data-i-placeholder="servSearchPh" />
@@ -1244,7 +1275,10 @@ window.I18N = {
     trust3: "Gratis en la beta",
     trust4: "",
     trustMore: "Ver reglas →",
-    servShowAll: "Ver todos los rubros",
+    featuredNote: "Los más pedidos",
+    moreRubrosTitle: "Más rubros",
+    pageTitle: "LibresTrabaja — Conseguí clientes sin comisiones",
+    servShowAll: "Más rubros",
     servHideAll: "Ocultar rubros",
     contactAltTitle: "¿Preferís no usar WhatsApp? Escribinos acá",
     contactAltLead: "Nombre, email o teléfono y mensaje. Se guarda localmente (y mailto si configurás el email del sitio).",
@@ -1454,8 +1488,11 @@ window.I18N = {
     trust3: "Grátis na beta",
     trust4: "",
     trustMore: "Ver regras →",
-    servShowAll: "Ver todas as categorias",
-    servHideAll: "Ocultar categorias",
+    featuredNote: "Os mais pedidos",
+    moreRubrosTitle: "Mais rubros",
+    pageTitle: "LibresTrabaja — Conquiste clientes sem comissões",
+    servShowAll: "Mais rubros",
+    servHideAll: "Ocultar rubros",
     contactAltTitle: "Prefere não usar WhatsApp? Escreva aqui",
     contactAltLead: "Nome, e-mail ou telefone e mensagem. Salvo localmente (e mailto se configurar o e-mail do site).",
     contactReach: "E-mail ou telefone",
@@ -1946,6 +1983,7 @@ function syncFxBar() {
 function applyTexts() {
   document.documentElement.lang = lang;
   const dict = t();
+  if (dict.pageTitle) document.title = dict.pageTitle;
   document.querySelectorAll("[data-i]").forEach((el) => {
     const key = el.getAttribute("data-i");
     if (dict[key]) el.textContent = dict[key];
@@ -2109,8 +2147,14 @@ function renderServices() {
     syncAllRubrosToggle();
   }
 
+  const featuredSet = new Set(FEATURED_RUBROS);
   root.innerHTML = SERVICE_GROUPS.map((g) => {
-    const items = window.SERVICES.filter((s) => s.group === g.id && serviceMatches(s, q));
+    const items = window.SERVICES.filter((s) => {
+      if (s.group !== g.id || !serviceMatches(s, q)) return false;
+      // Avoid duplicate listing vs featured cards unless user is searching
+      if (!searching && featuredSet.has(s.es)) return false;
+      return true;
+    });
     if (!items.length) return "";
     const isOpen = searching || openGroups.has(g.id);
     const cards = items.map((s) => `
