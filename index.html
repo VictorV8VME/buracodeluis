@@ -33,14 +33,17 @@ body {
 .wrap { width: min(1120px, calc(100% - 28px)); margin: 0 auto; }
 .nav {
   position: sticky; top: 0; z-index: 30;
-  background: rgba(255,255,255,.94);
+  background: rgba(255,255,255,.97);
+  backdrop-filter: saturate(1.2) blur(10px);
+  -webkit-backdrop-filter: saturate(1.2) blur(10px);
   border-bottom: 1px solid var(--line);
+  box-shadow: 0 2px 14px rgba(18,38,58,.07);
 }
 .nav-in {
   min-height: 66px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
   flex-wrap: wrap; padding: 8px 0;
 }
-.brand { font-weight: 800; color: var(--navy); text-decoration: none; font-size: 20px; white-space: nowrap; flex-shrink: 0; }
+.brand { font-weight: 800; color: var(--navy); text-decoration: none; font-size: 20px; white-space: nowrap; flex-shrink: 0; letter-spacing: -.01em; }
 .brand span { color: var(--teal); }
 .nav-links {
   display: flex; gap: 10px 12px; align-items: center; flex-wrap: wrap;
@@ -554,6 +557,40 @@ form .actions {
 }
 
 
+
+.more-info { padding-top: 40px; padding-bottom: 48px; }
+.more-info > .wrap > h2 { margin-bottom: 14px; }
+.more-info > details.more-block {
+  background: #fff; border: 1px solid var(--line); border-radius: 14px;
+  margin: 0 0 10px; padding: 0;
+}
+.more-info > details.more-block > summary {
+  cursor: pointer; list-style: none; font-weight: 800; font-size: 17px;
+  color: var(--navy); padding: 14px 16px; display: flex; align-items: center;
+  justify-content: space-between; gap: 10px;
+}
+.more-info > details.more-block > summary::-webkit-details-marker { display: none; }
+.more-info > details.more-block > summary::after {
+  content: "▾"; color: var(--teal); font-size: 14px; transition: transform .2s;
+}
+.more-info > details.more-block[open] > summary::after { transform: rotate(180deg); }
+.more-info > details.more-block .more-body { padding: 0 16px 16px; }
+.more-info .faq-list { margin: 0; }
+.more-info .rules-box { margin: 0; border: 0; padding: 0; background: transparent; }
+.how-short .steps { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.how-short .step { min-height: 0; padding: 16px 14px; }
+.how-short .publish-note { margin-top: 14px; }
+.cta-final { padding: 36px 0; }
+
+
+.more-info .rules-list { margin: 8px 0 0; padding-left: 18px; color: var(--muted); font-size: 14px; }
+.more-info .rules-list li { margin: 6px 0; }
+.nav-in .brand { display: inline-flex; align-items: baseline; gap: 0; }
+@media (max-width: 820px) {
+  .nav-links .btn-nav-wa { flex-shrink: 0; }
+  .nav-in { flex-wrap: nowrap; }
+  .nav-links { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
@@ -567,8 +604,8 @@ form .actions {
       <div class="nav-links">
         <a class="nav-text" href="#servicios" data-i="navServ"></a>
         <a class="nav-text" href="#servicios-publicados" data-i="pubServTitle"></a>
-        <a class="nav-text" href="#start" data-i="startTitle"></a>
-        <a class="nav-text" href="#comentarios" data-i="reviewsTitle"></a>
+        <a class="nav-text" href="#beta" data-i="priceTitle"></a>
+        <a class="nav-text" href="#mas-info" data-i="moreInfoTitle"></a>
         <a class="nav-text" href="#faq" data-i="navFaq"></a>
         <a class="nav-text" href="#reglas" data-i="rulesNav"></a>
         <div class="nav-fx-wrap">
@@ -623,29 +660,18 @@ form .actions {
     </div>
   </section>
 
-  <section id="start" class="alt">
+  <section class="alt-teal" id="beta">
     <div class="wrap">
-      <h2 data-i="startTitle"></h2>
-      <div class="start-grid">
-        <a class="start-card" href="#pedir"><strong data-i="startNeed"></strong><span data-i="startNeedD"></span></a>
-        <a class="start-card" href="#ofrecer"><strong data-i="startOffer"></strong><span data-i="startOfferD"></span></a>
-      </div>
-      <div class="radio-bar">
-        <strong data-i="radioTitle"></strong>
-        <a class="pin" href="https://radioarg.net/nacional-paso-de-los-libres" target="_blank" rel="noopener" data-i="radioLibres"></a>
-        <a class="pin" href="https://radiosaovivo.net/radio-uruguaiana-fm-102-1/" target="_blank" rel="noopener" data-i="radioBr"></a>
+      <h2 data-i="priceTitle"></h2>
+      <p class="fx-note" data-i="fxNote"></p>
+      <div class="prices">
+        <div class="price"><strong data-i="priceClientLabel"></strong><p data-i="priceClient"></p></div>
+        <div class="price"><strong data-i="priceProvLabel"></strong><p data-i="priceProv"></p></div>
+        <div class="price"><strong data-i="priceShopLabel"></strong><p data-i="priceShop"></p></div>
       </div>
     </div>
   </section>
 
-  <section class="urgency-section alt-teal" aria-label="urgency">
-    <div class="wrap">
-      <div class="urgency-strip">
-        <p data-i="urgencyText"></p>
-        <a class="btn btn-wa" href="#ofrecer" data-i="urgencyCta"></a>
-      </div>
-    </div>
-  </section>
 
   <section id="servicios">
     <div class="wrap">
@@ -671,7 +697,7 @@ form .actions {
     </div>
   </section>
 
-  <section id="como" class="alt-teal">
+  <section id="como" class="alt-teal how-short">
     <div class="wrap">
       <h2 data-i="howTitle"></h2>
       <div class="steps" id="steps"></div>
@@ -688,38 +714,20 @@ form .actions {
     </div>
   </section>
 
-  <section id="faq" class="alt">
+  <section class="urgency-section cta-final alt-teal" aria-label="cta" id="sumate">
     <div class="wrap">
-      <h2 data-i="faqTitle"></h2>
-      <div class="faq-list">
-        <details>
-          <summary data-i="faqQ1"></summary>
-          <p data-i="faqA1"></p>
-        </details>
-        <details>
-          <summary data-i="faqQ2"></summary>
-          <p data-i="faqA2"></p>
-        </details>
-        <details>
-          <summary data-i="faqQ3"></summary>
-          <p data-i="faqA3"></p>
-        </details>
-        <details>
-          <summary data-i="faqQ4"></summary>
-          <p data-i="faqA4"></p>
-        </details>
+      <div class="urgency-strip">
+        <p data-i="urgencyText"></p>
+        <a class="btn btn-wa" href="#ofrecer" data-i="urgencyCta"></a>
       </div>
-    </div>
-  </section>
-
-  <section class="alt-teal">
-    <div class="wrap">
-      <h2 data-i="priceTitle"></h2>
-      <p class="fx-note" data-i="fxNote"></p>
-      <div class="prices">
-        <div class="price"><strong data-i="priceClientLabel"></strong><p data-i="priceClient"></p></div>
-        <div class="price"><strong data-i="priceProvLabel"></strong><p data-i="priceProv"></p></div>
-        <div class="price"><strong data-i="priceShopLabel"></strong><p data-i="priceShop"></p></div>
+      <div class="start-grid" style="margin-top:18px;max-width:640px">
+        <a class="start-card" href="#pedir"><strong data-i="startNeed"></strong><span data-i="startNeedD"></span></a>
+        <a class="start-card" href="#ofrecer"><strong data-i="startOffer"></strong><span data-i="startOfferD"></span></a>
+      </div>
+      <div class="radio-bar">
+        <strong data-i="radioTitle"></strong>
+        <a class="pin" href="https://radioarg.net/nacional-paso-de-los-libres" target="_blank" rel="noopener" data-i="radioLibres"></a>
+        <a class="pin" href="https://radiosaovivo.net/radio-uruguaiana-fm-102-1/" target="_blank" rel="noopener" data-i="radioBr"></a>
       </div>
     </div>
   </section>
@@ -884,10 +892,52 @@ form .actions {
     </div>
   </section>
 
-  <section class="alt" id="comentarios">
+  <section class="alt more-info" id="mas-info">
     <div class="wrap">
-      <h2 data-i="reviewsTitle"></h2>
-      <p class="sub" data-i="reviewsLead"></p>
+      <h2 data-i="moreInfoTitle"></h2>
+    </div>
+    <details class="more-block wrap" id="faq">
+      <summary data-i="faqTitle"></summary>
+      <div class="more-body">
+        <div class="faq-list">
+          <details>
+            <summary data-i="faqQ1"></summary>
+            <p data-i="faqA1"></p>
+          </details>
+          <details>
+            <summary data-i="faqQ2"></summary>
+            <p data-i="faqA2"></p>
+          </details>
+          <details>
+            <summary data-i="faqQ3"></summary>
+            <p data-i="faqA3"></p>
+          </details>
+          <details>
+            <summary data-i="faqQ4"></summary>
+            <p data-i="faqA4"></p>
+          </details>
+        </div>
+      </div>
+    </details>
+    <details class="more-block wrap" id="reglas">
+      <summary data-i="rulesTitle"></summary>
+      <div class="more-body">
+        <p class="sub" data-i="rulesLead"></p>
+        <ul class="rules-list">
+          <li data-i="rule1"></li>
+          <li data-i="rule2"></li>
+          <li data-i="rule3"></li>
+          <li data-i="rule4"></li>
+          <li data-i="rule5"></li>
+          <li data-i="rule6"></li>
+        </ul>
+        <p class="sub" style="margin-top:14px" data-i="privacyNote"></p>
+      </div>
+    </details>
+    <details class="more-block wrap" id="comentarios">
+      <summary data-i="reviewsTitle"></summary>
+      <div class="more-body">
+<p class="sub" data-i="reviewsLead"></p>
       <div class="reviews-list" id="reviewsList"></div>
       <div class="split">
         <div>
@@ -964,30 +1014,9 @@ form .actions {
           </div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <section id="reglas" class="alt-teal">
-    <div class="wrap">
-      <h2 data-i="rulesTitle"></h2>
-      <p class="sub" data-i="rulesLead"></p>
-      <details class="rules-box" open>
-        <summary data-i="rulesSummary"></summary>
-        <ul>
-          <li data-i="rule1"></li>
-          <li data-i="rule2"></li>
-          <li data-i="rule3"></li>
-          <li data-i="rule4"></li>
-          <li data-i="rule5"></li>
-          <li data-i="rule6"></li>
-        </ul>
-      </details>
-      <p class="sub" style="margin-top:14px" data-i="privacyNote"></p>
-      <div class="urgency-strip" style="margin-top:22px">
-        <p data-i="urgencyText"></p>
-        <a class="btn btn-wa" href="#ofrecer" data-i="urgencyCta"></a>
+    
       </div>
-    </div>
+    </details>
   </section>
 
   <footer>
@@ -1056,7 +1085,7 @@ window.I18N = {
     navJoin: "Sumate",
     ctaNeed: "Solicitar presupuesto",
     ctaOffer: "Publicar mi oficio",
-    eyebrow: "Red de oficios · Libres–Uruguaiana",
+    eyebrow: "LibresTrabaja · Libres–Uruguaiana",
     heroTitle: "Conseguí clientes en tu ciudad",
     heroAccent: "sin comisiones.",
     heroLead: "Publicá gratis tu oficio y recibí contactos directos por WhatsApp.",
@@ -1081,10 +1110,9 @@ window.I18N = {
     servLead: "Oficios, cuidados, trámites, frontera y más.",
     howTitle: "Cómo funciona",
     steps: [
-      ["1", "Pedí o publicá", "Solicitá un presupuesto o publicá tu oficio con el formulario de la página."],
-      ["2", "Completás tus datos", "Rubro, zona y contacto. Tu aviso queda en revisión."],
-      ["3", "Se publica gratis (beta)", "Al aprobarse, tu servicio queda visible. En la beta no hay cobro."],
-      ["4", "Coordinás y cobrás vos", "Presupuesto y pago directo. Sin comisión de la página."],
+      ["1", "Pedí o publicá", "Solicitá presupuesto o publicá tu oficio en el formulario."],
+      ["2", "Revisión corta", "Tu aviso queda en revisión y, al aprobarse, se publica gratis (beta)."],
+      ["3", "WhatsApp directo", "Coordinás y cobrás vos. Sin comisión de la página."],
     ],
     priceTitle: "Durante la beta",
     priceClientLabel: "Clientes",
@@ -1098,7 +1126,7 @@ window.I18N = {
     shopCta: "Quiero mi espacio",
     formNeedTitle: "Pedir un servicio",
     formNeedLead: "Te contactamos por WhatsApp. No tiene costo.",
-    formOfferTitle: "Ofrecer un servicio",
+    formOfferTitle: "Publicar mi oficio",
     formOfferLead: "Completá el formulario: tu aviso queda en revisión y, al aprobarse, se publica en la página. En la beta publicar es gratis.",
     formShopTitle: "Anunciar mi comercio",
     name: "Nombre",
@@ -1142,9 +1170,9 @@ window.I18N = {
     musicOff: "Music",
     helpName: "Luisito",
     helpHi: "Hola, soy Luisito. Te ayudo a usar la página.",
-    help1: "1. Elegí: solicitar presupuesto o publicar tu servicio.",
+    help1: "1. Elegí: solicitar presupuesto o publicar tu oficio.",
     help2: "2. Completá tu nombre, WhatsApp y el rubro.",
-    help3: "3. Enviá el formulario. Pedidos llegan por WhatsApp; publicar servicio es por el sitio.",
+    help3: "3. Enviá el formulario. Pedidos llegan por WhatsApp; publicar oficio es por el sitio.",
     help4: "4. En la beta pública publicar tu oficio es gratis.",
     helpClose: "Entendido",
     helpOpen: "¿Ayuda?",
@@ -1189,7 +1217,7 @@ window.I18N = {
     reviewsTitle: "Opiniones y reputación",
     reviewsLead: "Opiniones reales de vecinos. Las nuevas quedan en revisión y, al aprobarse, aparecen acá.",
     reviewsEmpty: "Todavía no hay opiniones.",
-    emptyFirst: "Sé el primero",
+    emptyFirst: "Publicar mi oficio",
     emptyServicesHint: "Todavía no hay servicios publicados.",
     emptyReviewsHint: "Todavía no hay opiniones.",
     navWa: "WhatsApp",
@@ -1242,6 +1270,7 @@ window.I18N = {
     reviewSlow: "Esperá unos segundos antes de enviar otra reseña.",
     urgencyText: "¿Tenés un oficio? Publicá gratis y recibí clientes por WhatsApp — sin comisiones.",
     urgencyCta: "Publicar mi oficio",
+    moreInfoTitle: "Más info",
     faqTitle: "Preguntas frecuentes",
     faqQ1: "¿Hay comisión?",
     faqA1: "No. LibresTrabaja no cobra comisión. Coordinás y cobrás directo por WhatsApp.",
@@ -1266,7 +1295,7 @@ window.I18N = {
     navJoin: "Entrar",
     ctaNeed: "Solicitar orçamento",
     ctaOffer: "Publicar meu ofício",
-    eyebrow: "Rede de ofícios · Libres–Uruguaiana",
+    eyebrow: "LibresTrabaja · Libres e Uruguaiana",
     heroTitle: "Conquiste clientes na sua cidade",
     heroAccent: "sem comissões.",
     heroLead: "Publique grátis seu ofício e receba contatos diretos pelo WhatsApp.",
@@ -1291,10 +1320,9 @@ window.I18N = {
     servLead: "Ofícios, cuidados, despachos, fronteira e mais.",
     howTitle: "Como funciona",
     steps: [
-      ["1", "Peça ou publique", "Solicite um orçamento ou publique seu ofício pelo formulário da página."],
-      ["2", "Complete seus dados", "Categoria, zona e contato. Seu anúncio fica em revisão."],
-      ["3", "Publica grátis (beta)", "Após a aprovação, seu serviço fica visível. Na beta não há cobrança."],
-      ["4", "Combine e cobre você", "Orçamento e pagamento direto. Sem comissão da página."],
+      ["1", "Peça ou publique", "Peça orçamento ou publique seu ofício no formulário."],
+      ["2", "Revisão rápida", "Seu anúncio fica em revisão e, ao aprovar, publica grátis (beta)."],
+      ["3", "WhatsApp direto", "Combine e cobre você. Sem comissão da página."],
     ],
     priceTitle: "Durante a beta",
     priceClientLabel: "Clientes",
@@ -1308,7 +1336,7 @@ window.I18N = {
     shopCta: "Quero meu espaço",
     formNeedTitle: "Pedir um serviço",
     formNeedLead: "Falamos no WhatsApp. Sem custo.",
-    formOfferTitle: "Oferecer um serviço",
+    formOfferTitle: "Publicar meu ofício",
     formOfferLead: "Preencha o formulário: seu anúncio fica em revisão e, ao ser aprovado, aparece na página. Na beta publicar é grátis.",
     formShopTitle: "Anunciar meu comércio",
     name: "Nome",
@@ -1352,9 +1380,9 @@ window.I18N = {
     musicOff: "Music",
     helpName: "Luisito",
     helpHi: "Olá, eu sou o Luisito. Te ajudo a usar a página.",
-    help1: "1. Escolha: solicitar orçamento ou publicar seu serviço.",
+    help1: "1. Escolha: solicitar orçamento ou publicar seu ofício.",
     help2: "2. Preencha nome, WhatsApp e a categoria.",
-    help3: "3. Envie o formulário. Pedidos vão pelo WhatsApp; publicar serviço é pelo site.",
+    help3: "3. Envie o formulário. Pedidos vão pelo WhatsApp; publicar ofício é pelo site.",
     help4: "4. Na beta pública publicar seu ofício é grátis.",
     helpClose: "Entendi",
     helpOpen: "Ajuda?",
@@ -1399,7 +1427,7 @@ window.I18N = {
     reviewsTitle: "Opiniões e reputação",
     reviewsLead: "Avaliações reais de vizinhos. As novas ficam em revisão e, ao serem aprovadas, aparecem aqui.",
     reviewsEmpty: "Ainda não há avaliações.",
-    emptyFirst: "Seja o primeiro",
+    emptyFirst: "Publicar meu ofício",
     emptyServicesHint: "Ainda não há serviços publicados.",
     emptyReviewsHint: "Ainda não há avaliações.",
     navWa: "WhatsApp",
@@ -1452,6 +1480,7 @@ window.I18N = {
     reviewSlow: "Aguarde alguns segundos antes de enviar outra avaliação.",
     urgencyText: "Tem um ofício? Publique grátis e receba clientes pelo WhatsApp — sem comissões.",
     urgencyCta: "Publicar meu ofício",
+    moreInfoTitle: "Mais info",
     faqTitle: "Perguntas frequentes",
     faqQ1: "Tem comissão?",
     faqA1: "Não. O LibresTrabaja não cobra comissão. Combine e cobre direto pelo WhatsApp.",
@@ -1526,6 +1555,20 @@ window.SERVICES = [
   { es: "Vivero / plantas", pt: "Viveiro / plantas", d_es: "Plantas y jardín", d_pt: "Plantas e jardim", group: "otros" },
   { es: "Celulares y PCs", pt: "Celulares e PCs", d_es: "Reparación y formato", d_pt: "Conserto e formatação", group: "otros" },
 ];
+
+
+// HARD dedupe: each oficio es-name once across all groups
+(function dedupeServicesHard() {
+  const seen = new Set();
+  const out = [];
+  for (const s of window.SERVICES || []) {
+    const key = String(s.es || "").trim().toLowerCase();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push(s);
+  }
+  window.SERVICES = out;
+})();
 
 window.DEMO_SHOPS = [
   { es: "Ferretería El Puente", pt: "Ferragem El Puente", offer_es: "10% en pinturas esta semana", offer_pt: "10% em tintas nesta semana", city: "Libres", lat: -29.7152, lng: -57.0870 },
@@ -1944,7 +1987,7 @@ function serviceMatches(s, q) {
   return hay.includes(q);
 }
 
-const FEATURED_RUBROS = [
+const FEATURED_RUBROS_RAW = [
   "Plomería / gas",
   "Electricidad",
   "Enfermería",
@@ -1952,6 +1995,17 @@ const FEATURED_RUBROS = [
   "Mecánica / gomería",
   "Limpieza",
 ];
+const FEATURED_RUBROS = (() => {
+  const seen = new Set();
+  const names = new Set((window.SERVICES || []).map((s) => s.es));
+  const out = [];
+  for (const n of FEATURED_RUBROS_RAW) {
+    if (!names.has(n) || seen.has(n)) continue;
+    seen.add(n);
+    out.push(n);
+  }
+  return out;
+})();
 
 const RUBRO_ICONS = {
   "Plomería / gas": "🔧",
@@ -2329,7 +2383,7 @@ async function renderReviews() {
     root.innerHTML = `<div class="empty-state empty-state-rich reviews-empty">
       <span class="empty-icon" aria-hidden="true">⭐</span>
       <p>${escapeHtml(d.emptyReviewsHint || d.reviewsEmpty || "")}</p>
-      <a class="btn btn-wa" href="#comentarios">${escapeHtml(d.emptyFirst || "")}</a>
+      <a class="btn btn-ghost" href="#comentarios">${escapeHtml(d.reviewSubmit || "")}</a>
     </div>`;
     return;
   }
@@ -2807,6 +2861,27 @@ whenCaptchaReady(initCaptchaWidgets);
       else start();
     });
   }
+})();
+
+
+// Open Más info <details> when deep-linking #faq / #reglas / #comentarios / #mas-info
+(function () {
+  function openMoreFromHash() {
+    const id = (location.hash || "").replace(/^#/, "");
+    if (!id) return;
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.tagName === "DETAILS") {
+      el.open = true;
+      const parent = el.closest("details.more-block");
+      if (parent) parent.open = true;
+    }
+    if (id === "mas-info") {
+      // leave children closed
+    }
+  }
+  window.addEventListener("hashchange", openMoreFromHash);
+  openMoreFromHash();
 })();
 
 </script>
