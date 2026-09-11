@@ -440,6 +440,32 @@ form .actions {
 }
 
 
+.urgency-strip {
+  background: #dcefec;
+  border: 1px solid #b8ddd8;
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px;
+}
+.urgency-strip p {
+  margin: 0; color: var(--navy); font-weight: 700; font-size: 15px;
+  max-width: 42em; line-height: 1.4;
+}
+.urgency-section { padding: 28px 0; }
+.faq-list { display: grid; gap: 10px; max-width: 720px; }
+.faq-list details {
+  background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px;
+}
+.faq-list summary {
+  cursor: pointer; font-weight: 800; color: var(--navy); list-style: none;
+}
+.faq-list summary::-webkit-details-marker { display: none; }
+.faq-list details[open] summary { color: var(--teal); }
+.faq-list details p {
+  margin: 10px 0 0; color: var(--muted); font-size: 14px; line-height: 1.45;
+}
+
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
@@ -455,6 +481,7 @@ form .actions {
         <a class="nav-text" href="#servicios-publicados" data-i="pubServTitle"></a>
         <a class="nav-text" href="#start" data-i="startTitle"></a>
         <a class="nav-text" href="#comentarios" data-i="reviewsTitle"></a>
+        <a class="nav-text" href="#faq" data-i="navFaq"></a>
         <a class="nav-text" href="#reglas" data-i="rulesNav"></a>
         <div class="nav-fx-wrap">
           <div class="fx-bar" id="fxBar" title="Moneda / Moeda" role="group" aria-label="Currency">
@@ -491,8 +518,8 @@ form .actions {
         </ul>
         <div class="rubro-chips" id="heroRubroChips" aria-label="Rubros"></div>
         <div class="actions">
-          <a class="btn btn-primary" href="#ofrecer" data-i="heroOffer"></a>
           <a class="btn btn-ask" href="#pedir" data-i="heroNeed"></a>
+          <a class="btn btn-primary" href="#ofrecer" data-i="heroOffer"></a>
         </div>
         <div class="trust-inline" id="heroTrust">
           <strong data-i="trustTitle"></strong>
@@ -524,6 +551,15 @@ form .actions {
         <strong data-i="radioTitle"></strong>
         <a class="pin" href="https://radioarg.net/nacional-paso-de-los-libres" target="_blank" rel="noopener" data-i="radioLibres"></a>
         <a class="pin" href="https://radiosaovivo.net/radio-uruguaiana-fm-102-1/" target="_blank" rel="noopener" data-i="radioBr"></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="urgency-section" aria-label="urgency">
+    <div class="wrap">
+      <div class="urgency-strip">
+        <p data-i="urgencyText"></p>
+        <a class="btn btn-primary" href="#ofrecer" data-i="urgencyCta"></a>
       </div>
     </div>
   </section>
@@ -565,6 +601,30 @@ form .actions {
         </ol>
         <p class="sub" style="margin:10px 0 0" data-i="publishNoteFoot"></p>
         <a class="btn btn-primary" href="#ofrecer" style="margin-top:10px" data-i="heroOffer"></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="alt">
+    <div class="wrap">
+      <h2 data-i="faqTitle"></h2>
+      <div class="faq-list">
+        <details>
+          <summary data-i="faqQ1"></summary>
+          <p data-i="faqA1"></p>
+        </details>
+        <details>
+          <summary data-i="faqQ2"></summary>
+          <p data-i="faqA2"></p>
+        </details>
+        <details>
+          <summary data-i="faqQ3"></summary>
+          <p data-i="faqA3"></p>
+        </details>
+        <details>
+          <summary data-i="faqQ4"></summary>
+          <p data-i="faqA4"></p>
+        </details>
       </div>
     </div>
   </section>
@@ -906,6 +966,7 @@ window.I18N = {
     navUsed: "Usados",
     navAuction: "Remates",
     navHow: "Cómo funciona",
+    navFaq: "Preguntas",
     navShops: "Comercios",
     navJoin: "Sumate",
     ctaNeed: "Solicitar presupuesto",
@@ -914,7 +975,7 @@ window.I18N = {
     heroTitle: "Conseguí clientes en tu ciudad",
     heroAccent: "sin comisiones.",
     heroLead: "Publicá gratis tu oficio y recibí contactos directos por WhatsApp.",
-    heroAsk: "¿Ofrecés servicios?",
+    heroAsk: "¿Qué oficio necesitás?",
     ben1: "Perfil profesional gratis",
     ben2: "Te llegan pedidos de tu zona",
     ben3: "Publicás en minutos",
@@ -980,10 +1041,10 @@ window.I18N = {
     minBid: "Oferta mínima",
     heroSell: "Vender o rematar producto",
     startTitle: "¿Qué querés hacer?",
-    startNeed: "Solicitar presupuesto",
-    startNeedD: "Contanos qué necesitás y te contactamos",
-    startOffer: "Publicar mi servicio",
-    startOfferD: "Formulario en la página · gratis en la beta",
+    startNeed: "Necesito un oficio",
+    startNeedD: "Pedí presupuesto y te contactamos por WhatsApp",
+    startOffer: "Ofrezco un oficio",
+    startOfferD: "Publicá gratis y recibí clientes por WhatsApp",
     startSell: "Vender algo",
     startSellD: "Productos nuevos o usados",
     startAuc: "Rematar",
@@ -1086,6 +1147,17 @@ window.I18N = {
     captchaNeed: "Completá el captcha antes de enviar.",
     captchaFail: "No se pudo verificar el captcha. Probá de nuevo.",
     reviewSlow: "Esperá unos segundos antes de enviar otra reseña.",
+    urgencyText: "¿Tenés un oficio? Publicá gratis y recibí clientes por WhatsApp — sin comisiones.",
+    urgencyCta: "Publicar mi oficio",
+    faqTitle: "Preguntas frecuentes",
+    faqQ1: "¿Hay comisión?",
+    faqA1: "No. LibresTrabaja no cobra comisión. Coordinás y cobrás directo por WhatsApp.",
+    faqQ2: "¿Cómo contacto?",
+    faqA2: "Por WhatsApp. Pedidos y prestadores se contactan de forma directa.",
+    faqQ3: "¿Zona?",
+    faqA3: "Paso de los Libres y Uruguaiana (y alrededores de la frontera).",
+    faqQ4: "¿Cuánto tarda publicarse?",
+    faqA4: "Una revisión corta. Cuando se aprueba, tu aviso aparece en la página.",
     privacyNote: "Se publican avisos y opiniones solo después de moderación. El WhatsApp que indiques se usa para contactarte. Para pedir baja o corrección, escribinos al WhatsApp del administrador.",
   },
   pt: {
@@ -1096,6 +1168,7 @@ window.I18N = {
     navUsed: "Usados",
     navAuction: "Leilões",
     navHow: "Como funciona",
+    navFaq: "Perguntas",
     navShops: "Comércios",
     navJoin: "Entrar",
     ctaNeed: "Solicitar orçamento",
@@ -1104,7 +1177,7 @@ window.I18N = {
     heroTitle: "Conquiste clientes na sua cidade",
     heroAccent: "sem comissões.",
     heroLead: "Publique grátis seu ofício e receba contatos diretos pelo WhatsApp.",
-    heroAsk: "Você oferece serviços?",
+    heroAsk: "Qual ofício você precisa?",
     ben1: "Perfil profissional grátis",
     ben2: "Receba pedidos da sua região",
     ben3: "Publique em minutos",
@@ -1170,10 +1243,10 @@ window.I18N = {
     minBid: "Lance mínimo",
     heroSell: "Vender ou leiloar produto",
     startTitle: "O que você quer fazer?",
-    startNeed: "Solicitar orçamento",
-    startNeedD: "Conte o que precisa e falamos no WhatsApp",
-    startOffer: "Publicar meu serviço",
-    startOfferD: "Formulário na página · grátis na beta",
+    startNeed: "Preciso de um ofício",
+    startNeedD: "Peça orçamento e falamos no WhatsApp",
+    startOffer: "Ofereço um ofício",
+    startOfferD: "Publique grátis e receba clientes pelo WhatsApp",
     startSell: "Vender algo",
     startSellD: "Produtos novos ou usados",
     startAuc: "Leiloar",
@@ -1276,6 +1349,17 @@ window.I18N = {
     captchaNeed: "Complete o captcha antes de enviar.",
     captchaFail: "Não foi possível verificar o captcha. Tente de novo.",
     reviewSlow: "Aguarde alguns segundos antes de enviar outra avaliação.",
+    urgencyText: "Tem um ofício? Publique grátis e receba clientes pelo WhatsApp — sem comissões.",
+    urgencyCta: "Publicar meu ofício",
+    faqTitle: "Perguntas frequentes",
+    faqQ1: "Tem comissão?",
+    faqA1: "Não. O LibresTrabaja não cobra comissão. Combine e cobre direto pelo WhatsApp.",
+    faqQ2: "Como entro em contato?",
+    faqA2: "Pelo WhatsApp. Pedidos e prestadores se falam de forma direta.",
+    faqQ3: "Qual a zona?",
+    faqA3: "Passo de los Libres e Uruguaiana (e arredores da fronteira).",
+    faqQ4: "Quanto tempo demora para publicar?",
+    faqA4: "Uma revisão curta. Quando aprovado, seu anúncio aparece na página.",
     privacyNote: "Avisos e opiniões só são publicados após moderação. O WhatsApp indicado serve para contato. Para pedir remoção ou correção, escreva no WhatsApp do administrador.",
   },
 };
@@ -1516,11 +1600,8 @@ function renderRealServiceCards(rows) {
 }
 
 // Temporary hide for test listings until hard-deleted in Supabase (RLS blocks anon DELETE).
-const HIDDEN_LISTING_IDS = new Set([
-  "8f79ea1f-307f-4106-9a90-07550d7dd69b", // Enfermería / Raul
-  "5ae15ddc-bf56-4f2d-95be-832f12e1ab04", // Soldadura / Victor E
-  "4eb4da7b-57b9-41b3-bad3-314ece6b4375", // Techista / Victor
-]);
+// Cleared: former test listing IDs (Enfermería/Soldadura/Techista) removed.
+const HIDDEN_LISTING_IDS = new Set([]);
 
 async function renderPublishedServices() {
   const root = $("#publishedServices");
