@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- TODO (deferred): auth, live FX API, review moderation,
-       real shop geocoding, email delivery for contact form.
-       Backend: listings + reviews via Supabase. -->
+       real shop geocoding.
+       Backend: listings + reviews via Supabase; contact/pedidos via WhatsApp + Turnstile. -->
   <title>LibresTrabaja — Conseguí clientes sin comisiones</title>
   <meta name="description" content="LibresTrabaja: conseguí clientes sin comisiones en Paso de los Libres y Uruguaiana. Beta pública · publicar tu oficio gratis." />
   <style>
@@ -1049,7 +1049,7 @@ form .actions {
           <div class="contact-alt" id="contacto">
             <h3 data-i="contactAltTitle"></h3>
             <p class="sub" data-i="contactAltLead"></p>
-            <form class="form" id="contactForm" data-kind="contact-local">
+            <form class="form" id="contactForm" data-kind="contact-wa">
               <label><span data-i="name"></span><input name="nombre" required /></label>
               <label><span data-i="contactReach"></span><input name="contacto" required data-i-placeholder="contactReachPh" /></label>
               <label><span data-i="dest"></span>
@@ -1178,7 +1178,7 @@ window.I18N = {
     shopsLead: "Cada comercio tiene su apartado. Ideal para shoppings y negocios de Uruguaiana y Libres.",
     shopCta: "Quiero mi espacio",
     formNeedTitle: "Pedir un servicio",
-    formNeedLead: "Te contactamos por WhatsApp. No tiene costo.",
+    formNeedLead: "El pedido llega por WhatsApp (con captcha). Sin costo.",
     formOfferTitle: "Publicar mi oficio",
     formOfferLead: "Completá el formulario: tu aviso queda en revisión y, al aprobarse, se publica en la página. En la beta publicar es gratis.",
     formShopTitle: "Anunciar mi comercio",
@@ -1303,7 +1303,7 @@ window.I18N = {
     servShowAll: "Más rubros",
     servHideAll: "Ocultar rubros",
     contactAltTitle: "¿Preferís no usar WhatsApp? Escribinos acá",
-    contactAltLead: "Nombre, email o teléfono y mensaje. Se guarda localmente (y mailto si configurás el email del sitio).",
+    contactAltLead: "Nombre, email o teléfono y mensaje. Tras el captcha se abre WhatsApp con tu mensaje al administrador — no se pierde.",
     contactReach: "Email o teléfono",
     contactReachPh: "tu@email.com o 3772…",
     contactSubmit: "Enviar mensaje",
@@ -1392,7 +1392,7 @@ window.I18N = {
     shopsLead: "Cada comércio tem o seu espaço. Pensado para lojas de Uruguaiana e Libres.",
     shopCta: "Quero meu espaço",
     formNeedTitle: "Pedir um serviço",
-    formNeedLead: "Falamos no WhatsApp. Sem custo.",
+    formNeedLead: "O pedido chega pelo WhatsApp (com captcha). Sem custo.",
     formOfferTitle: "Publicar meu ofício",
     formOfferLead: "Preencha o formulário: seu anúncio fica em revisão e, ao ser aprovado, aparece na página. Na beta publicar é grátis.",
     formShopTitle: "Anunciar meu comércio",
@@ -1517,7 +1517,7 @@ window.I18N = {
     servShowAll: "Mais rubros",
     servHideAll: "Ocultar rubros",
     contactAltTitle: "Prefere não usar WhatsApp? Escreva aqui",
-    contactAltLead: "Nome, e-mail ou telefone e mensagem. Salvo localmente (e mailto se configurar o e-mail do site).",
+    contactAltLead: "Nome, e-mail ou telefone e mensagem. Depois do captcha abre o WhatsApp com sua mensagem ao administrador — não se perde.",
     contactReach: "E-mail ou telefone",
     contactReachPh: "seu@email.com ou 55…",
     contactSubmit: "Enviar mensagem",
@@ -2601,7 +2601,7 @@ function notifyVictorWa(kind, d, num) {
 document.querySelectorAll("form").forEach((form) => {
   form.addEventListener("submit", async (e) => {
     const kind = form.dataset.kind;
-    if (kind === "review-local" || kind === "contact-local") return; // handled separately
+    if (kind === "review-local" || kind === "contact-wa") return; // handled separately
     e.preventDefault();
     const d = sanitizeFormStrings(Object.fromEntries(new FormData(form).entries()));
     const num = destNumber(form);
@@ -2802,16 +2802,15 @@ $("#contactForm")?.addEventListener("submit", async (e) => {
     return;
   }
 
-  // Do not persist contact PII in localStorage — mailto if configured + UI ok only.
-  const email = (window.SITE.contactEmail || "").trim();
-  if (email) {
-    const subject = encodeURIComponent(window.SITE.name + " contacto (" + entry.destino + ")");
-    const body = encodeURIComponent(
-      "Nombre: " + entry.name + "\nContacto: " + entry.contacto +
-      "\nDestino: " + entry.destino + "\n\n" + entry.mensaje
-    );
-    window.location.href = "mailto:" + email + "?subject=" + subject + "&body=" + body;
-  }
+  // Lead real: mismo canal que pedidos — WhatsApp admin tras captcha (sin localStorage ni mailto).
+  const num = entry.destino === "BR" ? window.SITE.whatsappBR : window.SITE.whatsappAR;
+  wa(
+    window.SITE.name + " - CONTACTO WEB\nNombre: " + entry.name +
+    "\nContacto: " + entry.contacto +
+    "\nDestino: " + entry.destino +
+    "\nMensaje: " + entry.mensaje,
+    num
+  );
   form.reset();
   resetCaptcha(form);
   const ok = $("#contactOk");
