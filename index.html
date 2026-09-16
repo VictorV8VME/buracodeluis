@@ -6,8 +6,18 @@
   <!-- TODO (deferred): auth, live FX API, review moderation,
        real shop geocoding.
        Backend: listings + reviews via Supabase; contact/pedidos via WhatsApp + Turnstile. -->
-  <title>LibresTrabaja — Conseguí clientes sin comisiones</title>
-  <meta name="description" content="LibresTrabaja: conseguí clientes sin comisiones en Paso de los Libres y Uruguaiana. Beta pública · publicar tu oficio gratis." />
+  <title>LibresTrabaja — Oficios en Paso de los Libres y Uruguaiana sin comisiones</title>
+  <meta name="description" content="Encontrá oficios en Paso de los Libres y Uruguaiana, o publicá tu oficio gratis. Contacto directo por WhatsApp, sin comisiones. Español y portugués." />
+  <meta name="keywords" content="oficios Paso de los Libres, servicios Uruguaiana, carpintero, electricista, plomero, sin comisiones, LibresTrabaja" />
+  <link rel="canonical" href="https://www.librestrabaja.com.ar/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.librestrabaja.com.ar/" />
+  <meta property="og:title" content="LibresTrabaja — Oficios Libres y Uruguaiana sin comisiones" />
+  <meta property="og:description" content="Pedí presupuesto o publicá tu oficio gratis. WhatsApp directo, sin intermediarios." />
+  <meta property="og:locale" content="es_AR" />
+  <meta property="og:locale:alternate" content="pt_BR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f766e'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-size='28' font-family='Arial' fill='white'%3ELT%3C/text%3E%3C/svg%3E" />
   <style>
 :root {
   --navy: #12263a;
@@ -328,6 +338,16 @@ body.has-beta-banner .nav { top: 44px; }
 .trust-inline .trust-short { margin: 0 0 6px; color: var(--muted); font-size: 14px; font-weight: 700; }
 .trust-inline a { color: var(--teal); font-weight: 800; font-size: 13px; text-decoration: none; }
 .trust-inline a:hover { text-decoration: underline; }
+.what-is {
+  margin: 10px 0 0; padding: 12px 14px; border-radius: 12px;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
+  color: #e2e8f0; font-size: 14px; line-height: 1.45; max-width: 40em;
+}
+.legal-page { padding: 40px 0 24px; }
+.legal-page h2 { margin: 0 0 10px; font-size: 22px; color: var(--navy); }
+.legal-page p, .legal-page li { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.legal-page ul { margin: 8px 0 16px; padding-left: 18px; }
+.dual-cta-hint { margin: 8px 0 0; color: #c7d4e0; font-size: 13px; font-weight: 700; }
 .hero-ask {
   margin: 0 0 6px; font-size: 16px; font-weight: 800; color: #fef08a;
 }
@@ -685,6 +705,8 @@ form .actions {
         </h1>
         <p class="hero-ask" data-i="heroAsk"></p>
         <p class="lead" data-i="heroLead"></p>
+        <p class="what-is" data-i="whatIs"></p>
+        <p class="dual-cta-hint" data-i="dualHint"></p>
         <ul class="benefit-list" id="heroBenefits">
           <li><span class="bi" aria-hidden="true">👤</span><span data-i="ben1"></span></li>
           <li><span class="bi" aria-hidden="true">🔔</span><span data-i="ben2"></span></li>
@@ -1071,13 +1093,44 @@ form .actions {
     </details>
   </section>
 
+  <section class="legal-page alt" id="privacidad">
+    <div class="wrap">
+      <h2 data-i="privacyTitle"></h2>
+      <p data-i="privacyP1"></p>
+      <ul>
+        <li data-i="privacyLi1"></li>
+        <li data-i="privacyLi2"></li>
+        <li data-i="privacyLi3"></li>
+        <li data-i="privacyLi4"></li>
+      </ul>
+      <p data-i="privacyP2"></p>
+    </div>
+  </section>
+
+  <section class="legal-page" id="terminos">
+    <div class="wrap">
+      <h2 data-i="termsTitle"></h2>
+      <p data-i="termsP1"></p>
+      <ul>
+        <li data-i="termsLi1"></li>
+        <li data-i="termsLi2"></li>
+        <li data-i="termsLi3"></li>
+        <li data-i="termsLi4"></li>
+      </ul>
+      <p data-i="termsP2"></p>
+    </div>
+  </section>
+
   <footer>
     <div class="wrap">
       <p class="footer-brand">LibresTrabaja</p>
+      <p class="footer-copy" data-i="whoWeAre" style="margin-top:0;color:#a8bdd0"></p>
       <div class="footer-links">
         <a href="#contacto" data-i="footerContact"></a>
         <a href="#reglas" data-i="rulesNav"></a>
         <a href="#faq" data-i="navFaq"></a>
+        <a href="#privacidad" data-i="privacyNav"></a>
+        <a href="#terminos" data-i="termsNav"></a>
         <a href="https://wa.me/543772445319" target="_blank" rel="noopener" data-i="navWa">WhatsApp</a>
       </div>
       <p class="footer-copy">© 2026 · Víctor Manuel Espíndola · Libres / Uruguaiana</p>
@@ -1139,10 +1192,12 @@ window.I18N = {
     ctaNeedShort: "Presupuesto",
     ctaOffer: "Publicar mi oficio",
     eyebrow: "LibresTrabaja · Libres–Uruguaiana",
-    heroTitle: "Conseguí clientes en tu ciudad",
+    heroTitle: "Oficios en Paso de los Libres y Uruguaiana",
     heroAccent: "sin comisiones.",
-    heroLead: "Publicá gratis tu oficio y recibí contactos directos por WhatsApp.",
-    heroAsk: "¿Qué oficio necesitás?",
+    heroLead: "Publicá tu oficio gratis y recibí clientes por WhatsApp. Sin comisiones, sin intermediarios.",
+    heroAsk: "¿Qué oficio necesitás? Encontrá un profesional de tu zona en minutos.",
+    whatIs: "LibresTrabaja es un directorio de contacto: vecinos piden presupuesto y oficios reciben el mensaje directo por WhatsApp. No cobramos comisión por trabajo.",
+    dualHint: "Vecino: pedí presupuesto · Prestador: publicá gratis",
     ben1: "Perfil profesional gratis",
     ben2: "Te llegan pedidos de tu zona",
     ben3: "Publicás en minutos",
@@ -1172,7 +1227,7 @@ window.I18N = {
     priceProvLabel: "Proveedores",
     priceShopLabel: "Comercios",
     priceClient: "Pedir presupuesto: siempre gratis.",
-    priceProv: "Publicar tu oficio: gratis mientras dure la beta. Sin comisiones. Sin fecha de cobro.",
+    priceProv: "Publicar tu oficio: gratis en la beta. Sin comisión por trabajo. Más adelante puede haber destacados opcionales de pago; avisamos antes.",
     priceShop: "Espacio para comercios: próximamente. En la beta el foco es oficios y servicios.",
     shopsTitle: "Ofertas de comercios",
     shopsLead: "Cada comercio tiene su apartado. Ideal para shoppings y negocios de Uruguaiana y Libres.",
@@ -1271,8 +1326,8 @@ window.I18N = {
     reviewsLead: "Opiniones reales de vecinos. Las nuevas quedan en revisión y, al aprobarse, aparecen acá.",
     reviewsEmpty: "Todavía no hay opiniones.",
     emptyFirst: "Publicar mi oficio",
-    emptyServicesHint: "Todavía no hay servicios publicados.",
-    emptyReviewsHint: "Todavía no hay opiniones.",
+    emptyServicesHint: "Todavía no hay servicios publicados. Sé el primero en publicar tu oficio.",
+    emptyReviewsHint: "Todavía no hay reseñas. ¡Sé el primero!",
     navWa: "WhatsApp",
     footerContact: "Contacto",
     reviewFormTitle: "Dejá tu reseña",
@@ -1299,7 +1354,8 @@ window.I18N = {
     trustMore: "Ver reglas →",
     featuredNote: "Los más pedidos",
     moreRubrosTitle: "Más rubros",
-    pageTitle: "LibresTrabaja — Conseguí clientes sin comisiones",
+    pageTitle: "LibresTrabaja — Oficios en Paso de los Libres y Uruguaiana sin comisiones",
+    pageDesc: "Encontrá oficios en Paso de los Libres y Uruguaiana, o publicá gratis. WhatsApp directo, sin comisiones.",
     servShowAll: "Más rubros",
     servHideAll: "Ocultar rubros",
     contactAltTitle: "¿Preferís no usar WhatsApp? Escribinos acá",
@@ -1336,7 +1392,24 @@ window.I18N = {
     faqA3: "Paso de los Libres y Uruguaiana (y alrededores de la frontera).",
     faqQ4: "¿Cuánto tarda publicarse?",
     faqA4: "Una revisión corta. Cuando se aprueba, tu aviso aparece en la página.",
-    privacyNote: "Se publican avisos y opiniones solo después de moderación. El WhatsApp que indiques se usa para contactarte. Para pedir baja o corrección, escribinos al WhatsApp del administrador.",
+    privacyNote: "Se publican avisos y opiniones tras moderación. El WhatsApp se usa para contacto. Baja o corrección: WhatsApp del administrador. Ver Privacidad y Términos abajo.",
+    privacyNav: "Privacidad",
+    termsNav: "Términos",
+    privacyTitle: "Privacidad (Ley 25.326)",
+    privacyP1: "Responsable: Víctor Manuel Espíndola (Paso de los Libres / Uruguaiana). Tratamos datos para publicar oficios, pedidos y contacto entre vecinos y prestadores.",
+    privacyLi1: "Datos: nombre, WhatsApp, rubro, zona y mensajes que envíes en formularios.",
+    privacyLi2: "Los WhatsApp de oficios se muestran en el sitio con el fin de que te contacten por trabajo.",
+    privacyLi3: "Podés pedir acceso, corrección o baja de tu aviso escribiendo al WhatsApp del administrador.",
+    privacyLi4: "No vendemos bases de datos. Usamos captcha y moderación para limitar spam.",
+    privacyP2: "Al publicar o enviar un formulario declarás que los datos son tuyos o tenés autorización para compartirlos.",
+    termsTitle: "Términos de uso",
+    termsP1: "LibresTrabaja conecta vecinos y oficios. No somos empleador ni intermediamos el pago del trabajo.",
+    termsLi1: "Publicar implica consentimiento para mostrar tu contacto en la web.",
+    termsLi2: "Está prohibido publicar datos ajenos sin permiso, estafas o contenido ilegal.",
+    termsLi3: "Podemos ocultar o borrar avisos que incumplan las reglas o por pedido del titular.",
+    termsLi4: "El acuerdo de precio, calidad y garantía es solo entre vecino y prestador.",
+    termsP2: "Beta pública: el servicio puede cambiar. Avisamos novedades relevantes en el sitio o por WhatsApp.",
+    whoWeAre: "Quiénes somos: proyecto local de Víctor Manuel Espíndola para oficios en la frontera Libres–Uruguaiana.",
   },
   pt: {
     lang: "Português",
@@ -1353,10 +1426,12 @@ window.I18N = {
     ctaNeedShort: "Orçamento",
     ctaOffer: "Publicar meu ofício",
     eyebrow: "LibresTrabaja · Libres e Uruguaiana",
-    heroTitle: "Conquiste clientes na sua cidade",
+    heroTitle: "Ofícios em Passo de los Libres e Uruguaiana",
     heroAccent: "sem comissões.",
-    heroLead: "Publique grátis seu ofício e receba contatos diretos pelo WhatsApp.",
-    heroAsk: "Qual ofício você precisa?",
+    heroLead: "Publique seu ofício grátis e receba clientes pelo WhatsApp. Sem comissões, sem intermediários.",
+    heroAsk: "Qual ofício você precisa? Encontre um profissional da sua região em minutos.",
+    whatIs: "LibresTrabaja é um diretório de contato: vizinhos pedem orçamento e ofícios recebem a mensagem direto no WhatsApp. Não cobramos comissão por trabalho.",
+    dualHint: "Vizinho: peça orçamento · Prestador: publique grátis",
     ben1: "Perfil profissional grátis",
     ben2: "Receba pedidos da sua região",
     ben3: "Publique em minutos",
@@ -1386,7 +1461,7 @@ window.I18N = {
     priceProvLabel: "Prestadores",
     priceShopLabel: "Comércios",
     priceClient: "Pedir orçamento: sempre grátis.",
-    priceProv: "Publicar seu ofício: grátis enquanto durar a beta. Sem comissões. Sem data de cobrança.",
+    priceProv: "Publicar seu ofício: grátis na beta. Sem comissão por trabalho. Depois pode haver destaques opcionais pagos; avisamos antes.",
     priceShop: "Espaço para comércios: em breve. Na beta o foco é ofícios e serviços.",
     shopsTitle: "Ofertas dos comércios",
     shopsLead: "Cada comércio tem o seu espaço. Pensado para lojas de Uruguaiana e Libres.",
@@ -1485,8 +1560,8 @@ window.I18N = {
     reviewsLead: "Avaliações reais de vizinhos. As novas ficam em revisão e, ao serem aprovadas, aparecem aqui.",
     reviewsEmpty: "Ainda não há avaliações.",
     emptyFirst: "Publicar meu ofício",
-    emptyServicesHint: "Ainda não há serviços publicados.",
-    emptyReviewsHint: "Ainda não há avaliações.",
+    emptyServicesHint: "Ainda não há serviços publicados. Seja o primeiro a publicar seu ofício.",
+    emptyReviewsHint: "Ainda não há avaliações. Seja o primeiro!",
     navWa: "WhatsApp",
     footerContact: "Contato",
     reviewFormTitle: "Deixe sua avaliação",
@@ -1513,7 +1588,8 @@ window.I18N = {
     trustMore: "Ver regras →",
     featuredNote: "Os mais pedidos",
     moreRubrosTitle: "Mais rubros",
-    pageTitle: "LibresTrabaja — Conquiste clientes sem comissões",
+    pageTitle: "LibresTrabaja — Ofícios em Passo de los Libres e Uruguaiana sem comissões",
+    pageDesc: "Encontre ofícios em Passo de los Libres e Uruguaiana, ou publique grátis. WhatsApp direto, sem comissões.",
     servShowAll: "Mais rubros",
     servHideAll: "Ocultar rubros",
     contactAltTitle: "Prefere não usar WhatsApp? Escreva aqui",
@@ -1550,7 +1626,24 @@ window.I18N = {
     faqA3: "Passo de los Libres e Uruguaiana (e arredores da fronteira).",
     faqQ4: "Quanto tempo demora para publicar?",
     faqA4: "Uma revisão curta. Quando aprovado, seu anúncio aparece na página.",
-    privacyNote: "Avisos e opiniões só são publicados após moderação. O WhatsApp indicado serve para contato. Para pedir remoção ou correção, escreva no WhatsApp do administrador.",
+    privacyNote: "Avisos e opiniões após moderação. WhatsApp para contato. Remoção/correção: WhatsApp do administrador. Ver Privacidade e Termos abaixo.",
+    privacyNav: "Privacidade",
+    termsNav: "Termos",
+    privacyTitle: "Privacidade (Lei 25.326 AR)",
+    privacyP1: "Responsável: Víctor Manuel Espíndola (Passo de los Libres / Uruguaiana). Tratamos dados para publicar ofícios, pedidos e contato entre vizinhos e prestadores.",
+    privacyLi1: "Dados: nome, WhatsApp, rubro, zona e mensagens dos formulários.",
+    privacyLi2: "Os WhatsApp dos ofícios aparecem no site para contato de trabalho.",
+    privacyLi3: "Você pode pedir correção ou remoção pelo WhatsApp do administrador.",
+    privacyLi4: "Não vendemos bases. Usamos captcha e moderação contra spam.",
+    privacyP2: "Ao publicar ou enviar um formulário, você declara que os dados são seus ou tem autorização para compartilhar.",
+    termsTitle: "Termos de uso",
+    termsP1: "LibresTrabaja conecta vizinhos e ofícios. Não somos empregador nem intermediamos o pagamento.",
+    termsLi1: "Publicar implica consentimento para mostrar seu contato no site.",
+    termsLi2: "É proibido publicar dados de terceiros sem permissão, golpes ou conteúdo ilegal.",
+    termsLi3: "Podemos ocultar ou apagar avisos que violem as regras ou a pedido do titular.",
+    termsLi4: "Preço, qualidade e garantia ficam só entre vizinho e prestador.",
+    termsP2: "Beta pública: o serviço pode mudar. Avisamos novidades no site ou WhatsApp.",
+    whoWeAre: "Quem somos: projeto local de Víctor Manuel Espíndola para ofícios na fronteira Libres–Uruguaiana.",
   },
 };
 
@@ -2046,6 +2139,14 @@ function applyTexts() {
   document.documentElement.lang = lang;
   const dict = t();
   if (dict.pageTitle) document.title = dict.pageTitle;
+  if (dict.pageDesc) {
+    let md = document.querySelector('meta[name="description"]');
+    if (md) md.setAttribute("content", dict.pageDesc);
+    let og = document.querySelector('meta[property="og:description"]');
+    if (og) og.setAttribute("content", dict.pageDesc);
+    let ogt = document.querySelector('meta[property="og:title"]');
+    if (ogt && dict.pageTitle) ogt.setAttribute("content", dict.pageTitle);
+  }
   document.querySelectorAll("[data-i]").forEach((el) => {
     const key = el.getAttribute("data-i");
     if (dict[key]) el.textContent = dict[key];
