@@ -1895,6 +1895,7 @@ async function submitProtected(type, payload, captchaToken) {
 
 function getCaptchaToken(form) {
   if (!form) return "";
+  ensureCaptchaForForm(form);
   const slot = form.querySelector(".turnstile-slot");
   const wid = slot && slot.dataset.widgetId;
   if (wid != null && wid !== "" && window.turnstile && window.turnstile.getResponse) {
@@ -1929,18 +1930,56 @@ function alertCaptchaOrFail(err) {
   alert(t().publishFail || "Error");
 }
 
+function renderCaptchaSlot(slot) {
+  const key = SITE.turnstileSiteKey;
+  if (!slot || !key || !window.turnstile || !window.turnstile.render) return null;
+  if (slot.dataset.widgetId) return slot.dataset.widgetId;
+  try {
+    const id = window.turnstile.render(slot, {
+      sitekey: key,
+      theme: "light",
+      appearance: "always",
+      retry: "auto",
+    });
+    slot.dataset.widgetId = String(id);
+    return slot.dataset.widgetId;
+  } catch (err) {
+    console.warn("captcha render", err);
+    return null;
+  }
+}
+
+function ensureCaptchaForForm(form) {
+  if (!form) return;
+  const slot = form.querySelector(".turnstile-slot");
+  if (!slot) return;
+  renderCaptchaSlot(slot);
+}
+
+/** Lazy Turnstile: one widget when the user opens a form — avoids ~10 simultaneous challenges that hang. */
 function initCaptchaWidgets() {
   const key = SITE.turnstileSiteKey;
-  if (!key || !window.turnstile || !window.turnstile.render) return;
-  document.querySelectorAll(".turnstile-slot").forEach((slot) => {
-    if (slot.dataset.widgetId) return;
-    try {
-      const id = window.turnstile.render(slot, { sitekey: key, theme: "light" });
-      slot.dataset.widgetId = String(id);
-    } catch (err) {
-      console.warn("captcha render", err);
-    }
+  if (!key) return;
+  document.querySelectorAll("form").forEach((form) => {
+    if (!form.querySelector(".turnstile-slot")) return;
+    if (form.dataset.captchaBound) return;
+    form.dataset.captchaBound = "1";
+    form.addEventListener("focusin", function () { ensureCaptchaForForm(form); });
+    form.addEventListener("pointerdown", function () { ensureCaptchaForForm(form); }, { passive: true });
   });
+  // Prefetch only the first in-view slot (hero/pedir) so mobile has one widget ready
+  try {
+    const io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        const form = en.target.closest("form");
+        if (form) ensureCaptchaForForm(form);
+        io.unobserve(en.target);
+      });
+    }, { rootMargin: "80px", threshold: 0.15 });
+    const first = document.querySelector("form .turnstile-slot");
+    if (first) io.observe(first);
+  } catch (_) {}
 }
 
 function whenCaptchaReady(cb, tries) {
