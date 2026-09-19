@@ -661,6 +661,160 @@ form .actions {
   font-size: 18px;
   color: var(--navy);
 }
+
+.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+/* === VeriPro-inspired UX (LibresTrabaja identity) === */
+.serv-search-hero {
+  margin: 0 0 18px;
+  position: relative;
+}
+.serv-search-hero input {
+  width: 100%;
+  font: inherit;
+  font-size: 16px;
+  padding: 14px 16px 14px 46px;
+  border-radius: 14px;
+  border: 2px solid #b7e0da;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 6px 18px rgba(15,118,110,.08);
+}
+.serv-search-hero input:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(15,118,110,.18);
+}
+.serv-search-hero .search-ico {
+  position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+  font-size: 18px; pointer-events: none; opacity: .7;
+}
+.featured-rubros {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 0 0 16px;
+}
+.featured-rubros .card {
+  border: 2px solid #cfe8e4;
+  background: linear-gradient(180deg, #f4fbfa, #fff);
+  min-height: 88px;
+  cursor: pointer;
+  padding: 12px 8px;
+  text-align: center;
+  align-items: center;
+  transition: border-color .18s, transform .18s, box-shadow .18s;
+}
+.featured-rubros .card .ri {
+  width: 44px; height: 44px; border-radius: 14px;
+  margin: 0 auto 6px;
+  font-size: 22px;
+  border: 2px solid #b7e0da;
+  background: #e7f3f1;
+}
+.featured-rubros .card h3 {
+  font-size: 12px; line-height: 1.25; margin: 0;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.featured-rubros .card p { display: none; }
+@media (min-width: 720px) {
+  .featured-rubros {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  .featured-rubros .card {
+    text-align: left; align-items: flex-start; padding: 14px;
+    min-height: 96px;
+  }
+  .featured-rubros .card .ri { margin: 0 0 8px; border-radius: 999px; }
+  .featured-rubros .card h3 { font-size: 16px; -webkit-line-clamp: unset; }
+  .featured-rubros .card p {
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; font-size: 12px; line-height: 1.3; margin: 0;
+  }
+}
+.shop .stars {
+  color: #d97706; font-weight: 800; letter-spacing: 1px; font-size: 14px; margin: 4px 0 2px;
+}
+.shop .stars-meta { font-size: 11px; color: var(--muted); font-weight: 700; }
+.badge-publicado {
+  display: inline-block; font-size: 11px; font-weight: 800; color: var(--teal);
+  background: #dcefec; border-radius: 999px; padding: 2px 8px; margin-bottom: 6px;
+}
+.listings-scroll {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+@media (max-width: 719px) {
+  .listings-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    padding-bottom: 6px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .listings-scroll > .shop,
+  .listings-scroll > .empty-state-rich {
+    flex: 0 0 min(78vw, 280px);
+    scroll-snap-align: start;
+  }
+  .listings-scroll > .empty-state-rich { flex-basis: 100%; max-width: none; }
+}
+.reviews-teaser { margin-top: 8px; }
+.reviews-teaser .reviews-list.horizontal {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding-bottom: 4px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.reviews-teaser .reviews-list.horizontal .review {
+  flex: 0 0 min(82vw, 300px);
+  scroll-snap-align: start;
+  margin: 0;
+}
+.mobile-bottom-nav {
+  display: none;
+}
+@media (max-width: 767px) {
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 50;
+    background: #fff;
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -6px 20px rgba(18,38,58,.08);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+    justify-content: space-around;
+    align-items: stretch;
+  }
+  .mobile-bottom-nav a {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 6px 2px;
+    border-radius: 10px;
+  }
+  .mobile-bottom-nav a .bn-ico { font-size: 18px; line-height: 1; }
+  .mobile-bottom-nav a:hover,
+  .mobile-bottom-nav a:focus { color: var(--teal); background: #f3faf8; }
+  .mobile-bottom-nav a.active { color: var(--teal); }
+  body.has-mobile-nav {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+  body.has-mobile-nav .help-fab { bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
+  body.has-mobile-nav .clippy { bottom: calc(126px + env(safe-area-inset-bottom, 0px)); }
+}
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
@@ -749,15 +903,16 @@ form .actions {
     <div class="wrap">
       <h2 data-i="servTitle"></h2>
       <p class="sub" data-i="servLead"></p>
+      <div class="serv-search-hero" id="servSearchWrap">
+        <span class="search-ico" aria-hidden="true">🔍</span>
+        <label class="visually-hidden" for="servSearch" data-i="servSearchLabel" style="position:absolute;left:-9999px"></label>
+        <input type="search" id="servSearch" autocomplete="off" data-i-placeholder="servSearchPh" enterkeyhint="search" />
+      </div>
       <div class="featured-rubros" id="featuredRubros"></div>
       <p class="featured-note" data-i="featuredNote"></p>
       <button type="button" class="btn btn-ghost" id="toggleAllRubros" data-i="servShowAll" aria-expanded="false"></button>
       <div id="allRubrosPanel" class="all-rubros-panel" hidden>
         <h3 class="more-rubros-title" data-i="moreRubrosTitle"></h3>
-        <div class="search-wrap">
-          <label class="visually-hidden" for="servSearch" data-i="servSearchLabel" style="position:absolute;left:-9999px"></label>
-          <input type="search" id="servSearch" autocomplete="off" data-i-placeholder="servSearchPh" />
-        </div>
         <div class="accordion" id="serviciosGrid"></div>
       </div>
     </div>
@@ -767,7 +922,16 @@ form .actions {
     <div class="wrap">
       <h2 data-i="pubServTitle"></h2>
       <p class="sub" data-i="pubServLead"></p>
-      <div class="shops" id="publishedServices"></div>
+      <div class="shops listings-scroll" id="publishedServices"></div>
+    </div>
+  </section>
+
+  <section id="opiniones-recientes" class="reviews-teaser">
+    <div class="wrap">
+      <h2 data-i="recentReviewsTitle"></h2>
+      <p class="sub" data-i="recentReviewsLead"></p>
+      <div class="reviews-list horizontal" id="recentReviewsList"></div>
+      <p style="margin-top:12px"><a class="btn btn-ghost" href="#comentarios" data-i="recentReviewsCta"></a></p>
     </div>
   </section>
 
@@ -926,7 +1090,7 @@ form .actions {
     </div>
   </section>
 
-  <section class="alt-teal" id="ofrecer">
+  <section class="alt-teal" id="ofrecer"><a id="publicar-oficio" class="visually-hidden" tabindex="-1" aria-hidden="true"></a>
     <div class="wrap split">
       <div>
         <h2 data-i="formOfferTitle"></h2>
@@ -1137,6 +1301,13 @@ form .actions {
     </div>
   </footer>
 
+  <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Navegación móvil">
+    <a href="#inicio" data-bn="inicio"><span class="bn-ico" aria-hidden="true">🏠</span><span data-i="navBottomHome">Inicio</span></a>
+    <a href="#servicios" data-bn="buscar"><span class="bn-ico" aria-hidden="true">🔍</span><span data-i="navBottomSearch">Buscar</span></a>
+    <a href="#pedir" data-bn="pedir"><span class="bn-ico" aria-hidden="true">📋</span><span data-i="navBottomAsk">Pedir</span></a>
+    <a href="#ofrecer" data-bn="publicar" id="bnPublicar"><span class="bn-ico" aria-hidden="true">➕</span><span data-i="navBottomPublish">Publicar</span></a>
+  </nav>
+
   <button class="help-fab" id="helpOpen" type="button" data-i="helpOpen"></button>
   <aside class="clippy" id="clippy" hidden>
     <div class="clippy-face" aria-hidden="true">📎</div>
@@ -1300,7 +1471,7 @@ window.I18N = {
     destAR: "Argentina 3772 445319",
     destBR: "Brasil +55 55 9148-8778",
     betaBanner: "Beta pública · Libres y Uruguaiana · Publicá gratis →",
-    servSearchPh: "Buscar oficio o servicio…",
+    servSearchPh: "Buscar electricistas, plomeros…",
     servSearchLabel: "Buscar rubros",
     groupOficios: "Oficios",
     groupCuidados: "Salud",
@@ -1353,6 +1524,14 @@ window.I18N = {
     trust4: "",
     trustMore: "Ver reglas →",
     featuredNote: "Los más pedidos",
+    navBottomHome: "Inicio",
+    navBottomSearch: "Buscar",
+    navBottomAsk: "Pedir",
+    navBottomPublish: "Publicar",
+    recentReviewsTitle: "Opiniones recientes",
+    recentReviewsLead: "Reseñas reales de vecinos. Si aún no hay, podés dejar la primera.",
+    recentReviewsCta: "Ver o dejar reseña",
+    badgePublished: "Publicado",
     moreRubrosTitle: "Más rubros",
     pageTitle: "LibresTrabaja — Oficios en Paso de los Libres y Uruguaiana sin comisiones",
     pageDesc: "Encontrá oficios en Paso de los Libres y Uruguaiana, o publicá gratis. WhatsApp directo, sin comisiones.",
@@ -1534,7 +1713,7 @@ window.I18N = {
     destAR: "Argentina 3772 445319",
     destBR: "Brasil +55 55 9148-8778",
     betaBanner: "Beta pública · Libres e Uruguaiana · Publique grátis →",
-    servSearchPh: "Buscar ofício ou serviço…",
+    servSearchPh: "Buscar eletricistas, encanadores…",
     servSearchLabel: "Buscar categorias",
     groupOficios: "Ofícios",
     groupCuidados: "Saúde",
@@ -1587,6 +1766,14 @@ window.I18N = {
     trust4: "",
     trustMore: "Ver regras →",
     featuredNote: "Os mais pedidos",
+    navBottomHome: "Início",
+    navBottomSearch: "Buscar",
+    navBottomAsk: "Pedir",
+    navBottomPublish: "Publicar",
+    recentReviewsTitle: "Avaliações recentes",
+    recentReviewsLead: "Avaliações reais de vizinhos. Se ainda não houver, você pode deixar a primeira.",
+    recentReviewsCta: "Ver ou deixar avaliação",
+    badgePublished: "Publicado",
     moreRubrosTitle: "Mais rubros",
     pageTitle: "LibresTrabaja — Ofícios em Passo de los Libres e Uruguaiana sem comissões",
     pageDesc: "Encontre ofícios em Passo de los Libres e Uruguaiana, ou publique grátis. WhatsApp direto, sem comissões.",
@@ -1885,16 +2072,55 @@ async function insertReview(row, captchaToken) {
   return submitProtected("review", row, captchaToken);
 }
 
-function renderRealServiceCards(rows) {
+function reviewStatsByRubro(reviews) {
+  const map = new Map();
+  (reviews || []).forEach((r) => {
+    const key = String(r.rubro || "").trim().toLowerCase();
+    if (!key) return;
+    const cur = map.get(key) || { sum: 0, n: 0 };
+    cur.sum += Number(r.stars) || 0;
+    cur.n += 1;
+    map.set(key, cur);
+  });
+  const out = new Map();
+  map.forEach((v, k) => {
+    if (v.n > 0) out.set(k, { avg: v.sum / v.n, n: v.n });
+  });
+  return out;
+}
+
+function listingMatchStats(row, statsMap) {
+  if (!statsMap || !statsMap.size) return null;
+  const candidates = [row.rubro, row.title, row.category]
+    .map((x) => String(x || "").trim().toLowerCase())
+    .filter(Boolean);
+  for (const c of candidates) {
+    if (statsMap.has(c)) return statsMap.get(c);
+    for (const [k, v] of statsMap) {
+      if (c.includes(k) || k.includes(c)) return v;
+    }
+  }
+  return null;
+}
+
+function renderRealServiceCards(rows, reviewStats) {
   const waLabel = t().pubServWa || "WhatsApp";
+  const badge = t().badgePublished || (lang === "es" ? "Publicado" : "Publicado");
   return rows.map((row, i) => {
     const title = row.title || row.rubro || "";
     const zone = row.zone || row.city || row.description || "";
     const tag = lang === "es" ? "Servicio" : "Serviço";
+    const st = listingMatchStats(row, reviewStats);
+    const starsBlock = st
+      ? `<div class="stars" aria-label="${st.avg.toFixed(1)}/5">${starsHtml(Math.round(st.avg))}</div>
+         <div class="stars-meta">${st.avg.toFixed(1)} · ${st.n} ${lang === "es" ? "reseñas" : "avaliações"}</div>`
+      : "";
     return `
     <article class="shop">
+      <span class="badge-publicado">${escapeHtml(badge)}</span>
       <div class="tag kind-tag-servicio">${escapeHtml(tag)}</div>
       <h3>${escapeHtml(title)}</h3>
+      ${starsBlock}
       ${zone ? `<p>${escapeHtml(zone)}</p>` : ""}
       ${listingContactHtml(row) || (row.whatsapp ? `<p style="margin-top:8px"><a class="btn btn-ghost" style="padding:7px 12px;font-size:12px" href="https://wa.me/${waDigits(row.whatsapp)}" target="_blank" rel="noopener">${escapeHtml(waLabel)}</a></p>` : "")}
       ${shareRowHtml("svc-" + (row.id || i), title, zone, "#servicios-publicados")}
@@ -1912,8 +2138,13 @@ async function renderPublishedServices() {
   let rows = [];
   try { rows = await fetchListings("servicio"); } catch (err) { console.warn(err); rows = []; }
   rows = (rows || []).filter((r) => r && r.id && !HIDDEN_LISTING_IDS.has(r.id));
+  let reviewStats = new Map();
+  try {
+    const rev = await collectReviews();
+    reviewStats = reviewStatsByRubro(rev);
+  } catch (err) { console.warn(err); }
   if (rows.length) {
-    root.innerHTML = renderRealServiceCards(rows);
+    root.innerHTML = renderRealServiceCards(rows, reviewStats);
     bindShareButtons(root);
   } else {
     const d = t();
@@ -2278,12 +2509,16 @@ function renderFeaturedRubros() {
   const root = $("#featuredRubros");
   if (!root) return;
   const items = FEATURED_RUBROS.map((name) => window.SERVICES.find((s) => s.es === name)).filter(Boolean);
-  root.innerHTML = items.map((s) => `
+  root.innerHTML = items.map((s) => {
+    const full = lang === "es" ? s.es : s.pt;
+    const short = full.split(" / ")[0];
+    return `
     <article class="card clickable" data-rubro="${s.es}" role="button" tabindex="0">
       <span class="ri" aria-hidden="true">${RUBRO_ICONS[s.es] || "🛠️"}</span>
-      <h3>${lang === "es" ? s.es : s.pt}</h3>
+      <h3 title="${full}">${short}</h3>
       <p>${lang === "es" ? s.d_es : s.d_pt}</p>
-    </article>`).join("");
+    </article>`;
+  }).join("");
   root.querySelectorAll(".card.clickable").forEach(bindRubroCard);
   renderHeroRubroChips();
 }
@@ -2583,18 +2818,22 @@ function reviewCardHtml(r) {
 
 async function renderReviews() {
   const root = $("#reviewsList");
-  if (!root) return;
+  const teaser = $("#recentReviewsList");
   const items = await collectReviews();
-  if (!items.length) {
-    const d = t();
-    root.innerHTML = `<div class="empty-state empty-state-rich reviews-empty">
+  const d = t();
+  const emptyHtml = `<div class="empty-state empty-state-rich reviews-empty">
       <span class="empty-icon" aria-hidden="true">⭐</span>
       <p>${escapeHtml(d.emptyReviewsHint || d.reviewsEmpty || "")}</p>
       <a class="btn btn-ghost" href="#comentarios">${escapeHtml(d.reviewSubmit || "")}</a>
     </div>`;
+  if (!items.length) {
+    if (root) root.innerHTML = emptyHtml;
+    if (teaser) teaser.innerHTML = emptyHtml;
     return;
   }
-  root.innerHTML = items.map(reviewCardHtml).join("");
+  const cards = items.map(reviewCardHtml).join("");
+  if (root) root.innerHTML = cards;
+  if (teaser) teaser.innerHTML = items.slice(0, 8).map(reviewCardHtml).join("");
 }
 
 function fillSelects() {
@@ -2946,6 +3185,39 @@ if (servSearchEl) {
   servSearchEl.addEventListener("input", () => {
     servQuery = servSearchEl.value || "";
     renderServices();
+  });
+}
+
+
+document.body.classList.add("has-mobile-nav");
+
+function focusServSearch() {
+  const panel = $("#allRubrosPanel");
+  if (panel && !allRubrosOpen) {
+    allRubrosOpen = true;
+    syncAllRubrosToggle();
+  }
+  const input = $("#servSearch");
+  if (input) {
+    input.focus({ preventScroll: true });
+    try { input.select(); } catch (_) {}
+  }
+  $("#servicios")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+const mobileBottomNav = $("#mobileBottomNav");
+if (mobileBottomNav) {
+  mobileBottomNav.querySelectorAll("a[data-bn]").forEach((a) => {
+    a.addEventListener("click", (e) => {
+      const kind = a.getAttribute("data-bn");
+      if (kind === "buscar") {
+        e.preventDefault();
+        location.hash = "#servicios";
+        focusServSearch();
+      }
+      mobileBottomNav.querySelectorAll("a").forEach((x) => x.classList.remove("active"));
+      a.classList.add("active");
+    });
   });
 }
 
