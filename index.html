@@ -344,9 +344,23 @@ body.has-beta-banner .nav { top: 44px; }
   color: #e2e8f0; font-size: 14px; line-height: 1.45; max-width: 40em;
 }
 .legal-page { padding: 40px 0 24px; }
-.legal-page h2 { margin: 0 0 10px; font-size: 22px; color: var(--navy); }
-.legal-page p, .legal-page li { color: var(--muted); font-size: 14px; line-height: 1.5; }
-.legal-page ul { margin: 8px 0 16px; padding-left: 18px; }
+.legal-page h2 { margin: 0 0 8px; font-size: 22px; color: var(--navy); }
+.legal-page h3 {
+  margin: 18px 0 6px; font-size: 16px; color: var(--navy); font-weight: 800;
+}
+.legal-page .legal-updated {
+  margin: 0 0 14px; font-size: 13px; color: var(--muted); font-weight: 700;
+}
+.legal-page p, .legal-page li { color: var(--muted); font-size: 14px; line-height: 1.55; }
+.legal-page ul { margin: 8px 0 12px; padding-left: 18px; }
+.legal-page .legal-report {
+  margin-top: 16px; padding: 12px 14px; border-radius: 12px;
+  background: #f0f7f6; border: 1px solid var(--line);
+}
+.legal-page .legal-report a { color: var(--teal); font-weight: 800; text-decoration: none; }
+.legal-page .legal-report a:hover { text-decoration: underline; }
+.contact-report { margin: 12px 0 0; font-size: 14px; }
+.contact-report a { color: var(--teal); font-weight: 800; }
 .dual-cta-hint { margin: 8px 0 0; color: #c7d4e0; font-size: 13px; font-weight: 700; }
 .hero-ask {
   margin: 0 0 6px; font-size: 16px; font-weight: 800; color: #fef08a;
@@ -1249,6 +1263,9 @@ form .actions {
               <button class="btn btn-ghost" type="submit" data-i="contactSubmit"></button>
               <div class="form-ok" id="contactOk" data-i="contactOk"></div>
             </form>
+            <p class="contact-report">
+              <a href="https://wa.me/543772445319?text=Hola%2C%20quiero%20reportar%20un%20aviso%20o%20rese%C3%B1a%20en%20LibresTrabaja%3A" target="_blank" rel="noopener" data-report-wa data-i="reportNav"></a>
+            </p>
           </div>
         </div>
       </div>
@@ -1260,28 +1277,64 @@ form .actions {
   <section class="legal-page alt" id="privacidad">
     <div class="wrap">
       <h2 data-i="privacyTitle"></h2>
+      <p class="legal-updated" data-i="legalUpdated"></p>
+      <h3 data-i="privacyH1"></h3>
       <p data-i="privacyP1"></p>
+      <h3 data-i="privacyH2"></h3>
+      <p data-i="privacyP2a"></p>
       <ul>
         <li data-i="privacyLi1"></li>
         <li data-i="privacyLi2"></li>
-        <li data-i="privacyLi3"></li>
-        <li data-i="privacyLi4"></li>
       </ul>
-      <p data-i="privacyP2"></p>
+      <h3 data-i="privacyH3"></h3>
+      <p data-i="privacyP3"></p>
+      <h3 data-i="privacyH4"></h3>
+      <p data-i="privacyP4"></p>
+      <h3 data-i="privacyH5"></h3>
+      <p data-i="privacyP5"></p>
+      <h3 data-i="privacyH6"></h3>
+      <p data-i="privacyP6"></p>
+      <h3 data-i="privacyH7"></h3>
+      <p data-i="privacyP7"></p>
     </div>
   </section>
 
   <section class="legal-page" id="terminos">
     <div class="wrap">
       <h2 data-i="termsTitle"></h2>
+      <p class="legal-updated" data-i="legalUpdated"></p>
+      <h3 data-i="termsH1"></h3>
       <p data-i="termsP1"></p>
+      <h3 data-i="termsH2"></h3>
+      <p data-i="termsP2a"></p>
+      <h3 data-i="termsH3"></h3>
+      <p data-i="termsP3"></p>
       <ul>
-        <li data-i="termsLi1"></li>
-        <li data-i="termsLi2"></li>
-        <li data-i="termsLi3"></li>
-        <li data-i="termsLi4"></li>
+        <li data-i="termsLiDamages"></li>
+        <li data-i="termsLiBreach"></li>
+        <li data-i="termsLiAccidents"></li>
+        <li data-i="termsLiScams"></li>
+        <li data-i="termsLiConflicts"></li>
       </ul>
-      <p data-i="termsP2"></p>
+      <h3 data-i="termsH4"></h3>
+      <p data-i="termsP4"></p>
+      <h3 data-i="termsH5"></h3>
+      <p data-i="termsP5"></p>
+      <ul>
+        <li data-i="termsLiUse1"></li>
+        <li data-i="termsLiUse2"></li>
+        <li data-i="termsLiUse3"></li>
+      </ul>
+      <h3 data-i="termsH6"></h3>
+      <p data-i="termsP6"></p>
+      <h3 data-i="termsH7"></h3>
+      <p data-i="termsP7"></p>
+      <h3 data-i="termsH8"></h3>
+      <p data-i="termsP8"></p>
+      <div class="legal-report">
+        <p data-i="reportLead"></p>
+        <a href="https://wa.me/543772445319?text=Hola%2C%20quiero%20reportar%20un%20aviso%20o%20rese%C3%B1a%20en%20LibresTrabaja%3A" target="_blank" rel="noopener" data-report-wa data-i="reportNav"></a>
+      </div>
     </div>
   </section>
 
@@ -1295,6 +1348,7 @@ form .actions {
         <a href="#faq" data-i="navFaq"></a>
         <a href="#privacidad" data-i="privacyNav"></a>
         <a href="#terminos" data-i="termsNav"></a>
+        <a href="https://wa.me/543772445319?text=Hola%2C%20quiero%20reportar%20un%20aviso%20o%20rese%C3%B1a%20en%20LibresTrabaja%3A" target="_blank" rel="noopener" data-report-wa data-i="reportNav"></a>
         <a href="https://wa.me/543772445319" target="_blank" rel="noopener" data-i="navWa">WhatsApp</a>
       </div>
       <p class="footer-copy">© 2026 · Víctor Manuel Espíndola · Libres / Uruguaiana</p>
@@ -1574,20 +1628,52 @@ window.I18N = {
     privacyNote: "Se publican avisos y opiniones tras moderación. El WhatsApp se usa para contacto. Baja o corrección: WhatsApp del administrador. Ver Privacidad y Términos abajo.",
     privacyNav: "Privacidad",
     termsNav: "Términos",
+    reportNav: "Reportar aviso",
+    reportLead: "¿Viste un aviso o una reseña problemática? Escribinos por WhatsApp para revisarlo.",
+    reportWaMsg: "Hola, quiero reportar un aviso o reseña en LibresTrabaja:",
+    legalUpdated: "Última actualización: Septiembre 2026",
     privacyTitle: "Privacidad (Ley 25.326)",
-    privacyP1: "Responsable: Víctor Manuel Espíndola (Paso de los Libres / Uruguaiana). Tratamos datos para publicar oficios, pedidos y contacto entre vecinos y prestadores.",
-    privacyLi1: "Datos: nombre, WhatsApp, rubro, zona y mensajes que envíes en formularios.",
-    privacyLi2: "Los WhatsApp de oficios se muestran en el sitio con el fin de que te contacten por trabajo.",
-    privacyLi3: "Podés pedir acceso, corrección o baja de tu aviso escribiendo al WhatsApp del administrador.",
-    privacyLi4: "No vendemos bases de datos. Usamos captcha y moderación para limitar spam.",
-    privacyP2: "Al publicar o enviar un formulario declarás que los datos son tuyos o tenés autorización para compartirlos.",
+    privacyH1: "1. Responsable",
+    privacyP1: "El responsable del tratamiento es Víctor Manuel Espíndola (Paso de los Libres / Uruguaiana). Sitio: LibresTrabaja.",
+    privacyH2: "2. Datos que tratamos",
+    privacyP2a: "Según el caso, podemos tratar:",
+    privacyLi1: "Nombre, WhatsApp, rubro, zona y mensajes que envíes en formularios del sitio.",
+    privacyLi2: "El WhatsApp de oficios se publica en el directorio para contacto laboral directo entre vecinos y prestadores.",
+    privacyH3: "3. Finalidad",
+    privacyP3: "Usamos los datos para publicar oficios y pedidos, facilitar el contacto, y para captcha (Turnstile) y moderación anti-spam / anti-abuso.",
+    privacyH4: "4. No vendemos bases",
+    privacyP4: "No vendemos ni alquilamos bases de datos a terceros con fines comerciales.",
+    privacyH5: "5. Derechos (acceso, corrección y baja)",
+    privacyP5: "Podés pedir acceso, corrección o baja de tu aviso o datos escribiendo al WhatsApp del administrador: +54 3772 445319.",
+    privacyH6: "6. Datos de validación y moderación",
+    privacyP6: "Datos usados solo para validación interna o moderación (por ejemplo, evidencia de una reseña) no necesariamente se muestran en público.",
+    privacyH7: "7. Consentimiento",
+    privacyP7: "Al publicar o enviar un formulario declarás que los datos son tuyos o tenés autorización para compartirlos, y aceptás este aviso de privacidad.",
     termsTitle: "Términos de uso",
-    termsP1: "LibresTrabaja conecta vecinos y oficios. No somos empleador ni intermediamos el pago del trabajo.",
-    termsLi1: "Publicar implica consentimiento para mostrar tu contacto en la web.",
-    termsLi2: "Está prohibido publicar datos ajenos sin permiso, estafas o contenido ilegal.",
-    termsLi3: "Podemos ocultar o borrar avisos que incumplan las reglas o por pedido del titular.",
-    termsLi4: "El acuerdo de precio, calidad y garantía es solo entre vecino y prestador.",
-    termsP2: "Beta pública: el servicio puede cambiar. Avisamos novedades relevantes en el sitio o por WhatsApp.",
+    termsH1: "1. Qué es LibresTrabaja",
+    termsP1: "LibresTrabaja es un directorio local de oficios para Paso de los Libres y Uruguaiana. Publicamos avisos y facilitamos el contacto directo por WhatsApp, sin comisiones por el trabajo.",
+    termsH2: "2. Solo conectamos",
+    termsP2a: "Solo conectamos vecinos con prestadores. No somos empleador, no hacemos los trabajos publicados y no intermediamos pagos ni cobramos comisión sobre el servicio acordado entre las partes.",
+    termsH3: "3. Responsabilidad",
+    termsP3: "El acuerdo de precio, calidad, plazos y garantía es solo entre el vecino y el prestador. No garantizamos resultados ni conductas de terceros. LibresTrabaja no responde por:",
+    termsLiDamages: "daños o pérdidas derivadas del trabajo o del acuerdo entre las partes;",
+    termsLiBreach: "incumplimientos de presupuestos, plazos o calidad;",
+    termsLiAccidents: "accidentes ocurridos durante un servicio;",
+    termsLiScams: "estafas o engaños entre usuarios;",
+    termsLiConflicts: "conflictos, reclamos o disputas entre vecino y prestador.",
+    termsH4: "4. Reseñas y moderación",
+    termsP4: "Las reseñas pueden moderarse. Podemos pedir evidencia (comprobantes, fotos o datos de contacto) para reducir falsedades. La verificación o moderación de una reseña no garantiza la calidad futura del prestador.",
+    termsH5: "5. Uso adecuado",
+    termsP5: "Quien usa el sitio se compromete a:",
+    termsLiUse1: "brindar información real y de su titularidad;",
+    termsLiUse2: "no publicar datos ajenos sin permiso, estafas, contenido ilegal u ofensivo;",
+    termsLiUse3: "aceptar que podemos ocultar o borrar avisos o reseñas que incumplan estas reglas.",
+    termsH6: "6. Disponibilidad",
+    termsP6: "El sitio está en beta pública: puede cambiar, actualizarse o interrumpirse sin aviso previo.",
+    termsH7: "7. Cambios a estos términos",
+    termsP7: "Podemos modificar estos términos. Los cambios rigen desde su publicación en el sitio.",
+    termsH8: "8. Aceptación",
+    termsP8: "Usar LibresTrabaja implica haber leído y aceptado estos términos y el aviso de privacidad.",
     whoWeAre: "Quiénes somos: proyecto local de Víctor Manuel Espíndola para oficios en la frontera Libres–Uruguaiana.",
   },
   pt: {
@@ -1816,20 +1902,52 @@ window.I18N = {
     privacyNote: "Avisos e opiniões após moderação. WhatsApp para contato. Remoção/correção: WhatsApp do administrador. Ver Privacidade e Termos abaixo.",
     privacyNav: "Privacidade",
     termsNav: "Termos",
+    reportNav: "Denunciar publicação",
+    reportLead: "Viu um anúncio ou uma avaliação problemática? Escreva no WhatsApp para revisarmos.",
+    reportWaMsg: "Olá, quero denunciar um anúncio ou avaliação no LibresTrabaja:",
+    legalUpdated: "Última atualização: Setembro 2026",
     privacyTitle: "Privacidade (Lei 25.326 AR)",
-    privacyP1: "Responsável: Víctor Manuel Espíndola (Passo de los Libres / Uruguaiana). Tratamos dados para publicar ofícios, pedidos e contato entre vizinhos e prestadores.",
-    privacyLi1: "Dados: nome, WhatsApp, rubro, zona e mensagens dos formulários.",
-    privacyLi2: "Os WhatsApp dos ofícios aparecem no site para contato de trabalho.",
-    privacyLi3: "Você pode pedir correção ou remoção pelo WhatsApp do administrador.",
-    privacyLi4: "Não vendemos bases. Usamos captcha e moderação contra spam.",
-    privacyP2: "Ao publicar ou enviar um formulário, você declara que os dados são seus ou tem autorização para compartilhar.",
+    privacyH1: "1. Responsável",
+    privacyP1: "O responsável pelo tratamento é Víctor Manuel Espíndola (Passo de los Libres / Uruguaiana). Site: LibresTrabaja.",
+    privacyH2: "2. Dados que tratamos",
+    privacyP2a: "Conforme o caso, podemos tratar:",
+    privacyLi1: "Nome, WhatsApp, rubro, zona e mensagens enviadas nos formulários do site.",
+    privacyLi2: "O WhatsApp dos ofícios é publicado no diretório para contato de trabalho direto entre vizinhos e prestadores.",
+    privacyH3: "3. Finalidade",
+    privacyP3: "Usamos os dados para publicar ofícios e pedidos, facilitar o contato, e para captcha (Turnstile) e moderação anti-spam / antiabuso.",
+    privacyH4: "4. Não vendemos bases",
+    privacyP4: "Não vendemos nem alugamos bases de dados a terceiros com fins comerciais.",
+    privacyH5: "5. Direitos (acesso, correção e remoção)",
+    privacyP5: "Você pode pedir acesso, correção ou remoção do seu anúncio ou dados pelo WhatsApp do administrador: +54 3772 445319.",
+    privacyH6: "6. Dados de validação e moderação",
+    privacyP6: "Dados usados só para validação interna ou moderação (por exemplo, evidência de uma avaliação) não necessariamente aparecem em público.",
+    privacyH7: "7. Consentimento",
+    privacyP7: "Ao publicar ou enviar um formulário, você declara que os dados são seus ou tem autorização para compartilhar, e aceita este aviso de privacidade.",
     termsTitle: "Termos de uso",
-    termsP1: "LibresTrabaja conecta vizinhos e ofícios. Não somos empregador nem intermediamos o pagamento.",
-    termsLi1: "Publicar implica consentimento para mostrar seu contato no site.",
-    termsLi2: "É proibido publicar dados de terceiros sem permissão, golpes ou conteúdo ilegal.",
-    termsLi3: "Podemos ocultar ou apagar avisos que violem as regras ou a pedido do titular.",
-    termsLi4: "Preço, qualidade e garantia ficam só entre vizinho e prestador.",
-    termsP2: "Beta pública: o serviço pode mudar. Avisamos novidades no site ou WhatsApp.",
+    termsH1: "1. O que é o LibresTrabaja",
+    termsP1: "LibresTrabaja é um diretório local de ofícios para Passo de los Libres e Uruguaiana. Publicamos anúncios e facilitamos o contato direto pelo WhatsApp, sem comissões pelo trabalho.",
+    termsH2: "2. Só conectamos",
+    termsP2a: "Só conectamos vizinhos com prestadores. Não somos empregador, não executamos os trabalhos publicados e não intermediamos pagamentos nem cobramos comissão sobre o serviço acordado entre as partes.",
+    termsH3: "3. Responsabilidade",
+    termsP3: "O acordo de preço, qualidade, prazos e garantia fica só entre o vizinho e o prestador. Não garantimos resultados nem condutas de terceiros. O LibresTrabaja não responde por:",
+    termsLiDamages: "danos ou perdas decorrentes do trabalho ou do acordo entre as partes;",
+    termsLiBreach: "descumprimentos de orçamentos, prazos ou qualidade;",
+    termsLiAccidents: "acidentes ocorridos durante um serviço;",
+    termsLiScams: "golpes ou enganos entre usuários;",
+    termsLiConflicts: "conflitos, reclamações ou disputas entre vizinho e prestador.",
+    termsH4: "4. Avaliações e moderação",
+    termsP4: "As avaliações podem ser moderadas. Podemos pedir evidência (comprovantes, fotos ou dados de contato) para reduzir falsidades. A verificação ou moderação de uma avaliação não garante a qualidade futura do prestador.",
+    termsH5: "5. Uso adequado",
+    termsP5: "Quem usa o site se compromete a:",
+    termsLiUse1: "fornecer informação real e de sua titularidade;",
+    termsLiUse2: "não publicar dados de terceiros sem permissão, golpes, conteúdo ilegal ou ofensivo;",
+    termsLiUse3: "aceitar que podemos ocultar ou apagar anúncios ou avaliações que violem estas regras.",
+    termsH6: "6. Disponibilidade",
+    termsP6: "O site está em beta pública: pode mudar, ser atualizado ou interrompido sem aviso prévio.",
+    termsH7: "7. Mudanças nestes termos",
+    termsP7: "Podemos modificar estes termos. As mudanças valem a partir da publicação no site.",
+    termsH8: "8. Aceitação",
+    termsP8: "Usar o LibresTrabaja implica ter lido e aceitado estes termos e o aviso de privacidade.",
     whoWeAre: "Quem somos: projeto local de Víctor Manuel Espíndola para ofícios na fronteira Libres–Uruguaiana.",
   },
 };
@@ -2390,6 +2508,12 @@ function applyTexts() {
     const key = el.getAttribute("data-i-alt");
     if (dict[key]) el.setAttribute("alt", dict[key]);
   });
+  if (dict.reportWaMsg) {
+    const reportHref = "https://wa.me/543772445319?text=" + encodeURIComponent(dict.reportWaMsg);
+    document.querySelectorAll("[data-report-wa]").forEach((el) => {
+      el.setAttribute("href", reportHref);
+    });
+  }
   $("#langBtn").textContent = lang === "es" ? "PT" : "ES";
   syncFxBar();
   renderServices();
